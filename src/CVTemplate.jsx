@@ -124,15 +124,16 @@ const CVTemplate = () => {
   const [documents, setDocuments] = useState([]);
 
   const fetchDocuments = async () => {
+    if (!user) return;
     try {
-      const res = await fetch(API_URLS.documents);
+      const res = await fetch(`${API_URLS.documents}?userId=${user.id}`);
       if (res.ok) setDocuments(await res.json());
     } catch {}
   };
 
   useEffect(() => {
-    fetchDocuments();
-  }, []); // Solo al montar — el panel Docs tiene su propio fetch interno
+    if (user) fetchDocuments();
+  }, [user]); // Re-ejecutar cuando el usuario cambie o se cargue
 
   // ── UI helpers ──
   const [newSkill, setNewSkill] = useState('');

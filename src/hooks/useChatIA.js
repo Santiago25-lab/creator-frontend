@@ -16,7 +16,13 @@ export const useChatIA = (cvData, setCvData, user) => {
 
   // 1. Cargar historial desde Supabase al iniciar
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      // Si no hay usuario, resetear chat al mensaje de bienvenida inicial
+      setChatMessages([
+        { role: 'assistant', content: '¡Hola! Soy tu redactor. Cuéntame sobre ti y yo optimizaré tu CV con lenguaje de alto impacto.' }
+      ]);
+      return;
+    }
 
     const fetchHistory = async () => {
       const { data, error } = await supabase
@@ -66,7 +72,11 @@ export const useChatIA = (cvData, setCvData, user) => {
       const res = await fetch(API_URLS.aiGenerate, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: msg, currentState: cvData }),
+        body: JSON.stringify({ 
+          prompt: msg, 
+          currentState: cvData,
+          history: chatMessages // ENVIAR HISTORIAL COMPLETO
+        }),
         signal: controller.signal
       });
 

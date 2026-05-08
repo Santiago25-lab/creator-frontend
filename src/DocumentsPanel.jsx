@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { API_URLS, getDocumentAnalyzeUrl } from './services/api';
 import { formatSize, formatDateShort as formatDate, getFileIcon, getFileColor } from './utils/formatters';
 import './DocumentsPanel.css';
+import { useAuth } from './context/AuthContext';
 
 // Filtra campos vacíos del objeto extraído
 const hasContent = (val) => {
@@ -13,6 +14,7 @@ const hasContent = (val) => {
 };
 
 const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
+  const { user } = useAuth(); // Obtener el usuario actual
   const [documents, setDocuments] = useState([]);
   const [showToast, setShowToast] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
@@ -21,20 +23,24 @@ const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
   const [uploadError, setUploadError] = useState('');
   const [description, setDescription] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
-  const [analyzingId, setAnalyzingId] = useState(null);   // ID del doc en análisis
-  const [analysisResult, setAnalysisResult] = useState(null); // { doc, result }
+  const [analyzingId, setAnalyzingId] = useState(null);   
+  const [analysisResult, setAnalysisResult] = useState(null); 
   const fileInputRef = useRef(null);
 
-  useEffect(() => { fetchDocuments(); }, []);
+  useEffect(() => { 
+    if (user) fetchDocuments(); 
+  }, [user]);
 
   const fetchDocuments = async () => {
+    if (!user) return;
     try {
-      const res = await fetch(API_URLS.documents);
+      const res = await fetch(`${API_URLS.documents}?userId=${user.id}`);
       if (res.ok) setDocuments(await res.json());
     } catch {}
   };
 
   const uploadFile = async (file) => {
+    if (!user) return;
     setUploadError('');
     const allowed = ['application/pdf', 'image/jpeg', 'image/jpg', 'image/png', 'image/webp'];
     if (!allowed.includes(file.type)) { setUploadError('❌ Tipo no permitido. Solo PDF, JPG y PNG.'); return; }
@@ -43,6 +49,7 @@ const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
     setIsUploading(true);
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('userId', user.id); // Enviar el ID del dueño
     if (description.trim()) formData.append('description', description.trim());
 
     try {
@@ -57,12 +64,23 @@ const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
     setIsUploading(false);
   };
 
-  const handleFileSelect = (e) => { const f = e.target.files[0]; if (f) uploadFile(f); e.target.value = ''; };
-  const handleDrop = (e) => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files[0]; if (f) uploadFile(f); };
+  const handleFileSelect = (e) => { 
+    const f = e.target.files[0]; 
+    if (f) uploadFile(f); 
+    e.target.value = ''; 
+  };
+
+  const handleDrop = (e) => { 
+    e.preventDefault(); 
+    setIsDragging(false); 
+    const f = e.dataTransfer.files[0]; 
+    if (f) uploadFile(f); 
+  };
 
   const handleDelete = async (id) => {
+    if (!user) return;
     try {
-      const res = await fetch(`${API_URLS.documents}/${id}`, { method: 'DELETE' });
+      const res = await fetch(`${API_URLS.documents}/${id}?userId=${user.id}`, { method: 'DELETE' });
       if (res.ok) {
         setDocuments(prev => prev.filter(d => d.id !== id));
         if (onDocumentChange) onDocumentChange();
@@ -71,14 +89,18 @@ const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
     finally { setConfirmDeleteId(null); }
   };
 
-  const openViewer = (doc) => setViewer({ url: doc.viewUrl, type: doc.contentType, name: doc.originalName });
+  const openViewer = (doc) => {
+    // Añadir el userId a la URL de vista para validación
+    const viewUrlWithAuth = `${doc.viewUrl}?userId=${user.id}`;
+    setViewer({ url: viewUrlWithAuth, type: doc.contentType, name: doc.originalName });
+  };
 
-  // ── ANÁLISIS IA ──────────────────────────────────────────────────
   const analyzeDocument = async (doc) => {
+    if (!user) return;
     setAnalyzingId(doc.id);
     setAnalysisResult(null);
     try {
-      const res = await fetch(getDocumentAnalyzeUrl(doc.id), { method: 'POST' });
+      const res = await fetch(`${getDocumentAnalyzeUrl(doc.id)}?userId=${user.id}`, { method: 'POST' });
       const text = await res.text();
       const json = JSON.parse(text);
       if (json.error) {

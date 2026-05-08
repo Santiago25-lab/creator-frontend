@@ -3,35 +3,24 @@ import { supabase } from '../lib/supabase';
 
 const CV_STORAGE_KEY = 'creator_cv_data';
 
-export const defaultCV = {
-  personalInfo: {
-    name: "Santiago Urbina",
-    title: "Ingeniero de Software",
-    phone: "+57 310 123 4567",
-    email: "santiago@email.com",
-    address: "Bogotá, Colombia",
-    website: "santiagourbina.dev",
-    aboutMe: "Ingeniero de Software con +4 años diseñando sistemas escalables y experiencias de usuario de alto rendimiento. Especialista en arquitectura de microservicios, React y Spring Boot."
-  },
-  experience: [
-    { period: "2022 — Presente", title: "Desarrollador Full-Stack · TechCorp", description: "Lideré la migración de una aplicación monolítica a microservicios, reduciendo el tiempo de despliegue en un 60%." },
-    { period: "2020 — 2022", title: "Desarrollador Frontend · WebStudio", description: "Construí interfaces en React para clientes del sector financiero." }
-  ],
-  education: [
-    { period: "2015 — 2020", degree: "Ingeniería de Sistemas", institution: "Universidad Nacional de Colombia" }
-  ],
-  skills: ["React", "Spring Boot", "TypeScript", "Java", "PostgreSQL", "Docker", "AWS", "Figma"],
-  languages: ["Español (Nativo)", "Inglés (B2)"]
-};
-
-// CV totalmente vacío para nuevos usuarios
 export const blankCV = {
-  personalInfo: { name: "", title: "", phone: "", email: "", address: "", website: "", aboutMe: "" },
+  personalInfo: {
+    name: "",
+    title: "",
+    phone: "",
+    email: "",
+    address: "",
+    website: "",
+    aboutMe: ""
+  },
   experience: [],
   education: [],
   skills: [],
   languages: []
 };
+
+// Mantenemos una referencia por compatibilidad, pero vacía
+export const defaultCV = blankCV;
 
 export const useCvData = (user) => {
   const [cvData, setCvData] = useState(blankCV);

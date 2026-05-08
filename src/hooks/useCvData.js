@@ -24,21 +24,26 @@ export const defaultCV = {
   languages: ["Español (Nativo)", "Inglés (B2)"]
 };
 
-export const useCvData = (user) => {
-  const [cvData, setCvData] = useState(() => {
-    try {
-      const saved = localStorage.getItem(CV_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : defaultCV;
-    } catch {
-      return defaultCV;
-    }
-  });
+// CV totalmente vacío para nuevos usuarios
+export const blankCV = {
+  personalInfo: { name: "", title: "", phone: "", email: "", address: "", website: "", aboutMe: "" },
+  experience: [],
+  education: [],
+  skills: [],
+  languages: []
+};
 
+export const useCvData = (user) => {
+  const [cvData, setCvData] = useState(blankCV);
   const [isSaving, setIsSaving] = useState(false);
 
-  // 1. Cargar datos desde Supabase al iniciar sesión
+  // 1. Cargar datos de forma segura (Nube manda sobre Local)
   useEffect(() => {
-    if (!user) return;
+    if (!user) {
+      setCvData(blankCV);
+      localStorage.removeItem(CV_STORAGE_KEY);
+      return;
+    }
 
     const fetchSupabaseData = async () => {
       const { data, error } = await supabase
@@ -49,18 +54,13 @@ export const useCvData = (user) => {
         .maybeSingle();
 
       if (data && !error) {
+        // Usuario antiguo: restaurar su contenido
         setCvData(data.content);
         localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(data.content));
-      } else if (!data && !error) {
-        // Si no hay datos en nube pero sí en local, subirlos (Migración inicial)
-        const localData = localStorage.getItem(CV_STORAGE_KEY);
-        if (localData) {
-          await supabase.from('cv_data').insert({
-            user_id: user.id,
-            content: JSON.parse(localData),
-            is_primary: true
-          });
-        }
+      } else {
+        // Usuario nuevo o error: empezar de cero
+        setCvData(blankCV);
+        localStorage.removeItem(CV_STORAGE_KEY);
       }
     };
 

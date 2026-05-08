@@ -41,9 +41,12 @@ export const AuthProvider = ({ children }) => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
+    // Limpieza total del almacenamiento del navegador
+    localStorage.removeItem('creator_cv_data'); // Esta es la clave real que usas en useCvData
     localStorage.removeItem('cvData');
     localStorage.removeItem('cvStyle');
-    window.location.reload(); // Recargar para asegurar que todos los estados se limpien
+    localStorage.clear(); 
+    window.location.href = '/'; // Redirección total para limpiar memoria
   };
 
   return (

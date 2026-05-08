@@ -44,7 +44,7 @@ const CVTemplate = () => {
   const { cvData, setCvData, isSaving } = cv;
 
   // ── Chat IA (hook extraído) ──
-  const chat = useChatIA(cvData, setCvData);
+  const chat = useChatIA(cvData, setCvData, user);
 
   // ── UI State ──
   const [activeTemplate, setActiveTemplate] = useState('resume-a');

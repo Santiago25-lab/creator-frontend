@@ -39,8 +39,11 @@ export const AuthProvider = ({ children }) => {
     return supabase.auth.signInWithPassword({ email, password });
   };
 
-  const signOut = () => {
-    return supabase.auth.signOut();
+  const signOut = async () => {
+    await supabase.auth.signOut();
+    localStorage.removeItem('cvData');
+    localStorage.removeItem('cvStyle');
+    window.location.reload(); // Recargar para asegurar que todos los estados se limpien
   };
 
   return (

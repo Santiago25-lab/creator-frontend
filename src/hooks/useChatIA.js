@@ -36,20 +36,37 @@ export const useChatIA = (cvData, setCvData) => {
     setIsLoading(true);
 
     try {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 60000); // 60 segundos de espera
+
       const res = await fetch(API_URLS.aiGenerate, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: msg, currentState: cvData })
+        body: JSON.stringify({ prompt: msg, currentState: cvData }),
+        signal: controller.signal
       });
+
+      clearTimeout(timeoutId);
+
       if (res.ok) {
         const data = await res.json();
         setCvData(mergeCvData(cvData, data));
         setChatMessages([...newMsgs, { role: 'assistant', content: data.ai_message || '✅ CV actualizado.' }]);
       } else {
-        setChatMessages([...newMsgs, { role: 'assistant', content: '⚠️ Error del servidor.' }]);
+        const errorText = await res.text();
+        let errorMsg = '⚠️ Error del servidor.';
+        if (res.status === 429) errorMsg = '⚠️ Límite de mensajes alcanzado. Espera un momento.';
+        if (errorText.includes('timeout')) errorMsg = '⚠️ La IA tardó demasiado en responder. Reintenta.';
+        
+        setChatMessages([...newMsgs, { role: 'assistant', content: errorMsg }]);
       }
-    } catch {
-      setChatMessages([...newMsgs, { role: 'assistant', content: '⚠️ Sin conexión.' }]);
+    } catch (err) {
+      console.error('Chat error:', err);
+      const isTimeout = err.name === 'AbortError';
+      setChatMessages([...newMsgs, { 
+        role: 'assistant', 
+        content: isTimeout ? '⚠️ Tiempo de espera agotado. Reintentando...' : '⚠️ Error de conexión. Verifica tu internet.' 
+      }]);
     }
     setIsLoading(false);
   };

@@ -56,24 +56,37 @@ export const useCvData = (user) => {
     fetchSupabaseData();
   }, [user]);
 
-  // 2. Guardar en Supabase cuando cvData cambia (Debounced)
+  // 2. Guardar en Supabase y LocalStorage (con manejo de errores)
   useEffect(() => {
-    localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
+    try {
+      localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
+    } catch (e) {
+      if (e.name === 'QuotaExceededError') {
+        console.warn('LocalStorage lleno. Los datos solo se guardarán en la nube.');
+        // Opcional: Podríamos quitar la foto del localStorage para que el resto quepa
+        const dataWithoutPhoto = { ...cvData, personalInfo: { ...cvData.personalInfo, photo: null } };
+        try { localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(dataWithoutPhoto)); } catch {}
+      }
+    }
     
     if (!user) return;
 
     const timer = setTimeout(async () => {
       setIsSaving(true);
-      await supabase
-        .from('cv_data')
-        .upsert({ 
-          user_id: user.id, 
-          content: cvData, 
-          is_primary: true,
-          updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id, is_primary' });
+      try {
+        await supabase
+          .from('cv_data')
+          .upsert({ 
+            user_id: user.id, 
+            content: cvData, 
+            is_primary: true,
+            updated_at: new Date().toISOString()
+          }, { onConflict: 'user_id, is_primary' });
+      } catch (err) {
+        console.error("Error al guardar en Supabase:", err);
+      }
       setIsSaving(false);
-    }, 2000); // Guardado automático cada 2 segundos de inactividad
+    }, 2000);
 
     return () => clearTimeout(timer);
   }, [cvData, user]);
@@ -84,6 +97,8 @@ export const useCvData = (user) => {
   };
 
   const setPhoto = (dataUrl) => {
+    // Si la imagen es muy grande (> 1MB aprox), intentamos avisar o procesar
+    // Por ahora, la guardamos y dejamos que el try-catch de arriba maneje el localstorage
     setCvData(d => ({ ...d, personalInfo: { ...d.personalInfo, photo: dataUrl } }));
   };
 
@@ -141,10 +156,29 @@ export const useCvData = (user) => {
     setCvData(d => ({ ...d, languages: d.languages.filter((_, idx) => idx !== i) }));
   };
 
+  const saveToBackend = async () => {
+    if (!user) return;
+    setIsSaving(true);
+    try {
+      await supabase
+        .from('cv_data')
+        .upsert({ 
+          user_id: user.id, 
+          content: cvData, 
+          is_primary: true,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id, is_primary' });
+    } catch (err) {
+      console.error("Error al guardar manualmente:", err);
+    }
+    setIsSaving(false);
+  };
+
   return {
     cvData,
     setCvData,
     isSaving,
+    saveToBackend,
     updatePersonal,
     setPhoto,
     removePhoto,

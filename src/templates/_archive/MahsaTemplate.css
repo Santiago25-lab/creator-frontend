@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;800&display=swap');
+
+.mahsa-cv {
+    width: 210mm;
+    min-height: 297mm;
+    margin: 20px auto;
+    display: grid;
+    grid-template-columns: 40% 60%;
+    background: linear-gradient(135deg, #ffffff 20%, #ff5f8a 100%);
+    font-family: 'Poppins', sans-serif;
+    color: #000;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+    overflow: hidden;
+}
+
+/* LEFT */
+.mahsa-left {
+    padding: 60px 40px;
+    background: linear-gradient(135deg, #ff5f8a 0%, #ffffff 100%);
+    position: relative;
+}
+
+.mahsa-name {
+    font-size: 56px;
+    font-weight: 800;
+    line-height: 0.9;
+    text-transform: uppercase;
+}
+
+.mahsa-info {
+    margin-top: 40px;
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.mahsa-title {
+    margin-top: 40px;
+    font-weight: 800;
+    font-size: 22px;
+    text-transform: uppercase;
+}
+
+.mahsa-photo {
+    margin-top: 40px;
+}
+
+.mahsa-photo img {
+    width: 100%;
+    border-radius: 4px;
+    filter: grayscale(100%);
+}
+
+/* RIGHT */
+.mahsa-right {
+    padding: 60px 40px;
+    background: #fff;
+    border-left: 1px solid rgba(0,0,0,0.1);
+}
+
+.mahsa-section {
+    margin-bottom: 40px;
+}
+
+.mahsa-section h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+/* timeline */
+.mahsa-row {
+    display: flex;
+    gap: 20px;
+    margin: 12px 0;
+    font-size: 14px;
+}
+
+.mahsa-row span:first-child {
+    width: 100px;
+    color: #666;
+    font-weight: 600;
+}
+
+/* dots */
+.mahsa-dots {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 15px;
+}
+
+.mahsa-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #ff3b6f;
+}
+
+.mahsa-dot.gray {
+    background: #eee;
+}
+
+/* skills */
+.mahsa-skill {
+    display: flex;
+    align-items: center;
+    margin: 18px 0;
+    gap: 20px;
+    font-weight: 600;
+}
+
+.mahsa-bar {
+    flex: 1;
+    height: 2px;
+    background: #ccc;
+    position: relative;
+}
+
+.mahsa-circle {
+    position: absolute;
+    top: -5px;
+    width: 12px;
+    height: 12px;
+    background: #ff3b6f;
+    border-radius: 50%;
+    box-shadow: 0 0 10px rgba(255, 59, 111, 0.5);
+}

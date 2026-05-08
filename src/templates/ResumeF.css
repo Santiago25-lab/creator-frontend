@@ -1,0 +1,318 @@
+/* ═══════════════════════════════════════════════════
+   RESUME F — "Dark Impact"
+   Fondo foto oscuro. Texto blanco. Dos columnas.
+   Íconos en círculos. Header "MI CURRÍCULUM" gigante.
+   ═══════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap');
+
+.resume-f {
+  width: 794px;
+  min-height: 1123px;
+  position: relative;
+  font-family: 'Inter', sans-serif;
+  color: #fff;
+  overflow: hidden;
+  background: #1a1a2e;
+}
+
+/* ── Fondo foto + overlay oscuro ── */
+.resume-f__bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
+  z-index: 0;
+}
+
+.resume-f__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0.72) 0%,
+    rgba(0,0,0,0.60) 30%,
+    rgba(0,0,0,0.75) 100%
+  );
+  z-index: 1;
+}
+
+/* ── Contenido sobre el overlay ── */
+.resume-f__content {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-height: 1123px;
+}
+
+/* ── HEADER "MI CURRÍCULUM" ── */
+.resume-f__header {
+  padding: 28px 36px 18px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+}
+
+.resume-f__main-title {
+  font-size: 72px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  margin: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+/* ── BODY: dos columnas ── */
+.resume-f__body {
+  display: grid;
+  grid-template-columns: 45% 55%;
+  flex: 1;
+}
+
+/* ── COLUMNA IZQUIERDA ── */
+.resume-f__left {
+  padding: 28px 28px 28px 36px;
+  border-right: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* ── COLUMNA DERECHA ── */
+.resume-f__right {
+  padding: 28px 36px 28px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+}
+
+/* ── Sección genérica ── */
+.resume-f__section-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.resume-f__icon-box {
+  width: 42px;
+  height: 42px;
+  border: 2px solid rgba(255,255,255,0.7);
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.resume-f__section-title {
+  font-size: 20px;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0;
+  line-height: 1.1;
+}
+
+/* ── INFO ── */
+.resume-f__info-row {
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 5px;
+  display: flex;
+  gap: 6px;
+}
+
+.resume-f__info-label {
+  font-weight: 700;
+  color: #fff;
+  white-space: nowrap;
+}
+
+/* ── EDUCACIÓN ── */
+.resume-f__edu-period {
+  font-size: 11px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.6);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin: 0 0 4px 0;
+}
+
+.resume-f__edu-degree {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+  margin: 0;
+  line-height: 1.4;
+}
+
+.resume-f__edu-institution {
+  font-size: 11.5px;
+  color: rgba(255,255,255,0.6);
+  margin: 3px 0 0 0;
+}
+
+/* ── EXPERIENCIA ── */
+.resume-f__exp-item {
+  margin-bottom: 14px;
+}
+
+.resume-f__exp-period {
+  font-size: 10px;
+  font-weight: 800;
+  color: rgba(255,255,255,0.5);
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  margin: 0 0 4px 0;
+}
+
+.resume-f__exp-company {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.resume-f__exp-location {
+  font-size: 11px;
+  color: rgba(255,255,255,0.55);
+  margin: 2px 0 6px 0;
+}
+
+.resume-f__exp-bullet {
+  font-size: 12px;
+  color: rgba(255,255,255,0.8);
+  margin-bottom: 3px;
+  display: flex;
+  gap: 8px;
+}
+
+.resume-f__exp-bullet::before {
+  content: '−';
+  color: rgba(255,255,255,0.4);
+}
+
+/* ── CONTACTO ── */
+.resume-f__contact-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: rgba(255,255,255,0.85);
+  margin-bottom: 7px;
+}
+
+.resume-f__contact-item i {
+  font-size: 13px;
+  color: rgba(255,255,255,0.5);
+  width: 16px;
+  text-align: center;
+}
+
+/* ── Quote referencias ── */
+.resume-f__quote {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 11px;
+  font-style: italic;
+  color: rgba(255,255,255,0.6);
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+
+.resume-f__quote i { flex-shrink: 0; margin-top: 1px; }
+
+/* ── HABILIDADES SOFTWARE ── */
+.resume-f__skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+
+.resume-f__skill-circle {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.resume-f__skill-badge {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 900;
+  border: 2px solid rgba(255,255,255,0.3);
+  letter-spacing: -0.5px;
+}
+
+.resume-f__skill-name {
+  font-size: 10px;
+  color: rgba(255,255,255,0.75);
+  text-align: center;
+}
+
+/* Colores de los badges (rotativos) */
+.resume-f__skill-badge:nth-child(1) { background: rgba(255,165,0,0.3); border-color: #FFA500; }
+.resume-f__skill-badge:nth-child(2) { background: rgba(0,100,255,0.3); border-color: #3b82f6; }
+.resume-f__skill-badge:nth-child(3) { background: rgba(139,0,200,0.3); border-color: #9333ea; }
+.resume-f__skill-badge:nth-child(4) { background: rgba(0,180,255,0.3); border-color: #38bdf8; }
+.resume-f__skill-badge:nth-child(5) { background: rgba(30,30,180,0.4); border-color: #818cf8; }
+.resume-f__skill-badge:nth-child(6) { background: rgba(220,50,50,0.3); border-color: #f87171; }
+.resume-f__skill-badge:nth-child(7) { background: rgba(0,180,100,0.3); border-color: #34d399; }
+.resume-f__skill-badge:nth-child(8) { background: rgba(200,150,0,0.3); border-color: #fbbf24; }
+
+/* ── PASIONES ── */
+.resume-f__passions-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.resume-f__passion-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.resume-f__passion-icon {
+  width: 54px;
+  height: 54px;
+  border: 2px solid rgba(255,255,255,0.4);
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+}
+
+.resume-f__passion-label {
+  font-size: 11px;
+  color: rgba(255,255,255,0.8);
+  text-align: center;
+}
+
+/* ── Mensaje final ── */
+.resume-f__message {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 10px;
+  padding: 14px 16px;
+  font-size: 12px;
+  line-height: 1.7;
+  color: rgba(255,255,255,0.75);
+  font-style: italic;
+  text-align: center;
+}

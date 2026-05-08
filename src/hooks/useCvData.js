@@ -1,0 +1,167 @@
+import { useState, useEffect, useCallback } from 'react';
+import { supabase } from '../lib/supabase';
+
+const CV_STORAGE_KEY = 'creator_cv_data';
+
+export const defaultCV = {
+  personalInfo: {
+    name: "Santiago Urbina",
+    title: "Ingeniero de Software",
+    phone: "+57 310 123 4567",
+    email: "santiago@email.com",
+    address: "Bogotá, Colombia",
+    website: "santiagourbina.dev",
+    aboutMe: "Ingeniero de Software con +4 años diseñando sistemas escalables y experiencias de usuario de alto rendimiento. Especialista en arquitectura de microservicios, React y Spring Boot."
+  },
+  experience: [
+    { period: "2022 — Presente", title: "Desarrollador Full-Stack · TechCorp", description: "Lideré la migración de una aplicación monolítica a microservicios, reduciendo el tiempo de despliegue en un 60%." },
+    { period: "2020 — 2022", title: "Desarrollador Frontend · WebStudio", description: "Construí interfaces en React para clientes del sector financiero." }
+  ],
+  education: [
+    { period: "2015 — 2020", degree: "Ingeniería de Sistemas", institution: "Universidad Nacional de Colombia" }
+  ],
+  skills: ["React", "Spring Boot", "TypeScript", "Java", "PostgreSQL", "Docker", "AWS", "Figma"],
+  languages: ["Español (Nativo)", "Inglés (B2)"]
+};
+
+export const useCvData = (user) => {
+  const [cvData, setCvData] = useState(() => {
+    try {
+      const saved = localStorage.getItem(CV_STORAGE_KEY);
+      return saved ? JSON.parse(saved) : defaultCV;
+    } catch {
+      return defaultCV;
+    }
+  });
+
+  const [isSaving, setIsSaving] = useState(false);
+
+  // 1. Cargar datos desde Supabase al iniciar sesión
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchSupabaseData = async () => {
+      const { data, error } = await supabase
+        .from('cv_data')
+        .select('content')
+        .eq('user_id', user.id)
+        .eq('is_primary', true)
+        .maybeSingle();
+
+      if (data && !error) {
+        setCvData(data.content);
+        localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(data.content));
+      } else if (!data && !error) {
+        // Si no hay datos en nube pero sí en local, subirlos (Migración inicial)
+        const localData = localStorage.getItem(CV_STORAGE_KEY);
+        if (localData) {
+          await supabase.from('cv_data').insert({
+            user_id: user.id,
+            content: JSON.parse(localData),
+            is_primary: true
+          });
+        }
+      }
+    };
+
+    fetchSupabaseData();
+  }, [user]);
+
+  // 2. Guardar en Supabase cuando cvData cambia (Debounced)
+  useEffect(() => {
+    localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
+    
+    if (!user) return;
+
+    const timer = setTimeout(async () => {
+      setIsSaving(true);
+      await supabase
+        .from('cv_data')
+        .upsert({ 
+          user_id: user.id, 
+          content: cvData, 
+          is_primary: true,
+          updated_at: new Date().toISOString()
+        }, { onConflict: 'user_id, is_primary' });
+      setIsSaving(false);
+    }, 2000); // Guardado automático cada 2 segundos de inactividad
+
+    return () => clearTimeout(timer);
+  }, [cvData, user]);
+
+  /* ── Métodos de actualización ── */
+  const updatePersonal = (field, value) => {
+    setCvData(d => ({ ...d, personalInfo: { ...d.personalInfo, [field]: value } }));
+  };
+
+  const setPhoto = (dataUrl) => {
+    setCvData(d => ({ ...d, personalInfo: { ...d.personalInfo, photo: dataUrl } }));
+  };
+
+  const removePhoto = () => {
+    setCvData(d => ({ ...d, personalInfo: { ...d.personalInfo, photo: null } }));
+  };
+
+  const addExperience = () => {
+    setCvData(d => ({ ...d, experience: [...d.experience, { period: "", title: "", description: "" }] }));
+  };
+
+  const updateExperience = (i, field, value) => {
+    setCvData(d => {
+      const exp = [...d.experience];
+      exp[i] = { ...exp[i], [field]: value };
+      return { ...d, experience: exp };
+    });
+  };
+
+  const removeExperience = (i) => {
+    setCvData(d => ({ ...d, experience: d.experience.filter((_, idx) => idx !== i) }));
+  };
+
+  const addEducation = () => {
+    setCvData(d => ({ ...d, education: [...d.education, { period: "", degree: "", institution: "" }] }));
+  };
+
+  const updateEducation = (i, field, value) => {
+    setCvData(d => {
+      const edu = [...d.education];
+      edu[i] = { ...edu[i], [field]: value };
+      return { ...d, education: edu };
+    });
+  };
+
+  const removeEducation = (i) => {
+    setCvData(d => ({ ...d, education: d.education.filter((_, idx) => idx !== i) }));
+  };
+
+  const addSkill = (skill) => {
+    if (!skill || !skill.trim()) return;
+    setCvData(d => ({ ...d, skills: [...d.skills, skill.trim()] }));
+  };
+
+  const removeSkill = (i) => {
+    setCvData(d => ({ ...d, skills: d.skills.filter((_, idx) => idx !== i) }));
+  };
+
+  const addLanguage = (lang) => {
+    if (!lang || !lang.trim()) return;
+    setCvData(d => ({ ...d, languages: [...d.languages, lang.trim()] }));
+  };
+
+  const removeLanguage = (i) => {
+    setCvData(d => ({ ...d, languages: d.languages.filter((_, idx) => idx !== i) }));
+  };
+
+  return {
+    cvData,
+    setCvData,
+    isSaving,
+    updatePersonal,
+    setPhoto,
+    removePhoto,
+    addExperience, updateExperience, removeExperience,
+    addEducation, updateEducation, removeEducation,
+    addSkill, removeSkill,
+    addLanguage, removeLanguage,
+  };
+};

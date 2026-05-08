@@ -1,0 +1,162 @@
+.creative-cv-wrapper {
+  width: 100%;
+  max-width: 900px;
+  background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+  padding: 40px;
+  border-radius: 20px;
+  color: #fff;
+  overflow: hidden;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+}
+
+.creative-glass-container {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 15px;
+  padding: 30px;
+}
+
+.neon-text {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0;
+  background: linear-gradient(to right, #00f2fe, #4facfe);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  text-shadow: 0 0 20px rgba(0, 242, 254, 0.3);
+}
+
+.creative-title {
+  font-size: 1.2rem;
+  color: #00f2fe;
+  letter-spacing: 3px;
+  margin-top: 5px;
+  text-transform: uppercase;
+}
+
+.creative-bio {
+  margin-top: 20px;
+  line-height: 1.6;
+  color: #ccc;
+  max-width: 70%;
+}
+
+.creative-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 40px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+  padding-bottom: 30px;
+}
+
+.contact-pill {
+  background: rgba(255,255,255,0.1);
+  padding: 8px 15px;
+  border-radius: 20px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.creative-content {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+  gap: 40px;
+}
+
+.creative-section-title {
+  font-size: 1rem;
+  letter-spacing: 2px;
+  color: #4facfe;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.creative-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to right, #4facfe, transparent);
+  margin-left: 15px;
+}
+
+/* Timeline */
+.timeline {
+  border-left: 2px solid rgba(79, 172, 254, 0.3);
+  margin-left: 10px;
+  padding-left: 20px;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 30px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -27px;
+  top: 5px;
+  width: 12px;
+  height: 12px;
+  background: #00f2fe;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #00f2fe;
+}
+
+.timeline-content h4 {
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.timeline-date {
+  font-size: 0.8rem;
+  color: #00f2fe;
+}
+
+/* Skills Tags */
+.creative-skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.skill-tag {
+  background: rgba(79, 172, 254, 0.15);
+  border: 1px solid rgba(79, 172, 254, 0.3);
+  padding: 5px 12px;
+  border-radius: 5px;
+  font-size: 0.85rem;
+}
+
+/* Languages */
+.lang-bar {
+  margin-bottom: 15px;
+}
+
+.progress-bg {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 3px;
+  margin-top: 5px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(to right, #00f2fe, #4facfe);
+  border-radius: 3px;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.5);
+}
+
+/* Reference Cards */
+.ref-glass-card {
+  background: rgba(255,255,255,0.05);
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 15px;
+  border: 1px solid rgba(255,255,255,0.05);
+}

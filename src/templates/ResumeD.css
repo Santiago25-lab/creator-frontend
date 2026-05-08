@@ -1,0 +1,243 @@
+/* ═══════════════════════════════════════════════════
+   RESUME D — "Creative Designer"
+   Inspirado en diseño editorial bold con columna
+   izquierda para nombre/skills y derecha para secciones.
+   ═══════════════════════════════════════════════════ */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+
+.resume-d {
+  width: 794px;
+  min-height: 1123px;
+  background: #f5f5f5;
+  font-family: 'Inter', sans-serif;
+  color: #111;
+  display: grid;
+  grid-template-columns: 42% 58%;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+}
+
+/* ══════════════════════════════
+   COLUMNA IZQUIERDA
+   ══════════════════════════════ */
+.resume-d__left {
+  background: #fff;
+  padding: 44px 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  border-right: 1px solid #e0e0e0;
+}
+
+/* Nombre grande */
+.resume-d__name {
+  font-size: 52px;
+  font-weight: 900;
+  line-height: 1;
+  color: #111;
+  margin: 0;
+  word-break: break-word;
+  letter-spacing: -2px;
+}
+
+.resume-d__title-badge {
+  display: inline-block;
+  background: #111;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 5px 14px;
+  border-radius: 4px;
+  margin-top: 10px;
+}
+
+/* Foto */
+.resume-d__photo {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #111;
+  display: block;
+}
+
+/* About */
+.resume-d__about {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: #444;
+  margin: 0;
+}
+
+/* Skills como badges creativos */
+.resume-d__skills-title {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 2.5px;
+  text-transform: uppercase;
+  color: #7c3aed;
+  margin: 0 0 12px 0;
+  border-bottom: 2px solid #7c3aed;
+  padding-bottom: 6px;
+}
+
+.resume-d__badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.resume-d__badge {
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 700;
+  border: 2px solid #111;
+  background: transparent;
+  color: #111;
+  transition: 0.2s;
+}
+
+.resume-d__badge:nth-child(odd) {
+  background: #111;
+  color: #fff;
+}
+
+.resume-d__badge:nth-child(3n) {
+  background: #7c3aed;
+  border-color: #7c3aed;
+  color: #fff;
+}
+
+/* ══════════════════════════════
+   COLUMNA DERECHA
+   ══════════════════════════════ */
+.resume-d__right {
+  background: #f5f5f5;
+  padding: 44px 36px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Títulos de sección morados */
+.resume-d__section-title {
+  font-size: 22px;
+  font-weight: 900;
+  color: #7c3aed;
+  margin: 0 0 16px 0;
+  letter-spacing: -0.5px;
+}
+
+/* Items de educación */
+.resume-d__edu-item {
+  margin-bottom: 14px;
+  padding-left: 14px;
+  border-left: 3px solid #7c3aed;
+}
+
+.resume-d__edu-period {
+  display: inline-block;
+  font-size: 10px;
+  font-weight: 700;
+  background: #111;
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 999px;
+  margin-bottom: 5px;
+  letter-spacing: 0.5px;
+}
+
+.resume-d__edu-degree {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.resume-d__edu-institution {
+  font-size: 11.5px;
+  color: #777;
+  margin: 2px 0 0 0;
+}
+
+/* Items de experiencia */
+.resume-d__exp-item {
+  margin-bottom: 14px;
+  display: flex;
+  gap: 12px;
+}
+
+.resume-d__exp-dates {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  min-width: 60px;
+  gap: 2px;
+}
+
+.resume-d__exp-date {
+  font-size: 10px;
+  font-weight: 700;
+  color: #999;
+  white-space: nowrap;
+}
+
+.resume-d__exp-divider {
+  width: 1px;
+  flex: 1;
+  background: #ccc;
+  margin: 2px auto;
+}
+
+.resume-d__exp-content {}
+
+.resume-d__exp-role {
+  font-size: 13px;
+  font-weight: 700;
+  color: #111;
+  margin: 0;
+}
+
+.resume-d__exp-company {
+  font-size: 11.5px;
+  color: #777;
+  margin: 2px 0 0 0;
+}
+
+.resume-d__exp-desc {
+  font-size: 11.5px;
+  color: #666;
+  line-height: 1.6;
+  margin: 5px 0 0 0;
+}
+
+/* Idiomas y Contacto */
+.resume-d__lang-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+.resume-d__lang-name { font-weight: 700; color: #111; }
+.resume-d__lang-level { color: #888; font-size: 12px; }
+
+.resume-d__contact-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  font-size: 12px;
+  color: #444;
+}
+
+.resume-d__contact-row i {
+  font-size: 13px;
+  color: #7c3aed;
+  width: 16px;
+  text-align: center;
+}

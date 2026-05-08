@@ -1,0 +1,104 @@
+/* SmartTemplate.css - El motor de estilos dinámicos */
+:root {
+  --smart-primary: #3498db;
+  --smart-secondary: #2c3e50;
+  --smart-bg: #ffffff;
+  --smart-text: #333333;
+  --smart-font: 'Inter', sans-serif;
+  --smart-radius: 8px;
+  --smart-gap: 20px;
+}
+
+.smart-template-container {
+  width: 210mm;
+  min-height: 297mm;
+  background: var(--smart-bg);
+  color: var(--smart-text);
+  font-family: var(--smart-font);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+  margin: 0 auto;
+  overflow: hidden;
+  display: flex;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Layouts Inteligentes */
+.smart-layout-sidebar-left { flex-direction: row; }
+.smart-layout-sidebar-right { flex-direction: row-reverse; }
+.smart-layout-top { flex-direction: column; }
+
+/* Sidebar */
+.smart-sidebar {
+  width: 250px;
+  background: var(--smart-primary);
+  color: white;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: var(--smart-gap);
+}
+
+.smart-main-content {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+}
+
+/* Componentes Atómicos */
+.smart-header h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin: 0;
+  color: var(--smart-primary);
+  text-transform: uppercase;
+  letter-spacing: -1px;
+}
+
+.smart-section-title {
+  font-size: 1.1rem;
+  font-weight: 700;
+  border-bottom: 2px solid var(--smart-primary);
+  padding-bottom: 5px;
+  margin-bottom: 15px;
+  color: var(--smart-primary);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.smart-item {
+  margin-bottom: 20px;
+}
+
+.smart-item h3 {
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--smart-secondary);
+}
+
+.smart-period {
+  font-size: 0.85rem;
+  color: #666;
+  font-style: italic;
+}
+
+.smart-badge {
+  display: inline-block;
+  padding: 4px 12px;
+  background: rgba(52, 152, 219, 0.1);
+  color: var(--smart-primary);
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin: 4px;
+}
+
+/* Layout TOP específico */
+.smart-layout-top .smart-sidebar {
+  width: 100%;
+  flex-direction: row;
+  justify-content: space-around;
+  padding: 20px;
+}

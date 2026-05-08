@@ -1,0 +1,50 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #333; /* Dark background to showcase the white/black CV */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+/* Reset for editable elements so they feel like normal text */
+[contenteditable="true"] {
+  outline: none;
+  cursor: text;
+  transition: background-color 0.2s;
+  min-width: 10px;
+  display: inline-block;
+}
+
+[contenteditable="true"]:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 2px;
+}
+
+[contenteditable="true"]:focus {
+  background-color: rgba(255, 255, 255, 0.8);
+  color: #000;
+  border-radius: 2px;
+}
+
+.sidebar [contenteditable="true"]:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.sidebar [contenteditable="true"]:focus {
+  background-color: rgba(255, 255, 255, 0.9);
+  color: #000;
+}
+
+.notranslate { translate: no !important; }
+font { display: contents !important; }
+goog-te-banner-frame { display: none !important; }

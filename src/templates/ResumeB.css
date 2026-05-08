@@ -1,0 +1,181 @@
+/* ═══════════════════════════════════════════════════
+   RESUME B — "Clean Minimal"
+   Centrada. Sin sidebar. ATS-friendly al máximo.
+   ═══════════════════════════════════════════════════ */
+
+.resume-b {
+  width: 794px;
+  min-height: 1123px;
+  background: #fff;
+  font-family: 'Inter', sans-serif;
+  color: #1f2937;
+  padding: 60px 70px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 36px;
+}
+
+/* ── HEADER ── */
+.resume-b__header {
+  text-align: center;
+  padding-bottom: 28px;
+  border-bottom: 2px solid #111827;
+}
+
+.resume-b__photo {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #111827;
+  margin-bottom: 16px;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.resume-b__name {
+  font-size: 36px;
+  font-weight: 800;
+  color: #111827;
+  margin: 0;
+  letter-spacing: -0.5px;
+}
+
+.resume-b__title {
+  font-size: 13px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  color: #6b7280;
+  margin: 10px 0 0 0;
+}
+
+.resume-b__contact {
+  display: flex;
+  justify-content: center;
+  gap: 24px;
+  margin-top: 18px;
+  flex-wrap: wrap;
+}
+
+.resume-b__contact-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 11.5px;
+  color: #6b7280;
+}
+
+.resume-b__contact-item i {
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* ── SECTIONS ── */
+.resume-b__section {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.resume-b__section-title {
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  color: #111827;
+  margin: 0;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+/* ── ABOUT ── */
+.resume-b__about {
+  font-size: 13px;
+  line-height: 1.8;
+  color: #4b5563;
+  margin: 0;
+}
+
+/* ── EXPERIENCE ── */
+.resume-b__exp-item {
+  margin-bottom: 22px;
+}
+
+.resume-b__exp-item:last-child { margin-bottom: 0; }
+
+.resume-b__exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.resume-b__exp-role {
+  font-size: 15px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.resume-b__exp-period {
+  font-size: 12px;
+  color: #9ca3af;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.resume-b__exp-desc {
+  font-size: 12.5px;
+  line-height: 1.75;
+  color: #6b7280;
+  margin: 0;
+}
+
+/* ── EDUCATION ── */
+.resume-b__edu-item {
+  margin-bottom: 14px;
+}
+
+.resume-b__edu-item:last-child { margin-bottom: 0; }
+
+.resume-b__edu-degree {
+  font-size: 14px;
+  font-weight: 700;
+  color: #111827;
+  margin: 0;
+}
+
+.resume-b__edu-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: #9ca3af;
+  margin-top: 3px;
+}
+
+/* ── SKILLS ── */
+.resume-b__skills-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.resume-b__skill {
+  font-size: 11.5px;
+  padding: 5px 16px;
+  border-radius: 4px;
+  background: #f9fafb;
+  border: 1px solid #e5e7eb;
+  color: #374151;
+  font-weight: 500;
+}
+
+/* ── TWO COLUMN BOTTOM ── */
+.resume-b__two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}

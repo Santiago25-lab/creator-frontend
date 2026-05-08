@@ -1,0 +1,385 @@
+/* ═══════════════════════════════════════════════════
+   Template Composition Engine — Styles
+   ═══════════════════════════════════════════════════ */
+
+/* ── Composer Panel ── */
+.composer-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.composer-back {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.5);
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  font-family: 'Inter', sans-serif;
+  transition: 0.2s;
+}
+
+.composer-back:hover {
+  color: #3b82f6;
+  background: rgba(59,130,246,0.05);
+}
+
+.composer-back i { font-size: 11px; }
+
+/* ── Title ── */
+.composer-title-wrap {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 16px 14px;
+}
+
+.composer-title-icon {
+  font-size: 22px;
+  background: linear-gradient(135deg, #8b5cf6, #ec4899);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.composer-title {
+  font-size: 14px;
+  font-weight: 800;
+  color: #e2e8f0;
+  margin: 0;
+}
+
+.composer-subtitle {
+  font-size: 11px;
+  color: rgba(255,255,255,0.35);
+  margin: 2px 0 0;
+}
+
+/* ── Tabs ── */
+.composer-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.composer-tab {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  color: rgba(255,255,255,0.3);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  font-family: 'Inter', sans-serif;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.composer-tab i { font-size: 10px; }
+.composer-tab:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.03); }
+
+.composer-tab--active {
+  color: #8b5cf6 !important;
+  background: rgba(139,92,246,0.1) !important;
+}
+
+/* ── Content area ── */
+.composer-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 14px;
+}
+
+.composer-hint {
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  margin: 0 0 14px;
+  line-height: 1.5;
+}
+
+/* ── Block Options ── */
+.composer-blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.composer-block {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02);
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: left;
+  font-family: 'Inter', sans-serif;
+  width: 100%;
+}
+
+.composer-block:hover {
+  border-color: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  transform: translateX(3px);
+}
+
+.composer-block--active {
+  border-color: var(--block-color, #8b5cf6) !important;
+  background: color-mix(in srgb, var(--block-color, #8b5cf6) 8%, transparent) !important;
+}
+
+.composer-block-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  flex-shrink: 0;
+  transition: 0.2s;
+}
+
+.composer-block-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.composer-block-info strong {
+  font-size: 12px;
+  color: #e2e8f0;
+}
+
+.composer-block-info span {
+  font-size: 10px;
+  color: rgba(255,255,255,0.3);
+}
+
+.composer-block-check {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 9px;
+  flex-shrink: 0;
+  animation: checkPop 0.25s ease;
+}
+
+@keyframes checkPop {
+  0% { transform: scale(0); }
+  70% { transform: scale(1.2); }
+  100% { transform: scale(1); }
+}
+
+/* ── Presets ── */
+.composer-presets {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.composer-preset-btn {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  border: 1.5px solid rgba(255,255,255,0.05);
+  background: rgba(255,255,255,0.02);
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Inter', sans-serif;
+  color: #e2e8f0;
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+  text-align: left;
+}
+
+.composer-preset-btn:hover {
+  border-color: var(--preset-color, #8b5cf6);
+  background: color-mix(in srgb, var(--preset-color, #8b5cf6) 8%, transparent);
+  transform: translateX(3px);
+}
+
+.composer-preset-btn--active {
+  border-color: var(--preset-color, #8b5cf6) !important;
+  background: color-mix(in srgb, var(--preset-color, #8b5cf6) 12%, transparent) !important;
+}
+
+.composer-preset-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.composer-preset-arrow {
+  margin-left: auto;
+  font-size: 10px;
+  opacity: 0;
+  transition: 0.2s;
+  color: var(--preset-color, #8b5cf6);
+}
+
+.composer-preset-btn:hover .composer-preset-arrow { opacity: 1; }
+
+/* ── Color Picker ── */
+.composer-theme {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.composer-color-field label {
+  display: block;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+  margin-bottom: 8px;
+}
+
+.composer-color-input-wrap {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.composer-color-native {
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: none;
+  padding: 0;
+}
+
+.composer-color-native::-webkit-color-swatch-wrapper { padding: 0; }
+.composer-color-native::-webkit-color-swatch {
+  border-radius: 8px;
+  border: 2px solid rgba(255,255,255,0.1);
+}
+
+.composer-color-text {
+  flex: 1;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #1e293b;
+  border: 1px solid rgba(255,255,255,0.06);
+  color: white;
+  font-size: 12px;
+  font-family: 'Inter', monospace;
+  outline: none;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: border-color 0.2s;
+}
+
+.composer-color-text:focus { border-color: #8b5cf6; }
+
+/* ── Quick Colors ── */
+.composer-quick-colors {
+  margin-top: 8px;
+}
+
+.composer-quick-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.35);
+}
+
+.composer-quick-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.composer-quick-swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.composer-quick-swatch:hover {
+  transform: scale(1.2);
+}
+
+/* ── Botón especial "Crear Diseño" en el catálogo ── */
+.app__create-design-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 16px 20px;
+  margin: 6px 0;
+  border-radius: 12px;
+  border: 2px dashed rgba(139,92,246,0.35);
+  background: linear-gradient(135deg, rgba(139,92,246,0.08) 0%, rgba(236,72,153,0.05) 100%);
+  color: #a78bfa;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  width: 100%;
+  transition: all 0.3s;
+  position: relative;
+  overflow: hidden;
+}
+
+.app__create-design-btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(135deg, rgba(139,92,246,0.15) 0%, rgba(236,72,153,0.1) 100%);
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.app__create-design-btn:hover {
+  border-color: rgba(139,92,246,0.6);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(139,92,246,0.15);
+}
+
+.app__create-design-btn:hover::before { opacity: 1; }
+
+.app__create-design-btn i,
+.app__create-design-btn span {
+  position: relative;
+  z-index: 1;
+}
+
+.app__create-design-btn i { font-size: 16px; }
+
+.composer-title-wrap { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
+.composer-save-btn { background: var(--btn-color, #3b82f6); color: white; border: none; border-radius: 12px; padding: 10px 16px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.composer-save-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+.composer-save-btn i { font-size: 1rem; }

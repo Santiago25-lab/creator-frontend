@@ -1,0 +1,22 @@
+.open-resume-cv {
+    width: 800px;
+    min-height: 1130px; /* Tamaño A4 aproximado */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    color: #333;
+    line-height: 1.5;
+}
+
+.open-resume-cv .marta-section {
+    margin-top: 30px;
+}
+
+/* Estilo para las etiquetas de habilidades */
+.open-resume-cv .skill-tag {
+    transition: all 0.2s ease;
+}
+
+.open-resume-cv .skill-tag:hover {
+    background: #eff6ff !important;
+    border-color: #3b82f6 !important;
+    transform: translateY(-1px);
+}

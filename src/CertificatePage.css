@@ -1,0 +1,160 @@
+/* ═══════════════════════════════════════════════════
+   CERTIFICATE PAGE — Hoja de soporte A4
+   Una página por documento, misma estética de plantilla.
+   ═══════════════════════════════════════════════════ */
+
+.cert-page {
+  width: 794px;
+  min-height: 1123px;
+  background: #fff;
+  font-family: 'Inter', sans-serif;
+  display: flex;
+  flex-direction: column;
+  margin-top: 32px;
+  box-shadow: 0 25px 60px rgba(0,0,0,0.12);
+  page-break-before: always;
+}
+
+/* ── Cabecera ── */
+.cert-page__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 36px;
+  border-bottom: 3px solid #3b82f6;
+}
+
+.cert-page__header-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cert-page__owner {
+  font-size: 16px;
+  font-weight: 800;
+  color: #111;
+  letter-spacing: -0.3px;
+}
+
+.cert-page__label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  color: #9ca3af;
+}
+
+.cert-page__badge {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  color: #fff;
+}
+
+/* ── Cuerpo ── */
+.cert-page__body {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 28px 36px 20px;
+  gap: 12px;
+}
+
+.cert-page__meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.cert-page__title {
+  font-size: 20px;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+.cert-page__desc {
+  font-size: 13px;
+  color: #6b7280;
+  margin: 0;
+}
+
+.cert-page__info-row {
+  display: flex;
+  gap: 20px;
+  font-size: 11px;
+  color: #9ca3af;
+}
+
+/* ── Visor del archivo ── */
+.cert-page__viewer {
+  flex: 1;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #f9fafb;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 880px;
+}
+
+.cert-page__iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 880px;
+  border: none;
+  display: block;
+}
+
+.cert-page__img {
+  max-width: 100%;
+  max-height: 880px;
+  object-fit: contain;
+  display: block;
+}
+
+/* Fallback para PDFs en export */
+.cert-page__pdf-fallback {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  padding: 60px;
+  text-align: center;
+  color: #6b7280;
+}
+
+.cert-page__pdf-fallback i {
+  font-size: 64px;
+}
+
+.cert-page__pdf-fallback p {
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* ── Pie de página ── */
+.cert-page__footer {
+  padding: 14px 36px;
+  border-top: 1px solid #e5e7eb;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+  color: #9ca3af;
+}
+
+.cert-page__footer-accent {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+}

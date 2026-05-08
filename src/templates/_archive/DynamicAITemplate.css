@@ -1,0 +1,64 @@
+.dynamic-ai-wrapper {
+  width: 100%;
+  max-width: 900px;
+  font-family: var(--font-family);
+  transition: all 0.5s ease;
+}
+
+.dynamic-ai-container {
+  box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+  overflow: hidden;
+  min-height: 800px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header Styles */
+.dynamic-header {
+  padding: 40px;
+}
+
+.header-top-flex {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.dynamic-header.centered {
+  text-align: center;
+}
+
+.dynamic-header.impact {
+  padding: 60px 40px;
+  color: white;
+}
+
+/* Sections with Solid Box */
+.section-title-box {
+  padding: 10px 20px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  margin-bottom: 20px;
+  display: inline-block;
+  min-width: 150px;
+}
+
+/* Skills with Dots */
+.skill-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.skill-dots {
+  display: flex;
+  gap: 5px;
+}
+
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}

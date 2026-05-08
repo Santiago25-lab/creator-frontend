@@ -74,8 +74,12 @@ export const useChatIA = (cvData, setCvData, user) => {
 
       if (res.ok) {
         const data = await res.json();
-        const aiResponse = data.ai_message || 'He actualizado tu CV con la nueva información. ¿Hay algo más que desees ajustar?';
+        const aiResponse = data.ai_message;
         
+        if (!aiResponse) {
+          throw new Error('La IA no devolvió un mensaje conversacional.');
+        }
+
         setCvData(mergeCvData(cvData, data));
         
         // Guardar y mostrar respuesta de la IA

@@ -170,14 +170,146 @@ const CVTemplate = () => {
     });
   };
 
-  const handlePhotoUpload = async (e) => {
+  // ── WhatsApp-Style Cropper State & Logic ──
+  const [showCropper, setShowCropper] = useState(false);
+  const [cropperSrc, setCropperSrc] = useState(null);
+  const [cropZoom, setCropZoom] = useState(1.0);
+  const [cropPan, setCropPan] = useState({ x: 0, y: 0 });
+  const [isDragging, setIsDragging] = useState(false);
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [imgDimensions, setImgDimensions] = useState({ width: 0, height: 0, naturalWidth: 0, naturalHeight: 0 });
+
+  useEffect(() => {
+    if (!cropperSrc) return;
+    const img = new Image();
+    img.src = cropperSrc;
+    img.onload = () => {
+      const imgRatio = img.width / img.height;
+      let renderWidth, renderHeight;
+      if (imgRatio > 1) {
+        renderHeight = 300;
+        renderWidth = 300 * imgRatio;
+      } else {
+        renderWidth = 300;
+        renderHeight = 300 / imgRatio;
+      }
+      setImgDimensions({
+        width: renderWidth,
+        height: renderHeight,
+        naturalWidth: img.width,
+        naturalHeight: img.height
+      });
+    };
+  }, [cropperSrc]);
+
+  const constrainPan = (x, y, zoomValue = cropZoom) => {
+    if (!imgDimensions.width) return { x, y };
+    const visualWidth = imgDimensions.width * zoomValue;
+    const visualHeight = imgDimensions.height * zoomValue;
+    
+    // Bounds for X
+    const maxX = Math.max(0, (visualWidth - 300) / 2);
+    const minX = Math.min(0, (300 - visualWidth) / 2);
+    
+    // Bounds for Y
+    const maxY = Math.max(0, (visualHeight - 300) / 2);
+    const minY = Math.min(0, (300 - visualHeight) / 2);
+    
+    return {
+      x: Math.min(maxX, Math.max(minX, x)),
+      y: Math.min(maxY, Math.max(minY, y))
+    };
+  };
+
+  const handleZoomChange = (e) => {
+    const z = parseFloat(e.target.value);
+    setCropZoom(z);
+    setCropPan(prev => constrainPan(prev.x, prev.y, z));
+  };
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    setIsDragging(true);
+    setDragStart({
+      x: e.clientX - cropPan.x,
+      y: e.clientY - cropPan.y
+    });
+  };
+
+  const handleMouseMove = (e) => {
+    if (!isDragging) return;
+    const rawX = e.clientX - dragStart.x;
+    const rawY = e.clientY - dragStart.y;
+    setCropPan(constrainPan(rawX, rawY));
+  };
+
+  const handleMouseUp = () => {
+    setIsDragging(false);
+  };
+
+  const handleTouchStart = (e) => {
+    if (e.touches.length !== 1) return;
+    setIsDragging(true);
+    setDragStart({
+      x: e.touches[0].clientX - cropPan.x,
+      y: e.touches[0].clientY - cropPan.y
+    });
+  };
+
+  const handleTouchMove = (e) => {
+    if (!isDragging || e.touches.length !== 1) return;
+    const rawX = e.touches[0].clientX - dragStart.x;
+    const rawY = e.touches[0].clientY - dragStart.y;
+    setCropPan(constrainPan(rawX, rawY));
+  };
+
+  const handleApplyCrop = () => {
+    if (!cropperSrc || !imgDimensions.width) return;
+    
+    const img = new Image();
+    img.src = cropperSrc;
+    img.onload = () => {
+      const canvas = document.createElement('canvas');
+      canvas.width = 640;
+      canvas.height = 640;
+      const ctx = canvas.getContext('2d');
+      
+      // Background base
+      ctx.fillStyle = '#ffffff';
+      ctx.fillRect(0, 0, 640, 640);
+      
+      // Calculate drawing dimensions relative to 300x300 viewport scaled up by 640/300
+      const scaleFactor = 640 / 300;
+      const visualWidth = imgDimensions.width * cropZoom;
+      const visualHeight = imgDimensions.height * cropZoom;
+      
+      const visualLeft = (300 - visualWidth) / 2 + cropPan.x;
+      const visualTop = (300 - visualHeight) / 2 + cropPan.y;
+      
+      const canvasLeft = visualLeft * scaleFactor;
+      const canvasTop = visualTop * scaleFactor;
+      const canvasWidth = visualWidth * scaleFactor;
+      const canvasHeight = visualHeight * scaleFactor;
+      
+      ctx.drawImage(img, canvasLeft, canvasTop, canvasWidth, canvasHeight);
+      
+      // Compression high quality 0.95
+      const croppedBase64 = canvas.toDataURL('image/jpeg', 0.95);
+      cv.setPhoto(croppedBase64);
+      setShowCropper(false);
+    };
+  };
+
+  const handlePhotoUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
     
     const reader = new FileReader();
-    reader.onloadend = async () => {
-      const compressed = await compressImage(reader.result);
-      cv.setPhoto(compressed);
+    reader.onloadend = () => {
+      setCropperSrc(reader.result);
+      setCropZoom(1.0);
+      setCropPan({ x: 0, y: 0 });
+      setShowCropper(true);
     };
     reader.readAsDataURL(file);
   };
@@ -201,7 +333,7 @@ const CVTemplate = () => {
       margin: 0,
       filename: `${cvData.personalInfo.name.replace(/\s+/g, '_')}_CV.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false },
+      html2canvas: { scale: 3, useCORS: true, allowTaint: true, logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
 
@@ -500,6 +632,77 @@ const CVTemplate = () => {
           </div>
         </div>
       </main>
+      
+      {/* ── WhatsApp-Style Cropper Modal ── */}
+      {showCropper && (
+        <div 
+          className="cropper-modal" 
+          onMouseUp={handleMouseUp} 
+          onMouseMove={handleMouseMove} 
+          onTouchEnd={handleMouseUp} 
+          onTouchMove={handleTouchMove}
+        >
+          <div className="cropper-modal__content" onClick={e => e.stopPropagation()}>
+            <h3 className="cropper-modal__title">Ajustar Foto de Perfil</h3>
+            <p className="cropper-modal__subtitle">Arrastra la foto para encuadrarla dentro del círculo</p>
+            
+            {/* Viewport de recorte circular */}
+            <div 
+              className="cropper-modal__viewport-wrap"
+              onMouseDown={handleMouseDown}
+              onTouchStart={handleTouchStart}
+            >
+              <div className="cropper-modal__viewport">
+                {cropperSrc && (
+                  <img
+                    src={cropperSrc}
+                    alt="Original"
+                    style={{
+                      position: 'absolute',
+                      width: `${imgDimensions.width}px`,
+                      height: `${imgDimensions.height}px`,
+                      left: `${(300 - imgDimensions.width) / 2}px`,
+                      top: `${(300 - imgDimensions.height) / 2}px`,
+                      transform: `translate(${cropPan.x}px, ${cropPan.y}px) scale(${cropZoom})`,
+                      transformOrigin: 'center',
+                      cursor: isDragging ? 'grabbing' : 'grab',
+                      userSelect: 'none',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                )}
+                {/* Máscara oscura con hueco circular */}
+                <div className="cropper-modal__mask" />
+              </div>
+            </div>
+            
+            {/* Slider de Zoom con iconos */}
+            <div className="cropper-modal__controls">
+              <i className="fa-solid fa-image cropper-modal__icon-small" />
+              <input
+                type="range"
+                min="1.0"
+                max="3.0"
+                step="0.01"
+                value={cropZoom}
+                onChange={handleZoomChange}
+                className="cropper-modal__slider"
+              />
+              <i className="fa-solid fa-image cropper-modal__icon-large" style={{ fontSize: '1.4rem' }} />
+            </div>
+            
+            {/* Botones de acción */}
+            <div className="cropper-modal__actions">
+              <button className="cropper-modal__btn cropper-modal__btn--cancel" onClick={() => setShowCropper(false)}>
+                Cancelar
+              </button>
+              <button className="cropper-modal__btn cropper-modal__btn--apply" onClick={handleApplyCrop}>
+                Aplicar Encuadre
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
     </div>
   );

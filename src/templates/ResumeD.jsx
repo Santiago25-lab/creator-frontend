@@ -32,7 +32,11 @@ const ResumeD = ({ data }) => {
 
         {/* Foto (si existe) */}
         {personalInfo.photo && (
-          <img className="resume-d__photo" src={personalInfo.photo} alt={personalInfo.name} />
+          <div 
+            className="resume-d__photo" 
+            style={{ backgroundImage: `url(${personalInfo.photo})` }}
+            aria-label={personalInfo.name}
+          />
         )}
 
         {/* Nombre gigante */}

@@ -15,7 +15,11 @@ const ResumeB = ({ data }) => {
       {/* ═══ HEADER CENTRADO ═══ */}
       <header className="resume-b__header">
         {personalInfo.photo && (
-          <img className="resume-b__photo" src={personalInfo.photo} alt={personalInfo.name} />
+          <div 
+            className="resume-b__photo" 
+            style={{ backgroundImage: `url(${personalInfo.photo})` }}
+            aria-label={personalInfo.name}
+          />
         )}
         <h1 className="resume-b__name">{personalInfo.name}</h1>
         <p className="resume-b__title">{personalInfo.title}</p>

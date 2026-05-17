@@ -27,8 +27,9 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  object-fit: cover;
-  object-position: center top;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
   border: 3px solid #111827;
   margin-bottom: 16px;
   display: block;

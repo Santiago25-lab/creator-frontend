@@ -16,7 +16,11 @@ const ResumeC = ({ data }) => {
         {/* ═══ HEADER ELEGANTE ═══ */}
         <header className="resume-c__header">
           {personalInfo.photo && (
-            <img className="resume-c__photo" src={personalInfo.photo} alt={personalInfo.name} />
+            <div 
+              className="resume-c__photo" 
+              style={{ backgroundImage: `url(${personalInfo.photo})` }}
+              aria-label={personalInfo.name}
+            />
           )}
           <h1 className="resume-c__name">{personalInfo.name}</h1>
           <div className="resume-c__divider" />

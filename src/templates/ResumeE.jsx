@@ -41,7 +41,13 @@ const ResumeE = ({ data }) => {
         {/* Foto enmarcada */}
         <div className="resume-e__photo-wrap">
           {personalInfo.photo
-            ? <img className="resume-e__photo" src={personalInfo.photo} alt={personalInfo.name} />
+            ? (
+              <div 
+                className="resume-e__photo" 
+                style={{ backgroundImage: `url(${personalInfo.photo})` }}
+                aria-label={personalInfo.name}
+              />
+            )
             : (
               <div className="resume-e__photo-placeholder">
                 <i className="fa-solid fa-camera" />

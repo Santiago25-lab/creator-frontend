@@ -58,8 +58,9 @@
   width: 120px;
   height: 120px;
   border-radius: 50%;
-  object-fit: cover;
-  object-position: center top;
+  background-size: cover;
+  background-position: center top;
+  background-repeat: no-repeat;
   border: 3px solid #111;
   display: block;
   flex-shrink: 0;

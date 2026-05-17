@@ -49,7 +49,7 @@ const CVTemplate = () => {
   // ── UI State ──
   const [activeTemplate, setActiveTemplate] = useState('resume-a');
   const [activeTab, setActiveTab] = useState('templates');
-  const [zoom, setZoom] = useState(0.75);
+  const [zoom, setZoom] = useState(1.0);
 
   // ── Composition Engine ──
   const [composerMode, setComposerMode] = useState(false);

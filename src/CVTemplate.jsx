@@ -50,6 +50,7 @@ const CVTemplate = () => {
   const [activeTemplate, setActiveTemplate] = useState('resume-a');
   const [activeTab, setActiveTab] = useState('templates');
   const [zoom, setZoom] = useState(1.0);
+  const [showTemplates, setShowTemplates] = useState(false);
 
   // ── Composition Engine ──
   const [composerMode, setComposerMode] = useState(false);
@@ -399,24 +400,46 @@ const CVTemplate = () => {
           {/* TAB: Plantillas */}
           {activeTab === 'templates' && !composerMode && (
             <div className="app__gallery">
-              {TEMPLATES.map(t => (
-                <div key={t.id} className={`app__card ${activeTemplate === t.id && !composerMode ? 'app__card--active' : ''}`} onClick={() => { setActiveTemplate(t.id); setComposerMode(false); }}>
-                  <div className="app__card-preview" style={{ borderColor: t.accent }}>
-                    <i className={`fa-solid ${t.icon}`} style={{ color: t.accent }} />
-                  </div>
-                  <div className="app__card-info">
-                    <strong>{t.name}</strong>
-                    <span className="app__card-tag" style={{ color: t.accent }}>{t.tag}</span>
-                  </div>
-                  {activeTemplate === t.id && !composerMode && <div className="app__card-check" style={{ background: t.accent }}><i className="fa-solid fa-check" /></div>}
-                </div>
-              ))}
-
-              {/* Botón Crear Diseño de Plantilla */}
+              {/* Botón Crear Diseño de Plantilla - PRIMERO Y RELEVANTE */}
               <button className="app__create-design-btn" onClick={() => setComposerMode(true)}>
                 <i className="fa-solid fa-wand-magic-sparkles" />
                 <span>Crear Diseño de Plantilla</span>
               </button>
+
+              {/* Botón Toggle para desplegar Plantillas Estáticas */}
+              <button 
+                className={`app__toggle-templates-btn ${showTemplates ? 'app__toggle-templates-btn--active' : ''}`}
+                onClick={() => setShowTemplates(!showTemplates)}
+              >
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <i className="fa-solid fa-clone" style={{ color: '#3b82f6' }} />
+                  <span>Plantillas Estáticas</span>
+                </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <span className="app__toggle-active-name">
+                    {TEMPLATES.find(t => t.id === activeTemplate)?.name || 'Seleccionar'}
+                  </span>
+                  <i className={`fa-solid fa-chevron-${showTemplates ? 'up' : 'down'}`} />
+                </div>
+              </button>
+
+              {/* Contenedor colapsable para Plantillas Estáticas */}
+              {showTemplates && (
+                <div className="app__gallery-collapsible">
+                  {TEMPLATES.map(t => (
+                    <div key={t.id} className={`app__card ${activeTemplate === t.id && !composerMode ? 'app__card--active' : ''}`} onClick={() => { setActiveTemplate(t.id); setComposerMode(false); setShowTemplates(false); }}>
+                      <div className="app__card-preview" style={{ borderColor: t.accent }}>
+                        <i className={`fa-solid ${t.icon}`} style={{ color: t.accent }} />
+                      </div>
+                      <div className="app__card-info">
+                        <strong>{t.name}</strong>
+                        <span className="app__card-tag" style={{ color: t.accent }}>{t.tag}</span>
+                      </div>
+                      {activeTemplate === t.id && !composerMode && <div className="app__card-check" style={{ background: t.accent }}><i className="fa-solid fa-check" /></div>}
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {/* MIS DISEÑOS GUARDADOS */}
               {savedDesigns.length > 0 && (

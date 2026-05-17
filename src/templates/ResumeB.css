@@ -28,11 +28,13 @@
   height: 90px;
   border-radius: 50%;
   object-fit: cover;
+  object-position: center top;
   border: 3px solid #111827;
   margin-bottom: 16px;
   display: block;
   margin-left: auto;
   margin-right: auto;
+  flex-shrink: 0;
 }
 
 .resume-b__name {

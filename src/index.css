@@ -8,12 +8,15 @@
 
 body {
   font-family: 'Inter', sans-serif;
-  background-color: #333; /* Dark background to showcase the white/black CV */
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  margin: 0;
+  padding: 0;
   min-height: 100vh;
-  padding: 2rem;
+  background-color: #f8f9ff;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
 }
 
 /* Reset for editable elements so they feel like normal text */

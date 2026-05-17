@@ -515,7 +515,7 @@
   width: 100%;
   padding: 13px 24px;
   background: linear-gradient(135deg, var(--primary), var(--secondary));
-  color: white;
+  color: #0f0d15;
   border: none;
   border-radius: var(--border-radius-md); /* 12px */
   font-family: var(--font-body);

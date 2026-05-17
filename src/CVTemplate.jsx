@@ -412,7 +412,7 @@ const CVTemplate = () => {
                 onClick={() => setShowTemplates(!showTemplates)}
               >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <i className="fa-solid fa-clone" style={{ color: '#3b82f6' }} />
+                  <i className="fa-solid fa-clone" style={{ color: 'var(--color-primary)' }} />
                   <span>Plantillas Estáticas</span>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>

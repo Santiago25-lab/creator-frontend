@@ -268,7 +268,8 @@
 .app__msg--user {
   align-self: flex-end;
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  color: white;
+  color: #0f0d15;
+  font-weight: 600;
   box-shadow: 0 4px 12px var(--color-primary-glow);
 }
 
@@ -769,8 +770,8 @@
   justify-content: center;
   padding: 50px 20px;
   background: 
-    radial-gradient(circle at 20% 30%, rgba(59, 130, 246, 0.06) 0%, transparent 60%),
-    radial-gradient(circle at 80% 70%, rgba(139, 92, 246, 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 20% 30%, rgba(208, 188, 255, 0.06) 0%, transparent 60%),
+    radial-gradient(circle at 80% 70%, rgba(76, 215, 246, 0.06) 0%, transparent 60%),
     var(--bg-app);
 }
 
@@ -1054,7 +1055,7 @@
   justify-content: space-between;
   width: 100%;
   padding: 14px 18px;
-  background: rgba(7, 13, 31, 0.6);
+  background: rgba(29, 26, 35, 0.6);
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   color: var(--text-on-surface);
@@ -1068,14 +1069,14 @@
 }
 
 .app__toggle-templates-btn:hover {
-  background: rgba(15, 23, 42, 0.8);
+  background: rgba(44, 40, 50, 0.8);
   border-color: var(--color-primary);
   transform: translateY(-1px);
 }
 
 .app__toggle-templates-btn--active {
-  background: rgba(15, 23, 42, 0.8);
-  border-color: rgba(59, 130, 246, 0.5);
+  background: rgba(44, 40, 50, 0.8);
+  border-color: rgba(208, 188, 255, 0.5);
   box-shadow: 0 4px 15px var(--color-primary-glow);
 }
 
@@ -1084,11 +1085,11 @@
   font-size: 9px;
   font-weight: 700;
   color: var(--color-primary-light);
-  background: rgba(59, 130, 246, 0.1);
+  background: rgba(208, 188, 255, 0.1);
   padding: 3px 8px;
   border-radius: 6px;
   letter-spacing: 0.5px;
-  border: 1px solid rgba(59, 130, 246, 0.2);
+  border: 1px solid rgba(208, 188, 255, 0.2);
 }
 
 .app__gallery-collapsible {
@@ -1119,7 +1120,7 @@
   width: 100%;
   padding: 13px 20px;
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
-  color: white;
+  color: #0f0d15;
   border: none;
   border-radius: var(--radius-md);
   font-family: var(--font-ui);

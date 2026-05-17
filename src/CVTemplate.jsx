@@ -188,17 +188,30 @@ const CVTemplate = () => {
   };
 
   /* ── Exportar PDF ── */
-  const exportPDF = () => {
-    const el = cvRef.current;
-    if (!el) return;
+  const exportPDF = async () => {
+    const wrapper = cvRef.current;
+    if (!wrapper) return;
+
+    // Guardamos el transform actual y lo reseteamos a escala 1:1 para captura limpia
+    const prevTransform = wrapper.style.transform;
+    wrapper.style.transform = 'scale(1)';
+    wrapper.style.transformOrigin = 'top left';
+
     const opt = {
       margin: 0,
       filename: `${cvData.personalInfo.name.replace(/\s+/g, '_')}_CV.pdf`,
       image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 2, useCORS: true },
+      html2canvas: { scale: 2, useCORS: true, allowTaint: true, logging: false },
       jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
     };
-    html2pdf().set(opt).from(el).save();
+
+    try {
+      await html2pdf().set(opt).from(wrapper).save();
+    } finally {
+      // Restauramos el transform visual original después de exportar
+      wrapper.style.transform = prevTransform;
+      wrapper.style.transformOrigin = 'top center';
+    }
   };
 
   /* ── Render plantilla ── */
@@ -481,6 +494,7 @@ const CVTemplate = () => {
                 doc={doc}
                 accentColor={TEMPLATES.find(t => t.id === activeTemplate)?.accent || '#3b82f6'}
                 cvData={cvData}
+                userId={user?.id}
               />
             ))}
           </div>

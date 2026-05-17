@@ -8,11 +8,13 @@ import './CertificatePage.css';
  * Muestra el archivo real (imagen) o un iframe (PDF).
  * Recibe el color de acento de la plantilla activa.
  */
-const CertificatePage = ({ doc, accentColor = '#3b82f6', cvData }) => {
+const CertificatePage = ({ doc, accentColor = '#3b82f6', cvData, userId }) => {
   const isPdf = doc.contentType === 'application/pdf';
   const isImage = doc.contentType?.startsWith('image/');
   const ownerName = cvData?.personalInfo?.name || '';
   const ownerTitle = cvData?.personalInfo?.title || '';
+  // Añadir ?userId= para que el backend autorice la petición de vista del archivo
+  const authViewUrl = userId ? `${doc.viewUrl}?userId=${userId}` : doc.viewUrl;
 
   return (
     <div className="cert-page">
@@ -49,14 +51,15 @@ const CertificatePage = ({ doc, accentColor = '#3b82f6', cvData }) => {
           {isImage && (
             <img
               className="cert-page__img"
-              src={doc.viewUrl}
+              src={authViewUrl}
               alt={doc.originalName}
+              crossOrigin="anonymous"
             />
           )}
           {isPdf && (
             <iframe
               className="cert-page__iframe"
-              src={doc.viewUrl}
+              src={authViewUrl}
               title={doc.originalName}
             />
           )}

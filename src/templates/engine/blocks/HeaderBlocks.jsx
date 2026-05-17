@@ -11,9 +11,6 @@ import React from 'react';
 /* ═══════════════════════════════════════
    1. Sidebar con Foto (ResumeA)
    ═══════════════════════════════════════ */
-/* ═══════════════════════════════════════
-   1. Sidebar con Foto (ResumeA)
-   ═══════════════════════════════════════ */
 export const SidebarPhotoHeader = ({ data, theme }) => (
   <div style={{ textAlign: 'center', padding: '35px 20px 25px' }}>
     <div style={{
@@ -21,17 +18,20 @@ export const SidebarPhotoHeader = ({ data, theme }) => (
       margin: '0 auto 20px', overflow: 'hidden',
       border: `3px solid ${theme.primaryColor}33`,
       background: `${theme.primaryColor}11`,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
     }}>
-      <div
+      <img
+        src={data.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name || 'User')}&size=200&background=${theme.primaryColor.replace('#','')}&color=fff&bold=true`}
         style={{ 
           width: '100%', 
           height: '100%', 
-          backgroundImage: `url(${data.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(data.name || 'User')}&size=200&background=${theme.primaryColor.replace('#','')}&color=fff&bold=true`})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center top',
-          backgroundRepeat: 'no-repeat'
+          objectFit: 'cover',
+          objectPosition: 'center top',
+          borderRadius: '50%'
         }}
-        aria-label={data.name}
+        alt={data.name || 'Foto de perfil'}
       />
     </div>
     <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: theme.primaryColor, margin: '0 0 4px', lineHeight: 1.2 }}>{data.name}</h1>
@@ -45,17 +45,17 @@ export const SidebarPhotoHeader = ({ data, theme }) => (
 export const CenteredCleanHeader = ({ data, theme }) => (
   <div style={{ textAlign: 'center', padding: '50px 40px 30px', borderBottom: `3px solid ${theme.primaryColor}` }}>
     {data.photo && (
-      <div style={{ width: '90px', height: '90px', borderRadius: '50%', margin: '0 auto 20px', overflow: 'hidden', border: `2px solid ${theme.primaryColor}` }}>
-        <div 
+      <div style={{ width: '90px', height: '90px', borderRadius: '50%', margin: '0 auto 20px', overflow: 'hidden', border: `2px solid ${theme.primaryColor}`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <img
+          src={data.photo}
           style={{ 
             width: '100%', 
             height: '100%', 
-            backgroundImage: `url(${data.photo})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'no-repeat'
+            objectFit: 'cover',
+            objectPosition: 'center top',
+            borderRadius: '50%'
           }} 
-          aria-label={data.name}
+          alt={data.name || 'Foto de perfil'}
         />
       </div>
     )}
@@ -73,17 +73,17 @@ export const CenteredCleanHeader = ({ data, theme }) => (
 export const BoldEditorialHeader = ({ data, theme }) => (
   <div style={{ padding: '45px 40px 30px' }}>
     {data.photo && (
-      <div style={{ width: '100px', height: '100px', borderRadius: '16px', overflow: 'hidden', marginBottom: '20px', border: `3px solid ${theme.primaryColor}22` }}>
-        <div 
+      <div style={{ width: '100px', height: '100px', borderRadius: '16px', overflow: 'hidden', marginBottom: '20px', border: `3px solid ${theme.primaryColor}22`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <img
+          src={data.photo}
           style={{ 
             width: '100%', 
             height: '100%', 
-            backgroundImage: `url(${data.photo})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'no-repeat'
+            objectFit: 'cover',
+            objectPosition: 'center top',
+            borderRadius: '16px'
           }} 
-          aria-label={data.name}
+          alt={data.name || 'Foto de perfil'}
         />
       </div>
     )}
@@ -105,17 +105,17 @@ export const WarmHelloHeader = ({ data, theme }) => {
   return (
     <div style={{ padding: '50px 40px 30px', display: 'flex', alignItems: 'center', gap: '30px' }}>
       {data.photo && (
-        <div style={{ width: '110px', height: '110px', borderRadius: '30px', overflow: 'hidden', transform: 'rotate(-3deg)', border: `4px solid ${theme.primaryColor}22` }}>
-          <div 
+        <div style={{ width: '110px', height: '110px', borderRadius: '30px', overflow: 'hidden', transform: 'rotate(-3deg)', border: `4px solid ${theme.primaryColor}22`, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <img
+            src={data.photo}
             style={{ 
               width: '100%', 
               height: '100%', 
-              backgroundImage: `url(${data.photo})`,
-              backgroundSize: 'cover',
-              backgroundPosition: 'center top',
-              backgroundRepeat: 'no-repeat'
+              objectFit: 'cover',
+              objectPosition: 'center top',
+              borderRadius: '30px'
             }} 
-            aria-label={data.name}
+            alt={data.name || 'Foto de perfil'}
           />
         </div>
       )}
@@ -137,17 +137,17 @@ export const DarkImpactHeader = ({ data, theme }) => (
   <div style={{ padding: '55px 40px 35px', background: theme.primaryColor, color: '#fff', position: 'relative', overflow: 'hidden', display: 'flex', alignItems: 'center', gap: '30px' }}>
     <div style={{ position: 'absolute', inset: 0, opacity: 0.06, background: 'repeating-linear-gradient(45deg, transparent, transparent 20px, #fff 20px, #fff 21px)' }} />
     {data.photo && (
-      <div style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden', border: '3px solid rgba(255,255,255,0.3)', position: 'relative' }}>
-        <div 
+      <div style={{ width: '100px', height: '100px', borderRadius: '50%', overflow: 'hidden', border: '3px solid rgba(255,255,255,0.3)', position: 'relative', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <img
+          src={data.photo}
           style={{ 
             width: '100%', 
             height: '100%', 
-            backgroundImage: `url(${data.photo})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'no-repeat'
+            objectFit: 'cover',
+            objectPosition: 'center top',
+            borderRadius: '50%'
           }} 
-          aria-label={data.name}
+          alt={data.name || 'Foto de perfil'}
         />
       </div>
     )}
@@ -173,18 +173,17 @@ export const NeonGradientHeader = ({ data, theme }) => (
       </div>
     </div>
     {data.photo && (
-      <div style={{ width: '130px', height: '130px', borderRadius: '50%', overflow: 'hidden', border: `5px solid ${theme.primaryColor}11`, padding: '5px', background: '#fff' }}>
-        <div 
+      <div style={{ width: '130px', height: '130px', borderRadius: '50%', overflow: 'hidden', border: `5px solid ${theme.primaryColor}11`, padding: '5px', background: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <img
+          src={data.photo}
           style={{ 
             width: '100%', 
             height: '100%', 
-            backgroundImage: `url(${data.photo})`,
-            backgroundSize: 'cover',
-            backgroundPosition: 'center top',
-            backgroundRepeat: 'no-repeat',
+            objectFit: 'cover',
+            objectPosition: 'center top',
             borderRadius: '50%'
           }} 
-          aria-label={data.name}
+          alt={data.name || 'Foto de perfil'}
         />
       </div>
     )}

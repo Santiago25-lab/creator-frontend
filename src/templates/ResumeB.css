@@ -27,15 +27,14 @@
   width: 90px;
   height: 90px;
   border-radius: 50%;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
   border: 3px solid #111827;
   margin-bottom: 16px;
   display: block;
   margin-left: auto;
   margin-right: auto;
   flex-shrink: 0;
+  object-fit: cover;
+  object-position: center top;
 }
 
 .resume-b__name {

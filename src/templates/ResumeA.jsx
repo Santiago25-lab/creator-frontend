@@ -16,12 +16,10 @@ const ResumeA = ({ data }) => {
 
       {/* ═══ SIDEBAR ═══ */}
       <aside className="resume-a__sidebar">
-        <div
+        <img
           className="resume-a__photo"
-          style={{
-            backgroundImage: `url(${personalInfo.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(personalInfo.name)}&size=200&background=1e293b&color=60a5fa&bold=true`})`
-          }}
-          aria-label={personalInfo.name}
+          src={personalInfo.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(personalInfo.name)}&size=200&background=1e293b&color=60a5fa&bold=true`}
+          alt={personalInfo.name || 'Foto de perfil'}
         />
 
         {/* Contacto */}

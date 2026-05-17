@@ -42,10 +42,10 @@ const ResumeE = ({ data }) => {
         <div className="resume-e__photo-wrap">
           {personalInfo.photo
             ? (
-              <div 
+              <img 
                 className="resume-e__photo" 
-                style={{ backgroundImage: `url(${personalInfo.photo})` }}
-                aria-label={personalInfo.name}
+                src={personalInfo.photo}
+                alt={personalInfo.name || 'Foto de perfil'}
               />
             )
             : (

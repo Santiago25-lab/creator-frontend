@@ -69,12 +69,11 @@
 .resume-e__photo {
   width: 150px;
   height: 150px;
-  background-size: cover;
-  background-position: center top;
-  background-repeat: no-repeat;
   display: block;
   border-radius: 6px;
   flex-shrink: 0;
+  object-fit: cover;
+  object-position: center top;
 }
 
 .resume-e__photo-placeholder {

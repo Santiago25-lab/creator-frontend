@@ -32,10 +32,10 @@ const ResumeD = ({ data }) => {
 
         {/* Foto (si existe) */}
         {personalInfo.photo && (
-          <div 
-            className="resume-d__photo" 
-            style={{ backgroundImage: `url(${personalInfo.photo})` }}
-            aria-label={personalInfo.name}
+          <img
+            className="resume-d__photo"
+            src={personalInfo.photo}
+            alt={personalInfo.name || 'Foto de perfil'}
           />
         )}
 

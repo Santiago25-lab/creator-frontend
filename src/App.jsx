@@ -11,7 +11,8 @@ function AppContent() {
 
   useEffect(() => {
     // Apply saved theme on mount
-    applyTheme(getSavedTheme());
+    const savedTheme = getSavedTheme();
+    applyTheme(savedTheme.accent, savedTheme.mode);
   }, []);
 
   if (loading) {

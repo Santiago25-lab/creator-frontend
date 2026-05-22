@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { themes, applyTheme, getSavedTheme } from '../utils/theme';
+import { accentThemes, modeThemes, applyTheme, getSavedTheme } from '../utils/theme';
 import './ProfileModal.css';
 
 const ProfileModal = ({ onClose }) => {
@@ -10,7 +10,9 @@ const ProfileModal = ({ onClose }) => {
   const [showToast, setShowToast] = useState(false);
 
   // Apariencia
-  const [currentTheme, setCurrentTheme] = useState(getSavedTheme());
+  const saved = getSavedTheme();
+  const [currentAccent, setCurrentAccent] = useState(saved.accent);
+  const [currentMode, setCurrentMode] = useState(saved.mode);
 
   // Datos Básicos
   const [name, setName] = useState(user?.user_metadata?.full_name || 'Usuario Creator');
@@ -30,7 +32,7 @@ const ProfileModal = ({ onClose }) => {
       setTimeout(() => setShowToast(false), 3000);
       
       if (activeTab === 'appearance') {
-        applyTheme(currentTheme);
+        applyTheme(currentAccent, currentMode);
       } else if (activeTab === 'security') {
         setCurrentPassword('');
         setNewPassword('');
@@ -185,19 +187,35 @@ const ProfileModal = ({ onClose }) => {
         return (
           <div className="profile-tab-content fade-in">
             <h2 className="profile-section-title">Apariencia</h2>
-            <p className="profile-section-subtitle">Personaliza los colores de acento de CreatorCV.</p>
+            <p className="profile-section-subtitle">Personaliza la luz y el color de CreatorCV.</p>
             
-            <div className="theme-grid">
-              {Object.entries(themes).map(([key, theme]) => (
+            <h3 className="theme-group-title"><i className="fa-solid fa-circle-half-stroke"></i> Tema Base</h3>
+            <div className="theme-grid mode-grid">
+              {Object.entries(modeThemes).map(([key, mode]) => (
                 <div 
                   key={key} 
-                  className={`theme-card ${currentTheme === key ? 'active' : ''}`}
-                  onClick={() => setCurrentTheme(key)}
+                  className={`theme-card ${currentMode === key ? 'active' : ''}`}
+                  onClick={() => setCurrentMode(key)}
+                  style={{ background: mode.colors['--bg-app'] }}
+                >
+                  <span style={{ color: mode.colors['--text-on-surface'] }}>{mode.name}</span>
+                  {currentMode === key && <i className="fa-solid fa-circle-check" style={{ color: mode.colors['--text-on-surface'] }}></i>}
+                </div>
+              ))}
+            </div>
+
+            <h3 className="theme-group-title" style={{ marginTop: '32px' }}><i className="fa-solid fa-palette"></i> Color de Acento</h3>
+            <div className="theme-grid">
+              {Object.entries(accentThemes).map(([key, theme]) => (
+                <div 
+                  key={key} 
+                  className={`theme-card ${currentAccent === key ? 'active' : ''}`}
+                  onClick={() => setCurrentAccent(key)}
                   style={{ '--theme-preview': theme.colors['--color-primary'] }}
                 >
                   <div className="theme-preview-circle"></div>
                   <span>{theme.name}</span>
-                  {currentTheme === key && <i className="fa-solid fa-circle-check"></i>}
+                  {currentAccent === key && <i className="fa-solid fa-circle-check"></i>}
                 </div>
               ))}
             </div>

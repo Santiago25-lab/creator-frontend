@@ -449,11 +449,10 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
                 </div>
               </button>
 
-              {/* Contenedor colapsable para Plantillas Estáticas */}
               {showTemplates && (
                 <div className="app__gallery-collapsible">
                   {TEMPLATES.map(t => (
-                    <div key={t.id} className={`app__card ${activeTemplate === t.id && !composerMode ? 'app__card--active' : ''}`} onClick={() => { setActiveTemplate(t.id); setComposerMode(false); setShowTemplates(false); }}>
+                    <div key={t.id} className={`app__card ${activeTemplate === t.id && !composerMode ? 'app__card--active' : ''}`} onClick={() => { setActiveTemplate(t.id); setComposerMode(false); }}>
                       <div className="app__card-preview" style={{ borderColor: t.accent }}>
                         <i className={`fa-solid ${t.icon}`} style={{ color: t.accent }} />
                       </div>

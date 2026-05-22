@@ -277,6 +277,23 @@
   max-width: 600px;
 }
 
+.mode-grid {
+  grid-template-columns: repeat(2, 1fr);
+  max-width: 400px;
+}
+
+.theme-group-title {
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-primary, #d0bcff);
+  margin-bottom: 16px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
 .theme-card {
   background: rgba(15, 13, 21, 0.4);
   border: 1px solid rgba(149, 142, 160, 0.1);

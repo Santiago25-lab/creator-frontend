@@ -1,4 +1,4 @@
-export const themes = {
+export const accentThemes = {
   lilac: {
     name: 'Lila Mágico',
     colors: {
@@ -45,17 +45,61 @@ export const themes = {
   }
 };
 
-export const applyTheme = (themeKey) => {
-  const theme = themes[themeKey];
-  if (!theme) return;
+export const modeThemes = {
+  dark: {
+    name: 'Oscuro',
+    colors: {
+      '--bg-app': '#0f0d15',
+      '--bg-slate-deep': '#15121b',
+      '--panel-bg': 'rgba(29, 26, 35, 0.6)',
+      '--panel-border': 'rgba(149, 142, 160, 0.1)',
+      '--surface-container': '#211e27',
+      '--surface-container-high': '#2c2832',
+      '--surface-bright': '#3b3742',
+      '--text-on-surface': '#e7e0ed',
+      '--text-muted': '#cbc3d7',
+      '--text-dim': '#958ea0',
+    }
+  },
+  light: {
+    name: 'Claro',
+    colors: {
+      '--bg-app': '#f8fafc',
+      '--bg-slate-deep': '#ffffff',
+      '--panel-bg': 'rgba(255, 255, 255, 0.8)',
+      '--panel-border': 'rgba(0, 0, 0, 0.08)',
+      '--surface-container': '#ffffff',
+      '--surface-container-high': '#f1f5f9',
+      '--surface-bright': '#e2e8f0',
+      '--text-on-surface': '#0f172a',
+      '--text-muted': '#475569',
+      '--text-dim': '#64748b',
+    }
+  }
+};
+
+export const applyTheme = (accentKey, modeKey) => {
+  const accent = accentThemes[accentKey];
+  const mode = modeThemes[modeKey];
   
-  Object.entries(theme.colors).forEach(([key, value]) => {
-    document.documentElement.style.setProperty(key, value);
-  });
+  if (accent) {
+    Object.entries(accent.colors).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(key, value);
+    });
+    localStorage.setItem('creatorcv_accent', accentKey);
+  }
   
-  localStorage.setItem('creatorcv_theme', themeKey);
+  if (mode) {
+    Object.entries(mode.colors).forEach(([key, value]) => {
+      document.documentElement.style.setProperty(key, value);
+    });
+    localStorage.setItem('creatorcv_mode', modeKey);
+  }
 };
 
 export const getSavedTheme = () => {
-  return localStorage.getItem('creatorcv_theme') || 'lilac';
+  return {
+    accent: localStorage.getItem('creatorcv_accent') || 'lilac',
+    mode: localStorage.getItem('creatorcv_mode') || 'dark'
+  };
 };

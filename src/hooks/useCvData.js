@@ -156,15 +156,22 @@ export const useCvData = (user) => {
     setCvData(d => ({ ...d, languages: d.languages.filter((_, idx) => idx !== i) }));
   };
 
-  const saveToBackend = async () => {
+  const saveToBackend = async (customName = null) => {
     if (!user) return;
     setIsSaving(true);
+    
+    let contentToSave = cvData;
+    if (customName !== null) {
+      contentToSave = { ...cvData, cvName: customName };
+      setCvData(contentToSave);
+    }
+
     try {
       await supabase
         .from('cv_data')
         .upsert({ 
           user_id: user.id, 
-          content: cvData, 
+          content: contentToSave, 
           is_primary: true,
           updated_at: new Date().toISOString()
         }, { onConflict: 'user_id, is_primary' });

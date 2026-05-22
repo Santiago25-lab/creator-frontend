@@ -23,7 +23,7 @@ const Dashboard = ({ onSelectMode }) => {
       // Fetch CV Draft
       const { data: draftData } = await supabase
         .from('cv_data')
-        .select('updated_at')
+        .select('updated_at, content')
         .eq('user_id', user.id)
         .eq('is_primary', true)
         .maybeSingle();
@@ -116,7 +116,7 @@ const Dashboard = ({ onSelectMode }) => {
                     <i className="fa-solid fa-file-user" style={{ color: 'var(--color-secondary)' }}></i>
                   </div>
                   <div className="recent-card-info">
-                    <h4>Mi CV Principal</h4>
+                    <h4>{cvDraft.content?.cvName || 'Mi CV Principal'}</h4>
                     <span>Editado: {new Date(cvDraft.updated_at).toLocaleDateString()}</span>
                   </div>
                 </div>

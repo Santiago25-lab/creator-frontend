@@ -17,8 +17,8 @@
   padding: 12px 16px;
   background: none;
   border: none;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
-  color: rgba(255,255,255,0.5);
+  border-bottom: 1px solid var(--panel-border);
+  color: var(--text-muted);
   cursor: pointer;
   font-size: 12px;
   font-weight: 600;
@@ -51,13 +51,13 @@
 .composer-title {
   font-size: 14px;
   font-weight: 800;
-  color: #e2e8f0;
+  color: var(--text-on-surface);
   margin: 0;
 }
 
 .composer-subtitle {
   font-size: 11px;
-  color: rgba(255,255,255,0.35);
+  color: var(--text-dim);
   margin: 2px 0 0;
 }
 
@@ -67,7 +67,7 @@
   flex-wrap: wrap;
   gap: 4px;
   padding: 8px 12px;
-  border-bottom: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid var(--panel-border);
 }
 
 .composer-tab {
@@ -78,7 +78,7 @@
   border-radius: 8px;
   border: none;
   background: none;
-  color: rgba(255,255,255,0.3);
+  color: var(--text-dim);
   cursor: pointer;
   font-size: 10px;
   font-weight: 700;
@@ -88,11 +88,11 @@
 }
 
 .composer-tab i { font-size: 10px; }
-.composer-tab:hover { color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.03); }
+.composer-tab:hover { color: var(--text-on-surface); background: var(--surface-container-high); }
 
 .composer-tab--active {
-  color: #8b5cf6 !important;
-  background: rgba(139,92,246,0.1) !important;
+  color: var(--color-primary) !important;
+  background: var(--color-primary-glow) !important;
 }
 
 /* ── Content area ── */
@@ -104,7 +104,7 @@
 
 .composer-hint {
   font-size: 11px;
-  color: rgba(255,255,255,0.3);
+  color: var(--text-dim);
   margin: 0 0 14px;
   line-height: 1.5;
 }
@@ -122,8 +122,8 @@
   gap: 12px;
   padding: 12px;
   border-radius: 10px;
-  border: 1.5px solid rgba(255,255,255,0.05);
-  background: rgba(255,255,255,0.02);
+  border: 1.5px solid var(--panel-border);
+  background: var(--surface-container);
   cursor: pointer;
   transition: all 0.2s;
   text-align: left;
@@ -132,8 +132,8 @@
 }
 
 .composer-block:hover {
-  border-color: rgba(255,255,255,0.1);
-  background: rgba(255,255,255,0.04);
+  border-color: var(--color-primary);
+  background: var(--surface-container-high);
   transform: translateX(3px);
 }
 
@@ -163,12 +163,12 @@
 
 .composer-block-info strong {
   font-size: 12px;
-  color: #e2e8f0;
+  color: var(--text-on-surface);
 }
 
 .composer-block-info span {
   font-size: 10px;
-  color: rgba(255,255,255,0.3);
+  color: var(--text-dim);
 }
 
 .composer-block-check {
@@ -178,7 +178,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: white;
+  color: #ffffff;
   font-size: 9px;
   flex-shrink: 0;
   animation: checkPop 0.25s ease;
@@ -203,12 +203,12 @@
   gap: 12px;
   padding: 14px 16px;
   border-radius: 10px;
-  border: 1.5px solid rgba(255,255,255,0.05);
-  background: rgba(255,255,255,0.02);
+  border: 1.5px solid var(--panel-border);
+  background: var(--surface-container);
   cursor: pointer;
   transition: all 0.2s;
   font-family: 'Inter', sans-serif;
-  color: #e2e8f0;
+  color: var(--text-on-surface);
   font-size: 13px;
   font-weight: 600;
   width: 100%;
@@ -256,7 +256,7 @@
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
+  color: var(--text-dim);
   margin-bottom: 8px;
 }
 
@@ -286,9 +286,9 @@
   flex: 1;
   padding: 8px 12px;
   border-radius: 8px;
-  background: #1e293b;
-  border: 1px solid rgba(255,255,255,0.06);
-  color: white;
+  background: var(--surface-container-high);
+  border: 1px solid var(--panel-border);
+  color: var(--text-on-surface);
   font-size: 12px;
   font-family: 'Inter', monospace;
   outline: none;
@@ -309,7 +309,7 @@
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: rgba(255,255,255,0.35);
+  color: var(--text-dim);
 }
 
 .composer-quick-row {
@@ -380,6 +380,6 @@
 .app__create-design-btn i { font-size: 16px; }
 
 .composer-title-wrap { display: flex; justify-content: space-between; align-items: center; gap: 20px; }
-.composer-save-btn { background: var(--btn-color, #3b82f6); color: white; border: none; border-radius: 12px; padding: 10px 16px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+.composer-save-btn { background: var(--btn-color, #3b82f6); color: var(--text-on-surface); border: none; border-radius: 12px; padding: 10px 16px; font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
 .composer-save-btn:hover { transform: scale(1.05); filter: brightness(1.1); }
 .composer-save-btn i { font-size: 1rem; }

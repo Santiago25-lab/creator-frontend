@@ -258,7 +258,7 @@ const BlockOption = ({ id, label, description, icon, active, onClick, color }) =
     onClick={onClick}
     style={{ '--block-color': color }}
   >
-    <div className="composer-block-icon" style={{ background: active ? `${color}22` : 'rgba(255,255,255,0.03)', color: active ? color : 'rgba(255,255,255,0.4)' }}>
+    <div className="composer-block-icon" style={{ background: active ? `${color}22` : 'var(--surface-container-high)', color: active ? color : 'var(--text-dim)' }}>
       <i className={`fa-solid ${icon}`} />
     </div>
     <div className="composer-block-info">

@@ -670,7 +670,13 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
           <button className="app__regen-btn" onClick={chat.regenerateCV} disabled={chat.isRegenerating}>
             <i className={`fa-solid ${chat.isRegenerating ? 'fa-spinner fa-spin' : 'fa-rotate'}`} /> {chat.isRegenerating ? 'Regenerando...' : 'Regenerar'}
           </button>
-          <button className="app__regen-btn app__regen-btn--save" onClick={cv.saveToBackend} disabled={cv.isSaving}>
+          <button className="app__regen-btn app__regen-btn--save" onClick={() => {
+            const currentName = cv.cvData.cvName || "Mi CV Principal";
+            const name = prompt("¿Qué nombre le pondrás a este CV?", currentName);
+            if (name !== null) {
+              cv.saveToBackend(name);
+            }
+          }} disabled={cv.isSaving}>
             <i className={`fa-solid ${cv.isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} /> {cv.isSaving ? 'Guardando...' : 'Guardar'}
           </button>
           

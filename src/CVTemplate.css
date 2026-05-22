@@ -136,13 +136,16 @@
 }
 
 .app__panel-title {
+  height: 64px;
+  display: flex;
+  align-items: center;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
   color: var(--color-primary-light);
-  padding: 24px 20px 18px;
+  padding: 0 20px;
   border-bottom: 1px solid var(--panel-border);
 }
 
@@ -667,7 +670,8 @@
 }
 
 .app__topbar {
-  padding: 14px 28px;
+  height: 64px;
+  padding: 0 28px;
   background: var(--panel-bg);
   backdrop-filter: var(--backdrop-blur);
   border-bottom: 1px solid var(--panel-border);
@@ -724,46 +728,58 @@
   background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
   color: #0f0d15;
   border: none;
-  padding: 9px 20px;
+  padding: 10px 20px;
   border-radius: var(--radius-md);
   font-weight: 700;
-  font-size: 12px;
+  font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: var(--transition-smooth);
-  box-shadow: 0 4px 15px var(--color-primary-glow);
+  box-shadow: 0 4px 15px rgba(208, 188, 255, 0.3);
 }
 
 .app__export-btn:hover {
   filter: brightness(1.15);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 20px rgba(59, 130, 246, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(208, 188, 255, 0.5);
 }
 
 .app__regen-btn {
-  background: rgba(139, 92, 246, 0.08);
-  border: 1px solid rgba(139, 92, 246, 0.2);
-  color: var(--color-secondary-light);
-  padding: 9px 20px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: white;
+  padding: 10px 20px;
   border-radius: var(--radius-md);
-  font-weight: 700;
-  font-size: 12px;
+  font-weight: 600;
+  font-size: 13px;
   cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
   transition: var(--transition-smooth);
+  backdrop-filter: blur(8px);
 }
 
 .app__regen-btn:hover {
-  background: var(--color-secondary);
-  color: white;
-  box-shadow: 0 4px 15px var(--color-secondary-glow);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-2px);
 }
 
-.app__regen-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+.app__regen-btn--save {
+  background: rgba(16, 185, 129, 0.1);
+  border-color: rgba(16, 185, 129, 0.2);
+  color: #34d399;
+}
+
+.app__regen-btn--save:hover {
+  background: rgba(16, 185, 129, 0.2);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+
+.app__regen-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
 
 /* ── VIEWPORT (donde vive el CV) ── */
 .app__viewport {
@@ -807,6 +823,12 @@
   font-weight: 700;
   font-size: 14px;
   box-shadow: 0 4px 12px var(--color-primary-glow);
+  transition: var(--transition-smooth);
+}
+
+.app__user-badge:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 20px rgba(208, 188, 255, 0.4);
 }
 
 .app__logout-btn {

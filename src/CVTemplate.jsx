@@ -17,6 +17,7 @@ import CertificatePage from './CertificatePage';
 import ComposedTemplate from './templates/engine/ComposedTemplate';
 import ComposerPanel, { STORAGE_KEY } from './templates/engine/ComposerPanel';
 import { DEFAULT_RECIPE } from './templates/engine/registry';
+import ProfileModal from './components/ProfileModal';
 import './CVTemplate.css';
 
 /* ═══════════════════════════════════════════════════
@@ -51,6 +52,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
   const [activeTab, setActiveTab] = useState(initialTab);
   const [zoom, setZoom] = useState(1.0);
   const [showTemplates, setShowTemplates] = useState(false);
+  const [showProfile, setShowProfile] = useState(false);
 
   // ── Composition Engine ──
   const [composerMode, setComposerMode] = useState(false);
@@ -381,7 +383,12 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
         <ToolBtn icon="fa-paperclip" label="Docs" active={activeTab === 'docs'} onClick={() => setActiveTab('docs')} />
         
         <div className="app__tools-footer">
-          <div className="app__user-badge" title={user?.email}>
+          <div 
+            className="app__user-badge" 
+            title="Ver Perfil" 
+            onClick={() => setShowProfile(true)}
+            style={{ cursor: 'pointer' }}
+          >
             {user?.email?.[0].toUpperCase()}
           </div>
           <button className="app__logout-btn" onClick={signOut} title="Cerrar Sesión">
@@ -651,7 +658,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
           <button className="app__regen-btn" onClick={chat.regenerateCV} disabled={chat.isRegenerating}>
             <i className={`fa-solid ${chat.isRegenerating ? 'fa-spinner fa-spin' : 'fa-rotate'}`} /> {chat.isRegenerating ? 'Regenerando...' : 'Regenerar'}
           </button>
-          <button className="app__regen-btn" style={{ background: '#10b981' }} onClick={cv.saveToBackend} disabled={cv.isSaving}>
+          <button className="app__regen-btn app__regen-btn--save" onClick={cv.saveToBackend} disabled={cv.isSaving}>
             <i className={`fa-solid ${cv.isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} /> {cv.isSaving ? 'Guardando...' : 'Guardar'}
           </button>
           <button className="app__export-btn" onClick={exportPDF}>
@@ -746,6 +753,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
         </div>
       )}
 
+      {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
     </div>
   );
 };

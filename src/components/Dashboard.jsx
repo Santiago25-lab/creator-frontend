@@ -1,12 +1,14 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import ProfileModal from './ProfileModal';
 import './Dashboard.css';
 
 const Dashboard = ({ onSelectMode }) => {
-  const { user } = useAuth();
-  const [showPopup, setShowPopup] = React.useState(() => {
+  const { user, signOut } = useAuth();
+  const [showPopup, setShowPopup] = useState(() => {
     return sessionStorage.getItem('showSuccessPopup') === 'true';
   });
+  const [showProfile, setShowProfile] = useState(false);
 
   const closePopup = () => {
     setShowPopup(false);
@@ -21,8 +23,18 @@ const Dashboard = ({ onSelectMode }) => {
           <span className="logo-text">CreatorCV</span>
         </div>
         <div className="dashboard-user">
-          <div className="user-avatar">{user?.email?.[0].toUpperCase()}</div>
+          <div 
+            className="user-avatar" 
+            onClick={() => setShowProfile(true)}
+            title="Ver Perfil"
+            style={{ cursor: 'pointer' }}
+          >
+            {user?.email?.[0].toUpperCase()}
+          </div>
           <span className="user-email">{user?.email}</span>
+          <button className="dashboard-logout-btn" onClick={signOut} title="Cerrar Sesión">
+            <i className="fa-solid fa-right-from-bracket"></i>
+          </button>
         </div>
       </div>
       
@@ -49,7 +61,20 @@ const Dashboard = ({ onSelectMode }) => {
             <button className="card-btn manual-btn">Ir al Editor</button>
           </div>
         </div>
+
+        <div className="dashboard-extra">
+          <h3><i className="fa-solid fa-clock-rotate-left"></i> Actividad Reciente</h3>
+          <div className="extra-empty-state">
+            <div className="empty-icon">
+              <i className="fa-regular fa-folder-open"></i>
+            </div>
+            <p>Aún no tienes diseños guardados.</p>
+            <span>Los CVs que guardes aparecerán aquí para un acceso rápido.</span>
+          </div>
+        </div>
       </div>
+
+      {showProfile && <ProfileModal onClose={() => setShowProfile(false)} />}
 
       {/* Success Popup Overlay */}
       {showPopup && (

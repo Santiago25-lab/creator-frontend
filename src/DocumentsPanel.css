@@ -68,7 +68,7 @@
   width: 100%;
   padding: 9px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(7, 13, 31, 0.6);
+  background: var(--surface-container-high);
   border: 1px solid var(--panel-border);
   color: var(--text-on-surface);
   font-size: 12px;
@@ -107,12 +107,12 @@
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .docs__count {
   background: rgba(59,130,246,0.1);
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   border: 1px solid rgba(59,130,246,0.2);
   font-family: var(--font-mono);
   font-size: 10px;
@@ -223,7 +223,7 @@
 .docs__btn--view:hover {
   background: rgba(59,130,246,0.1);
   border-color: var(--color-primary);
-  color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .docs__btn--delete:hover {
@@ -300,7 +300,7 @@
 .docs__modal {
   position: fixed;
   inset: 0;
-  background: rgba(2, 6, 23, 0.9);
+  background: var(--surface-container);
   backdrop-filter: var(--backdrop-blur);
   z-index: 1000;
   display: flex;
@@ -350,7 +350,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(7, 13, 31, 0.6);
+  background: var(--surface-container-high);
   min-height: 500px;
 }
 

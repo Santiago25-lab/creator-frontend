@@ -13,9 +13,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px 40px;
-  background: rgba(21, 18, 27, 0.6);
+  background: var(--surface-container);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba(149, 142, 160, 0.1);
+  border-bottom: 1px solid var(--panel-border);
 }
 
 .dashboard-logo {
@@ -64,7 +64,8 @@
 
 .user-email {
   font-size: 14px;
-  color: var(--text-dim);
+  color: var(--text-on-surface);
+  font-weight: 500;
 }
 
 .dashboard-logout-btn {
@@ -121,8 +122,8 @@
 }
 
 .dashboard-card {
-  background: #15121b;
-  border: 1px solid rgba(149, 142, 160, 0.1);
+  background: var(--surface-container-high);
+  border: 1px solid var(--panel-border);
   border-radius: 24px;
   padding: 40px 32px;
   width: 100%;
@@ -137,9 +138,9 @@
 
 .dashboard-card:hover {
   transform: translateY(-8px);
-  background: #1d1a23;
-  border-color: rgba(208, 188, 255, 0.3);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  background: var(--surface-container);
+  border-color: var(--color-primary);
+  box-shadow: 0 20px 40px var(--color-primary-glow);
 }
 
 .card-icon {
@@ -159,13 +160,13 @@
 }
 
 .ia-icon {
-  background: rgba(208, 188, 255, 0.1);
-  color: #d0bcff;
+  background: var(--color-primary-glow);
+  color: var(--color-primary);
 }
 
 .manual-icon {
-  background: rgba(76, 215, 246, 0.1);
-  color: #4cd7f6;
+  background: var(--color-secondary-glow);
+  color: var(--color-secondary);
 }
 
 .dashboard-card h2 {
@@ -226,12 +227,12 @@
   max-width: 900px;
   margin-top: 60px;
   padding-top: 40px;
-  border-top: 1px solid rgba(149, 142, 160, 0.1);
+  border-top: 1px solid var(--panel-border);
 }
 
 .dashboard-extra h3 {
   font-size: 18px;
-  color: #d0bcff;
+  color: var(--color-primary);
   margin-bottom: 24px;
   display: flex;
   align-items: center;

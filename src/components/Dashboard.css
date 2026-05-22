@@ -64,7 +64,7 @@
 
 .user-email {
   font-size: 14px;
-  color: #958ea0;
+  color: var(--text-dim);
 }
 
 .dashboard-logout-btn {
@@ -106,7 +106,7 @@
 
 .dashboard-subtitle {
   font-size: 16px;
-  color: #958ea0;
+  color: var(--text-dim);
   margin-bottom: 48px;
   text-align: center;
 }
@@ -174,7 +174,7 @@
 }
 
 .dashboard-card p {
-  color: #958ea0;
+  color: var(--text-dim);
   line-height: 1.6;
   margin-bottom: 32px;
   flex: 1;
@@ -203,7 +203,7 @@
 
 .manual-btn {
   background: rgba(255, 255, 255, 0.05);
-  color: white;
+  color: var(--text-on-surface);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
@@ -239,7 +239,7 @@
 }
 
 .extra-empty-state {
-  background: rgba(15, 13, 21, 0.4);
+  background: var(--surface-container);
   border: 1px dashed rgba(149, 142, 160, 0.2);
   border-radius: 16px;
   padding: 40px;
@@ -256,13 +256,13 @@
 }
 
 .extra-empty-state p {
-  color: white;
+  color: var(--text-on-surface);
   font-weight: 600;
   margin-bottom: 8px;
 }
 
 .extra-empty-state span {
-  color: #958ea0;
+  color: var(--text-dim);
   font-size: 14px;
 }
 
@@ -272,7 +272,7 @@
 .auth-popup-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 13, 21, 0.8);
+  background: var(--surface-container);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -302,7 +302,7 @@
   font-family: var(--font-display, 'Inter', sans-serif);
   font-size: 24px;
   font-weight: 700;
-  color: white;
+  color: var(--text-on-surface);
   margin-bottom: 12px;
 }
 

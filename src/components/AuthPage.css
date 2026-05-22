@@ -14,9 +14,9 @@
   --tertiary: #ffb0cd;                   /* Soft Rose (Tertiary) */
   --tertiary-light: #ffd9e4;             /* Light Rose */
   
-  --background: #0f0d15;                 /* Surface Container Lowest */
+  --background: var(--bg-app);                 /* Surface Container Lowest */
   --surface: #15121b;                    /* Base Surface/Background */
-  --surface-lowest: #0f0d15;
+  --surface-lowest: var(--bg-app);
   --surface-low: #1d1a23;
   --surface-container: #211e27;          /* Cards & active items */
   --surface-container-high: #2c2832;     /* Hover states */
@@ -173,7 +173,7 @@
   font-weight: 800;
   line-height: 48px;
   letter-spacing: -0.02em;
-  color: white;
+  color: var(--text-on-surface);
   margin-bottom: 20px;
   background: linear-gradient(135deg, #ffffff 40%, var(--primary-container));
   -webkit-background-clip: text;
@@ -254,7 +254,7 @@
 
 .logo-icon {
   font-size: 24px;
-  color: white;
+  color: var(--text-on-surface);
   animation: float 4s ease-in-out infinite;
 }
 
@@ -262,7 +262,7 @@
   font-family: var(--font-display);
   font-size: 20px;
   font-weight: 800;
-  color: white;
+  color: var(--text-on-surface);
   letter-spacing: -0.5px;
 }
 
@@ -272,7 +272,7 @@
   font-weight: 700;
   line-height: 36px;
   letter-spacing: -0.01em;
-  color: white;
+  color: var(--text-on-surface);
   margin-bottom: 6px;
 }
 
@@ -451,7 +451,7 @@
 }
 
 .password-toggle-btn:hover {
-  color: white;
+  color: var(--text-on-surface);
   background-color: rgba(255, 255, 255, 0.05);
 }
 
@@ -502,7 +502,7 @@
 }
 
 .remember-me-checkbox:hover .checkbox-label {
-  color: white;
+  color: var(--text-on-surface);
 }
 
 .forgot-password-link {
@@ -515,7 +515,7 @@
 
 .forgot-password-link:hover {
   text-decoration: none;
-  color: white;
+  color: var(--text-on-surface);
   text-shadow: 0 0 8px var(--primary-glow);
 }
 
@@ -593,7 +593,7 @@
 }
 
 .switch-link-btn:hover {
-  color: white;
+  color: var(--text-on-surface);
   text-shadow: 0 0 8px var(--primary-glow);
 }
 
@@ -616,7 +616,7 @@
 }
 
 .footer-link:hover {
-  color: white;
+  color: var(--text-on-surface);
 }
 
 /* ==========================================================================
@@ -659,7 +659,7 @@
 .auth-popup-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(15, 13, 21, 0.8);
+  background: var(--surface-container);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
@@ -689,7 +689,7 @@
   font-family: var(--font-display);
   font-size: 24px;
   font-weight: 700;
-  color: white;
+  color: var(--text-on-surface);
   margin-bottom: 12px;
 }
 

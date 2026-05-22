@@ -11,26 +11,42 @@ const Dashboard = ({ onSelectMode }) => {
   });
   const [showProfile, setShowProfile] = useState(false);
   const [savedDesigns, setSavedDesigns] = useState([]);
+  const [cvDraft, setCvDraft] = useState(null);
   const [loadingDesigns, setLoadingDesigns] = useState(true);
 
   useEffect(() => {
     if (!user) return;
 
-    const fetchDesigns = async () => {
+    const fetchData = async () => {
       setLoadingDesigns(true);
-      const { data, error } = await supabase
+      
+      // Fetch CV Draft
+      const { data: draftData } = await supabase
+        .from('cv_data')
+        .select('updated_at')
+        .eq('user_id', user.id)
+        .eq('is_primary', true)
+        .maybeSingle();
+        
+      if (draftData) {
+        setCvDraft(draftData);
+      }
+
+      // Fetch Saved Designs (Templates)
+      const { data: designsData } = await supabase
         .from('saved_designs')
         .select('*')
         .order('created_at', { ascending: false })
-        .limit(4);
+        .limit(3);
       
-      if (data && !error) {
-        setSavedDesigns(data);
+      if (designsData) {
+        setSavedDesigns(designsData);
       }
+      
       setLoadingDesigns(false);
     };
 
-    fetchDesigns();
+    fetchData();
   }, [user]);
 
   const closePopup = () => {
@@ -91,17 +107,32 @@ const Dashboard = ({ onSelectMode }) => {
           {loadingDesigns ? (
             <div className="extra-empty-state">
               <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '24px', color: 'var(--color-primary)' }}></i>
-              <p>Cargando diseños...</p>
+              <p>Cargando actividad...</p>
             </div>
-          ) : savedDesigns.length > 0 ? (
+          ) : (cvDraft || savedDesigns.length > 0) ? (
             <div className="dashboard-recent-grid">
+              
+              {/* CV Principal (Borrador) */}
+              {cvDraft && (
+                <div className="recent-card" onClick={() => onSelectMode('manual')}>
+                  <div className="recent-card-preview" style={{ borderColor: 'var(--color-secondary)' }}>
+                    <i className="fa-solid fa-file-user" style={{ color: 'var(--color-secondary)' }}></i>
+                  </div>
+                  <div className="recent-card-info">
+                    <h4>Mi CV Principal</h4>
+                    <span>Editado: {new Date(cvDraft.updated_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Plantillas Guardadas */}
               {savedDesigns.map(design => (
                 <div key={design.id} className="recent-card" onClick={() => onSelectMode('manual')}>
                   <div className="recent-card-preview" style={{ borderColor: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}>
-                    <i className="fa-solid fa-file-lines" style={{ color: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}></i>
+                    <i className="fa-solid fa-palette" style={{ color: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}></i>
                   </div>
                   <div className="recent-card-info">
-                    <h4>{design.name || 'CV Sin Título'}</h4>
+                    <h4>{design.name || 'Plantilla Personalizada'}</h4>
                     <span>{new Date(design.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
@@ -112,8 +143,8 @@ const Dashboard = ({ onSelectMode }) => {
               <div className="empty-icon">
                 <i className="fa-regular fa-folder-open"></i>
               </div>
-              <p>Aún no tienes diseños guardados.</p>
-              <span>Los CVs que guardes aparecerán aquí para un acceso rápido.</span>
+              <p>Aún no tienes actividad reciente.</p>
+              <span>Tus CVs y plantillas guardadas aparecerán aquí.</span>
             </div>
           )}
         </div>

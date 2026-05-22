@@ -768,6 +768,27 @@
   transform: translateY(-2px);
 }
 
+.app__share-btn {
+  background: rgba(76, 215, 246, 0.1);
+  border: 1px solid rgba(76, 215, 246, 0.2);
+  color: #4cd7f6;
+  padding: 10px 20px;
+  border-radius: var(--radius-md);
+  font-weight: 600;
+  font-size: 13px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: var(--transition-smooth);
+}
+
+.app__share-btn:hover {
+  background: rgba(76, 215, 246, 0.2);
+  border-color: rgba(76, 215, 246, 0.4);
+  transform: translateY(-2px);
+}
+
 .app__regen-btn--save {
   background: rgba(16, 185, 129, 0.1);
   border-color: rgba(16, 185, 129, 0.2);
@@ -859,10 +880,10 @@
   padding: 4px 10px;
   border-radius: 20px;
   margin-left: auto;
-  animation: pulse 2s infinite;
+  animation: pulse-save 1.5s infinite;
 }
 
-@keyframes pulse {
+@keyframes pulse-save {
   0% { opacity: 0.6; }
   50% { opacity: 1; }
   100% { opacity: 0.6; }
@@ -1206,4 +1227,61 @@
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(255, 255, 255, 0.18);
+}
+
+/* ── SHARE TOAST ── */
+.share-toast {
+  position: absolute;
+  top: 80px;
+  right: 24px;
+  background: rgba(33, 30, 39, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(76, 215, 246, 0.3);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5), 0 0 20px rgba(76, 215, 246, 0.15);
+  border-radius: 16px;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  z-index: 100;
+  animation: slide-in-toast 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.share-toast-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(76, 215, 246, 0.1);
+  color: #4cd7f6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+}
+
+.share-toast-content h4 {
+  color: white;
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.share-toast-content p {
+  color: #958ea0;
+  margin: 0;
+  font-size: 13px;
+}
+
+.share-toast-content span {
+  color: #4cd7f6;
+  font-family: var(--font-mono);
+  background: rgba(0, 0, 0, 0.2);
+  padding: 2px 6px;
+  border-radius: 4px;
+  margin-left: 4px;
+}
+
+@keyframes slide-in-toast {
+  from { opacity: 0; transform: translateX(20px) translateY(-10px); }
+  to { opacity: 1; transform: translateX(0) translateY(0); }
 }

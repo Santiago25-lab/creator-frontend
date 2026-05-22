@@ -1,12 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { themes, applyTheme, getSavedTheme } from '../utils/theme';
 import './ProfileModal.css';
 
 const ProfileModal = ({ onClose }) => {
   const { user, signOut } = useAuth();
-  const [activeTab, setActiveTab] = useState('basic'); // 'basic', 'plans', 'security'
+  const [activeTab, setActiveTab] = useState('basic'); // 'basic', 'plans', 'security', 'appearance'
   const [isSaving, setIsSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
+
+  // Apariencia
+  const [currentTheme, setCurrentTheme] = useState(getSavedTheme());
 
   // Datos Básicos
   const [name, setName] = useState(user?.user_metadata?.full_name || 'Usuario Creator');
@@ -25,7 +29,9 @@ const ProfileModal = ({ onClose }) => {
       setShowToast(true);
       setTimeout(() => setShowToast(false), 3000);
       
-      if (activeTab === 'security') {
+      if (activeTab === 'appearance') {
+        applyTheme(currentTheme);
+      } else if (activeTab === 'security') {
         setCurrentPassword('');
         setNewPassword('');
         setConfirmPassword('');
@@ -175,6 +181,29 @@ const ProfileModal = ({ onClose }) => {
           </div>
         );
       
+      case 'appearance':
+        return (
+          <div className="profile-tab-content fade-in">
+            <h2 className="profile-section-title">Apariencia</h2>
+            <p className="profile-section-subtitle">Personaliza los colores de acento de CreatorCV.</p>
+            
+            <div className="theme-grid">
+              {Object.entries(themes).map(([key, theme]) => (
+                <div 
+                  key={key} 
+                  className={`theme-card ${currentTheme === key ? 'active' : ''}`}
+                  onClick={() => setCurrentTheme(key)}
+                  style={{ '--theme-preview': theme.colors['--color-primary'] }}
+                >
+                  <div className="theme-preview-circle"></div>
+                  <span>{theme.name}</span>
+                  {currentTheme === key && <i className="fa-solid fa-circle-check"></i>}
+                </div>
+              ))}
+            </div>
+          </div>
+        );
+      
       default:
         return null;
     }
@@ -215,6 +244,12 @@ const ProfileModal = ({ onClose }) => {
             >
               <i className="fa-solid fa-shield-halved"></i> Seguridad
             </button>
+            <button 
+              className={`sidebar-nav-btn ${activeTab === 'appearance' ? 'active' : ''}`}
+              onClick={() => setActiveTab('appearance')}
+            >
+              <i className="fa-solid fa-palette"></i> Apariencia
+            </button>
           </nav>
 
           <div className="sidebar-footer">
@@ -236,8 +271,8 @@ const ProfileModal = ({ onClose }) => {
             {renderContent()}
           </div>
 
-          {/* Footer Action Bar (only for basic and security) */}
-          {(activeTab === 'basic' || activeTab === 'security') && (
+          {/* Footer Action Bar (only for basic, security and appearance) */}
+          {['basic', 'security', 'appearance'].includes(activeTab) && (
             <div className="profile-main-footer">
               <button className="profile-save-btn" onClick={handleSave} disabled={isSaving}>
                 {isSaving ? (

@@ -53,6 +53,8 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
   const [zoom, setZoom] = useState(1.0);
   const [showTemplates, setShowTemplates] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
+  const [showShareToast, setShowShareToast] = useState(false);
+  const [shareLink, setShareLink] = useState('');
 
   // ── Composition Engine ──
   const [composerMode, setComposerMode] = useState(false);
@@ -320,6 +322,17 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
   const handleRemovePhoto = () => {
     cv.removePhoto();
     if (photoInputRef.current) photoInputRef.current.value = '';
+  };
+
+  const handleShare = () => {
+    // Generate a mock unique URL
+    const uniqueId = Math.random().toString(36).substr(2, 9);
+    const url = `https://creatorcv.com/v/${uniqueId}`;
+    setShareLink(url);
+    navigator.clipboard.writeText(url);
+    
+    setShowShareToast(true);
+    setTimeout(() => setShowShareToast(false), 4000);
   };
 
   /* ── Exportar PDF ── */
@@ -661,8 +674,13 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
           <button className="app__regen-btn app__regen-btn--save" onClick={cv.saveToBackend} disabled={cv.isSaving}>
             <i className={`fa-solid ${cv.isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} /> {cv.isSaving ? 'Guardando...' : 'Guardar'}
           </button>
+          
+          <button className="app__share-btn" onClick={handleShare}>
+            <i className="fa-solid fa-link" /> Compartir
+          </button>
+
           <button className="app__export-btn" onClick={exportPDF}>
-            <i className="fa-solid fa-download" /> Exportar PDF
+            <i className="fa-solid fa-file-pdf" /> Exportar PDF
           </button>
         </div>
 
@@ -749,6 +767,19 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
                 Aplicar Encuadre
               </button>
             </div>
+          </div>
+        </div>
+      )}
+
+      {/* Share Toast */}
+      {showShareToast && (
+        <div className="share-toast">
+          <div className="share-toast-icon">
+            <i className="fa-solid fa-check"></i>
+          </div>
+          <div className="share-toast-content">
+            <h4>¡Enlace copiado!</h4>
+            <p>Comparte tu CV en línea: <span>{shareLink}</span></p>
           </div>
         </div>
       )}

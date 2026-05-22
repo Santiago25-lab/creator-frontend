@@ -1,12 +1,18 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import CVTemplate from './CVTemplate'
 import AuthPage from './components/AuthPage'
 import Dashboard from './components/Dashboard'
+import { applyTheme, getSavedTheme } from './utils/theme'
 
 function AppContent() {
   const { user, loading } = useAuth();
   const [selectedMode, setSelectedMode] = useState(null);
+
+  useEffect(() => {
+    // Apply saved theme on mount
+    applyTheme(getSavedTheme());
+  }, []);
 
   if (loading) {
     return (

@@ -65,6 +65,13 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
     } catch { return DEFAULT_RECIPE; }
   });
 
+  // Load recipe from cvData if available
+  useEffect(() => {
+    if (cv.cvData?.recipe) {
+      setRecipe(cv.cvData.recipe);
+    }
+  }, [cv.cvData?.recipe]);
+
   // ── Diseños Guardados ──
   const [savedDesigns, setSavedDesigns] = useState([]);
 
@@ -674,7 +681,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
             const currentName = cv.cvData.cvName || "Mi CV Principal";
             const name = prompt("¿Qué nombre le pondrás a este CV?", currentName);
             if (name !== null) {
-              cv.saveToBackend(name);
+              cv.saveToBackend(name, recipe);
             }
           }} disabled={cv.isSaving}>
             <i className={`fa-solid ${cv.isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} /> {cv.isSaving ? 'Guardando...' : 'Guardar'}

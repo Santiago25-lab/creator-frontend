@@ -156,13 +156,15 @@ export const useCvData = (user) => {
     setCvData(d => ({ ...d, languages: d.languages.filter((_, idx) => idx !== i) }));
   };
 
-  const saveToBackend = async (customName = null) => {
+  const saveToBackend = async (customName = null, recipe = null) => {
     if (!user) return;
     setIsSaving(true);
     
     let contentToSave = cvData;
-    if (customName !== null) {
-      contentToSave = { ...cvData, cvName: customName };
+    if (customName !== null || recipe !== null) {
+      contentToSave = { ...cvData };
+      if (customName !== null) contentToSave.cvName = customName;
+      if (recipe !== null) contentToSave.recipe = recipe;
       setCvData(contentToSave);
     }
 

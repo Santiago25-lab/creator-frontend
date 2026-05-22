@@ -10,6 +10,7 @@ const AuthPage = () => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
 
   const { signIn, signUp } = useAuth();
 
@@ -25,8 +26,7 @@ const AuthPage = () => {
       } else {
         const { error } = await signUp(email, password, fullName);
         if (error) throw error;
-        alert('¡Registro exitoso! Por favor revisa tu correo para confirmar tu cuenta.');
-        setIsLogin(true);
+        setShowSuccessPopup(true);
       }
     } catch (err) {
       setError(err.message);
@@ -211,6 +211,30 @@ const AuthPage = () => {
           </div>
         </div>
       </section>
+
+      {/* Success Popup Overlay */}
+      {showSuccessPopup && (
+        <div className="auth-popup-overlay">
+          <div className="auth-popup-card">
+            <div className="auth-popup-icon">
+              <span className="material-symbols-outlined" style={{ fontSize: 'inherit' }}>check_circle</span>
+            </div>
+            <h3 className="auth-popup-title">¡Registro Exitoso!</h3>
+            <p className="auth-popup-message">
+              Tu cuenta ha sido creada. Por favor revisa tu correo electrónico para confirmarla y empezar a diseñar.
+            </p>
+            <button 
+              className="auth-popup-btn"
+              onClick={() => {
+                setShowSuccessPopup(false);
+                setIsLogin(true);
+              }}
+            >
+              Continuar al Login
+            </button>
+          </div>
+        </div>
+      )}
     </main>
   );
 };

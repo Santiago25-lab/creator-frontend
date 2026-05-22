@@ -26,6 +26,7 @@ const AuthPage = () => {
       } else {
         const { error } = await signUp(email, password, fullName);
         if (error) throw error;
+        sessionStorage.setItem('showSuccessPopup', 'true');
         setShowSuccessPopup(true);
       }
     } catch (err) {
@@ -227,6 +228,7 @@ const AuthPage = () => {
               className="auth-popup-btn"
               onClick={() => {
                 setShowSuccessPopup(false);
+                sessionStorage.removeItem('showSuccessPopup');
                 setIsLogin(true);
               }}
             >

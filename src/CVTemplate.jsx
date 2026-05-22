@@ -36,7 +36,7 @@ const SAVED_DESIGNS_KEY = 'creator_cv_saved_designs';
 /* ═══════════════════════════════════════════════════
    COMPONENTE PRINCIPAL
    ═══════════════════════════════════════════════════ */
-const CVTemplate = () => {
+const CVTemplate = ({ initialTab = 'templates', onBack }) => {
   const { user, signOut } = useAuth();
 
   // ── Estado del CV (hook extraído con soporte Supabase) ──
@@ -48,7 +48,7 @@ const CVTemplate = () => {
 
   // ── UI State ──
   const [activeTemplate, setActiveTemplate] = useState('resume-a');
-  const [activeTab, setActiveTab] = useState('templates');
+  const [activeTab, setActiveTab] = useState(initialTab);
   const [zoom, setZoom] = useState(1.0);
   const [showTemplates, setShowTemplates] = useState(false);
 
@@ -368,7 +368,13 @@ const CVTemplate = () => {
 
       {/* ═══ TOOL BAR ═══ */}
       <nav className="app__tools">
-        <div className="app__logo"><i className="fa-solid fa-pen-ruler" /></div>
+        {onBack ? (
+          <button className="app__logo" onClick={onBack} title="Volver al Menú" style={{ cursor: 'pointer', border: 'none' }}>
+            <i className="fa-solid fa-arrow-left" style={{ color: '#0f0d15' }} />
+          </button>
+        ) : (
+          <div className="app__logo"><i className="fa-solid fa-pen-ruler" /></div>
+        )}
         <ToolBtn icon="fa-layer-group" label="Diseños" active={activeTab === 'templates'} onClick={() => setActiveTab('templates')} />
         <ToolBtn icon="fa-user-pen" label="Datos" active={activeTab === 'editor'} onClick={() => setActiveTab('editor')} />
         <ToolBtn icon="fa-comment-dots" label="IA" active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} />

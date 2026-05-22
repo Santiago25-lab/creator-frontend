@@ -1,10 +1,12 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import CVTemplate from './CVTemplate'
 import AuthPage from './components/AuthPage'
+import Dashboard from './components/Dashboard'
 
 function AppContent() {
   const { user, loading } = useAuth();
+  const [selectedMode, setSelectedMode] = useState(null);
 
   if (loading) {
     return (
@@ -27,7 +29,15 @@ function AppContent() {
     );
   }
 
-  return user ? <CVTemplate /> : <AuthPage />;
+  if (!user) {
+    return <AuthPage />;
+  }
+
+  if (selectedMode) {
+    return <CVTemplate initialTab={selectedMode === 'ia' ? 'chat' : 'editor'} onBack={() => setSelectedMode(null)} />;
+  }
+
+  return <Dashboard onSelectMode={setSelectedMode} />;
 }
 
 function App() {

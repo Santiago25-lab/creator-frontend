@@ -141,7 +141,7 @@ const Dashboard = ({ onSelectMode }) => {
             ) : savedDesigns.length > 0 ? (
               <div className="dashboard-recent-grid">
                 {savedDesigns.map(design => (
-                  <div key={design.id} className="recent-card" onClick={() => onSelectMode('manual')}>
+                  <div key={design.id} className="recent-card" onClick={() => onSelectMode({ mode: 'manual', design })}>
                     <div className="recent-card-preview" style={{ borderColor: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}>
                       <i className="fa-solid fa-palette" style={{ color: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}></i>
                     </div>

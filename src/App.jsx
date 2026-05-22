@@ -41,7 +41,10 @@ function AppContent() {
   }
 
   if (selectedMode) {
-    return <CVTemplate initialTab={selectedMode === 'ia' ? 'chat' : 'editor'} onBack={() => setSelectedMode(null)} />;
+    const isObj = typeof selectedMode === 'object';
+    const mode = isObj ? selectedMode.mode : selectedMode;
+    const initialDesign = isObj ? selectedMode.design : null;
+    return <CVTemplate initialTab={mode === 'ia' ? 'chat' : 'editor'} initialDesign={initialDesign} onBack={() => setSelectedMode(null)} />;
   }
 
   return <Dashboard onSelectMode={setSelectedMode} />;

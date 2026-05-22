@@ -37,7 +37,7 @@ const SAVED_DESIGNS_KEY = 'creator_cv_saved_designs';
 /* ═══════════════════════════════════════════════════
    COMPONENTE PRINCIPAL
    ═══════════════════════════════════════════════════ */
-const CVTemplate = ({ initialTab = 'templates', onBack }) => {
+const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign }) => {
   const { user, signOut } = useAuth();
 
   // ── Estado del CV (hook extraído con soporte Supabase) ──
@@ -65,12 +65,14 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
     } catch { return DEFAULT_RECIPE; }
   });
 
-  // Load recipe from cvData if available
+  // Load layout configurations from cvData if available
   useEffect(() => {
-    if (cv.cvData?.recipe) {
-      setRecipe(cv.cvData.recipe);
+    if (cv.cvData) {
+      if (cv.cvData.recipe) setRecipe(cv.cvData.recipe);
+      if (cv.cvData.activeTemplate) setActiveTemplate(cv.cvData.activeTemplate);
+      if (cv.cvData.composerMode !== undefined) setComposerMode(cv.cvData.composerMode);
     }
-  }, [cv.cvData?.recipe]);
+  }, [cv.cvData?.recipe, cv.cvData?.activeTemplate, cv.cvData?.composerMode]);
 
   // ── Diseños Guardados ──
   const [savedDesigns, setSavedDesigns] = useState([]);
@@ -97,7 +99,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
     const newDesign = {
       user_id: user.id,
       name,
-      recipe: { ...recipe },
+      recipe: { ...recipe, activeTemplate, composerMode },
     };
 
     const { data, error } = await supabase
@@ -125,10 +127,21 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
   };
 
   const applyDesign = (design) => {
-    setRecipe(design.recipe);
-    setComposerMode(true);
+    if (!design) return;
+    if (design.recipe) {
+      setRecipe(design.recipe);
+      if (design.recipe.activeTemplate) setActiveTemplate(design.recipe.activeTemplate);
+      if (design.recipe.composerMode !== undefined) setComposerMode(design.recipe.composerMode);
+      else setComposerMode(true); // Fallback for old saved designs
+    }
     setActiveTab('templates');
   };
+
+  useEffect(() => {
+    if (initialDesign) {
+      applyDesign(initialDesign);
+    }
+  }, [initialDesign]);
 
   const cvRef = useRef(null);
 
@@ -681,7 +694,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack }) => {
             const currentName = cv.cvData.cvName || "Mi CV Principal";
             const name = prompt("¿Qué nombre le pondrás a este CV?", currentName);
             if (name !== null) {
-              cv.saveToBackend(name, recipe);
+              cv.saveToBackend(name, recipe, activeTemplate, composerMode);
             }
           }} disabled={cv.isSaving}>
             <i className={`fa-solid ${cv.isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} /> {cv.isSaving ? 'Guardando...' : 'Guardar'}

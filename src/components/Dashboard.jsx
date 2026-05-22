@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 import ProfileModal from './ProfileModal';
 import './Dashboard.css';
 
@@ -9,6 +10,28 @@ const Dashboard = ({ onSelectMode }) => {
     return sessionStorage.getItem('showSuccessPopup') === 'true';
   });
   const [showProfile, setShowProfile] = useState(false);
+  const [savedDesigns, setSavedDesigns] = useState([]);
+  const [loadingDesigns, setLoadingDesigns] = useState(true);
+
+  useEffect(() => {
+    if (!user) return;
+
+    const fetchDesigns = async () => {
+      setLoadingDesigns(true);
+      const { data, error } = await supabase
+        .from('saved_designs')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(4);
+      
+      if (data && !error) {
+        setSavedDesigns(data);
+      }
+      setLoadingDesigns(false);
+    };
+
+    fetchDesigns();
+  }, [user]);
 
   const closePopup = () => {
     setShowPopup(false);
@@ -64,13 +87,35 @@ const Dashboard = ({ onSelectMode }) => {
 
         <div className="dashboard-extra">
           <h3><i className="fa-solid fa-clock-rotate-left"></i> Actividad Reciente</h3>
-          <div className="extra-empty-state">
-            <div className="empty-icon">
-              <i className="fa-regular fa-folder-open"></i>
+          
+          {loadingDesigns ? (
+            <div className="extra-empty-state">
+              <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '24px', color: 'var(--color-primary)' }}></i>
+              <p>Cargando diseños...</p>
             </div>
-            <p>Aún no tienes diseños guardados.</p>
-            <span>Los CVs que guardes aparecerán aquí para un acceso rápido.</span>
-          </div>
+          ) : savedDesigns.length > 0 ? (
+            <div className="dashboard-recent-grid">
+              {savedDesigns.map(design => (
+                <div key={design.id} className="recent-card" onClick={() => onSelectMode('manual')}>
+                  <div className="recent-card-preview" style={{ borderColor: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}>
+                    <i className="fa-solid fa-file-lines" style={{ color: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}></i>
+                  </div>
+                  <div className="recent-card-info">
+                    <h4>{design.name || 'CV Sin Título'}</h4>
+                    <span>{new Date(design.created_at).toLocaleDateString()}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="extra-empty-state">
+              <div className="empty-icon">
+                <i className="fa-regular fa-folder-open"></i>
+              </div>
+              <p>Aún no tienes diseños guardados.</p>
+              <span>Los CVs que guardes aparecerán aquí para un acceso rápido.</span>
+            </div>
+          )}
         </div>
       </div>
 

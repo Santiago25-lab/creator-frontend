@@ -165,7 +165,7 @@ export const DarkImpactHeader = ({ data, theme }) => (
 export const NeonGradientHeader = ({ data, theme }) => (
   <div style={{ padding: '50px 40px 30px', borderBottom: `1px solid ${theme.primaryColor}22`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
     <div style={{ flex: 1 }}>
-      <h1 style={{ fontSize: '2.8rem', fontWeight: 900, margin: 0, background: `linear-gradient(135deg, ${theme.primaryColor}, ${theme.primaryColor}88)`, WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', lineHeight: 1.1 }}>{data.name}</h1>
+      <h1 style={{ fontSize: '2.8rem', fontWeight: 900, margin: 0, color: theme.primaryColor, lineHeight: 1.1 }}>{data.name}</h1>
       <h3 style={{ fontSize: '1rem', fontWeight: 700, color: theme.primaryColor, marginTop: '8px', letterSpacing: '1px' }}>{data.title}</h3>
       <div style={{ display: 'flex', gap: '12px', marginTop: '18px', flexWrap: 'wrap' }}>
         {data.email && <span style={{ fontSize: '0.75rem', color: `${theme.textColor}99` }}>✉️ {data.email}</span>}

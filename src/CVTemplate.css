@@ -294,6 +294,9 @@
   font-family: var(--font-ui);
   outline: none;
   transition: var(--transition-smooth);
+  resize: vertical;
+  min-height: 44px;
+  max-height: 150px;
 }
 
 .app__chat-input:focus {

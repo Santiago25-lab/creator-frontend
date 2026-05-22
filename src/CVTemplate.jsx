@@ -600,7 +600,20 @@ const CVTemplate = () => {
                 <div ref={chat.chatEndRef} />
               </div>
               <div className="app__chat-input-wrap">
-                <input className="app__chat-input" value={chat.userInput} onChange={e => chat.setUserInput(e.target.value)} onKeyDown={e => e.key === 'Enter' && chat.sendMessage()} placeholder="Cuéntame sobre tu experiencia..." disabled={chat.isLoading} />
+                <textarea 
+                  className="app__chat-input" 
+                  value={chat.userInput} 
+                  onChange={e => chat.setUserInput(e.target.value)} 
+                  onKeyDown={e => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      chat.sendMessage();
+                    }
+                  }} 
+                  placeholder="Cuéntame sobre tu experiencia..." 
+                  disabled={chat.isLoading} 
+                  rows={1}
+                />
                 <button className="app__chat-send" onClick={chat.sendMessage} disabled={chat.isLoading}><i className="fa-solid fa-paper-plane" /></button>
               </div>
             </div>

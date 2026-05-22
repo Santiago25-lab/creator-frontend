@@ -101,19 +101,16 @@ const Dashboard = ({ onSelectMode }) => {
           </div>
         </div>
 
-        <div className="dashboard-extra">
-          <h3><i className="fa-solid fa-clock-rotate-left"></i> Actividad Reciente</h3>
-          
-          {loadingDesigns ? (
-            <div className="extra-empty-state">
-              <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '24px', color: 'var(--color-primary)' }}></i>
-              <p>Cargando actividad...</p>
-            </div>
-          ) : (cvDraft || savedDesigns.length > 0) ? (
-            <div className="dashboard-recent-grid">
-              
-              {/* CV Principal (Borrador) */}
-              {cvDraft && (
+        <div className="dashboard-extra-sections">
+          <div className="dashboard-extra">
+            <h3><i className="fa-solid fa-clock-rotate-left"></i> Actividad Reciente</h3>
+            {loadingDesigns ? (
+              <div className="extra-empty-state">
+                <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '24px', color: 'var(--color-primary)' }}></i>
+                <p>Cargando actividad...</p>
+              </div>
+            ) : cvDraft ? (
+              <div className="dashboard-recent-grid">
                 <div className="recent-card" onClick={() => onSelectMode('manual')}>
                   <div className="recent-card-preview" style={{ borderColor: 'var(--color-secondary)' }}>
                     <i className="fa-solid fa-file-user" style={{ color: 'var(--color-secondary)' }}></i>
@@ -123,30 +120,47 @@ const Dashboard = ({ onSelectMode }) => {
                     <span>Editado: {new Date(cvDraft.updated_at).toLocaleDateString()}</span>
                   </div>
                 </div>
-              )}
-
-              {/* Plantillas Guardadas */}
-              {savedDesigns.map(design => (
-                <div key={design.id} className="recent-card" onClick={() => onSelectMode('manual')}>
-                  <div className="recent-card-preview" style={{ borderColor: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}>
-                    <i className="fa-solid fa-palette" style={{ color: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}></i>
-                  </div>
-                  <div className="recent-card-info">
-                    <h4>{design.name || 'Plantilla Personalizada'}</h4>
-                    <span>{new Date(design.created_at).toLocaleDateString()}</span>
-                  </div>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <div className="extra-empty-state">
-              <div className="empty-icon">
-                <i className="fa-regular fa-folder-open"></i>
               </div>
-              <p>Aún no tienes actividad reciente.</p>
-              <span>Tus CVs y plantillas guardadas aparecerán aquí.</span>
-            </div>
-          )}
+            ) : (
+              <div className="extra-empty-state">
+                <div className="empty-icon">
+                  <i className="fa-regular fa-file-lines"></i>
+                </div>
+                <p>Aún no tienes un borrador principal.</p>
+              </div>
+            )}
+          </div>
+
+          <div className="dashboard-extra">
+            <h3><i className="fa-solid fa-layer-group"></i> Plantillas Guardadas</h3>
+            {loadingDesigns ? (
+              <div className="extra-empty-state">
+                <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '24px', color: 'var(--color-primary)' }}></i>
+                <p>Cargando plantillas...</p>
+              </div>
+            ) : savedDesigns.length > 0 ? (
+              <div className="dashboard-recent-grid">
+                {savedDesigns.map(design => (
+                  <div key={design.id} className="recent-card" onClick={() => onSelectMode('manual')}>
+                    <div className="recent-card-preview" style={{ borderColor: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}>
+                      <i className="fa-solid fa-palette" style={{ color: design.recipe?.theme?.primaryColor || 'var(--color-primary)' }}></i>
+                    </div>
+                    <div className="recent-card-info">
+                      <h4>{design.name || 'Plantilla Personalizada'}</h4>
+                      <span>{new Date(design.created_at).toLocaleDateString()}</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="extra-empty-state">
+                <div className="empty-icon">
+                  <i className="fa-regular fa-folder-open"></i>
+                </div>
+                <p>No tienes plantillas personalizadas guardadas.</p>
+              </div>
+            )}
+          </div>
         </div>
       </div>
 

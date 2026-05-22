@@ -66,7 +66,6 @@ const ComposerPanel = ({ recipe, onRecipeChange, onBack, onSave }) => {
           }}
           style={{ '--btn-color': recipe.theme.primaryColor }}
         >
-          <i className="fa-solid fa-floppy-disk" />
           <span>Guardar Diseño</span>
         </button>
       </div>

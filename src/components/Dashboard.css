@@ -222,12 +222,19 @@
   }
 }
 
-.dashboard-extra {
+.dashboard-extra-sections {
   width: 100%;
   max-width: 900px;
   margin-top: 60px;
   padding-top: 40px;
   border-top: 1px solid var(--panel-border);
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+
+.dashboard-extra {
+  width: 100%;
 }
 
 .dashboard-extra h3 {

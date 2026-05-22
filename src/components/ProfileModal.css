@@ -119,13 +119,13 @@
 }
 
 .sidebar-nav-btn:hover {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-container-high);
   color: var(--text-muted);
 }
 
 .sidebar-nav-btn.active {
-  background: rgba(208, 188, 255, 0.1);
-  color: #d0bcff;
+  background: var(--color-primary-glow);
+  color: var(--color-primary);
 }
 
 .sidebar-footer {
@@ -252,7 +252,7 @@
 
 .profile-field input:focus {
   outline: none;
-  border-color: #d0bcff;
+  border-color: var(--color-primary);
   box-shadow: 0 0 0 2px rgba(208, 188, 255, 0.2);
   background: var(--surface-container);
 }
@@ -406,7 +406,7 @@
 }
 
 .plan-card-highlight h3 {
-  color: #d0bcff;
+  color: var(--color-primary);
   display: flex;
   align-items: center;
   justify-content: center;

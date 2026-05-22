@@ -114,7 +114,7 @@
 
 .app__tool-btn:hover {
   color: var(--text-on-surface);
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-container);
 }
 
 .app__tool-btn--active {
@@ -144,7 +144,7 @@
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   padding: 0 20px;
   border-bottom: 1px solid var(--panel-border);
 }
@@ -290,7 +290,7 @@
   flex: 1;
   padding: 12px 16px;
   border-radius: var(--radius-sm);
-  background: rgba(7, 13, 31, 0.6);
+  background: var(--surface-container-high);
   border: 1px solid var(--panel-border);
   color: var(--text-on-surface);
   font-size: 12px;
@@ -352,7 +352,7 @@
   width: 100%;
   padding: 10px 14px;
   border-radius: var(--radius-sm);
-  background: rgba(7, 13, 31, 0.6);
+  background: var(--surface-container-high);
   border: 1px solid var(--panel-border);
   color: var(--text-on-surface);
   font-size: 13px;
@@ -428,7 +428,7 @@
   padding: 7px 14px;
   border-radius: var(--radius-sm);
   border: 1px solid var(--panel-border);
-  background: rgba(255,255,255,0.03);
+  background: var(--surface-container);
   color: var(--text-muted);
   font-size: 11px;
   font-weight: 600;
@@ -442,7 +442,7 @@
 .app__photo-btn:hover {
   background: rgba(59,130,246,0.1);
   border-color: var(--color-primary);
-  color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .app__photo-btn--remove:hover {
@@ -467,7 +467,7 @@
   font-weight: 700;
   letter-spacing: 1.5px;
   text-transform: uppercase;
-  color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .app__editor-section-header button {
@@ -476,7 +476,7 @@
   border-radius: var(--radius-sm);
   border: 1px solid rgba(59,130,246,0.2);
   background: rgba(59,130,246,0.08);
-  color: var(--color-primary-light);
+  color: var(--color-primary);
   cursor: pointer;
   font-size: 12px;
   display: flex;
@@ -547,7 +547,7 @@
 
 .app__editor-tag:hover {
   border-color: var(--color-primary);
-  color: var(--color-primary-light);
+  color: var(--color-primary);
 }
 
 .app__editor-tag button {
@@ -574,7 +574,7 @@
   flex: 1;
   padding: 8px 12px;
   border-radius: var(--radius-sm);
-  background: rgba(7, 13, 31, 0.6);
+  background: var(--surface-container-high);
   border: 1px solid var(--panel-border);
   color: var(--text-on-surface);
   font-size: 12px;
@@ -695,7 +695,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  background: rgba(7, 13, 31, 0.6);
+  background: var(--surface-container-high);
   padding: 4px 14px;
   border-radius: 20px;
   border: 1px solid var(--panel-border);
@@ -747,8 +747,8 @@
 }
 
 .app__regen-btn {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: var(--surface-container);
+  border: 1px solid var(--panel-border);
   color: var(--text-on-surface);
   padding: 10px 20px;
   border-radius: var(--radius-md);
@@ -763,15 +763,15 @@
 }
 
 .app__regen-btn:hover {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.2);
+  background: var(--surface-container-high);
+  border-color: var(--color-primary);
   transform: translateY(-2px);
 }
 
 .app__share-btn {
   background: rgba(76, 215, 246, 0.1);
   border: 1px solid rgba(76, 215, 246, 0.2);
-  color: #4cd7f6;
+  color: var(--color-secondary);
   padding: 10px 20px;
   border-radius: var(--radius-md);
   font-weight: 600;
@@ -853,7 +853,7 @@
 }
 
 .app__logout-btn {
-  background: rgba(255, 255, 255, 0.03);
+  background: var(--surface-container);
   border: 1px solid var(--panel-border);
   color: var(--text-muted);
   width: 36px;
@@ -977,7 +977,7 @@
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  background: rgba(7, 13, 31, 0.6);
+  background: var(--surface-container-high);
   cursor: grab;
   box-shadow: 0 0 0 6px rgba(255,255,255,0.02), var(--shadow-md);
 }
@@ -1028,7 +1028,7 @@
   appearance: none;
   height: 6px;
   border-radius: 3px;
-  background: rgba(7, 13, 31, 0.6);
+  background: var(--surface-container-high);
   border: 1px solid var(--panel-border);
   outline: none;
   cursor: pointer;
@@ -1101,7 +1101,7 @@
   justify-content: space-between;
   width: 100%;
   padding: 14px 18px;
-  background: rgba(29, 26, 35, 0.6);
+  background: var(--surface-container);
   border: 1px solid var(--panel-border);
   border-radius: var(--radius-md);
   color: var(--text-on-surface);
@@ -1115,14 +1115,14 @@
 }
 
 .app__toggle-templates-btn:hover {
-  background: rgba(44, 40, 50, 0.8);
+  background: var(--surface-container-high);
   border-color: var(--color-primary);
   transform: translateY(-1px);
 }
 
 .app__toggle-templates-btn--active {
-  background: rgba(44, 40, 50, 0.8);
-  border-color: rgba(208, 188, 255, 0.5);
+  background: var(--surface-container-high);
+  border-color: var(--color-primary);
   box-shadow: 0 4px 15px var(--color-primary-glow);
 }
 
@@ -1130,12 +1130,12 @@
   font-family: var(--font-mono);
   font-size: 9px;
   font-weight: 700;
-  color: var(--color-primary-light);
-  background: rgba(208, 188, 255, 0.1);
+  color: var(--color-primary);
+  background: var(--color-primary-glow);
   padding: 3px 8px;
   border-radius: 6px;
   letter-spacing: 0.5px;
-  border: 1px solid rgba(208, 188, 255, 0.2);
+  border: 1px solid var(--color-primary);
 }
 
 .app__gallery-collapsible {
@@ -1248,7 +1248,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.08);
+  background: var(--surface-container-high);
   border-radius: 4px;
   border: 2px solid var(--bg-app);
   transition: var(--transition-smooth);
@@ -1281,7 +1281,7 @@
   height: 40px;
   border-radius: 12px;
   background: rgba(76, 215, 246, 0.1);
-  color: #4cd7f6;
+  color: var(--color-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -1302,7 +1302,7 @@
 }
 
 .share-toast-content span {
-  color: #4cd7f6;
+  color: var(--color-secondary);
   font-family: var(--font-mono);
   background: var(--surface-bright);
   padding: 2px 6px;

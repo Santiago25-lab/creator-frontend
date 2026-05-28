@@ -143,6 +143,22 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign }) => {
     }
   }, [initialDesign]);
 
+  // ── Alerta de Cambios Sin Guardar ──
+  useEffect(() => {
+    const handleBeforeUnload = (e) => {
+      if (cv.hasUnsavedChanges) {
+        e.preventDefault();
+        e.returnValue = ''; // Muestra el diálogo predeterminado del navegador
+        return '';
+      }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+  }, [cv.hasUnsavedChanges]);
+
   const cvRef = useRef(null);
 
   // ── Documentos adjuntos ──
@@ -690,14 +706,15 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign }) => {
           <button className="app__regen-btn" onClick={chat.regenerateCV} disabled={chat.isRegenerating}>
             <i className={`fa-solid ${chat.isRegenerating ? 'fa-spinner fa-spin' : 'fa-rotate'}`} /> {chat.isRegenerating ? 'Regenerando...' : 'Regenerar'}
           </button>
-          <button className="app__regen-btn app__regen-btn--save" onClick={() => {
+          <button className={`app__regen-btn app__regen-btn--save ${cv.hasUnsavedChanges ? 'unsaved' : ''}`} onClick={() => {
             const currentName = cv.cvData.cvName || "Mi CV Principal";
             const name = prompt("¿Qué nombre le pondrás a este CV?", currentName);
             if (name !== null) {
               cv.saveToBackend(name, recipe, activeTemplate, composerMode);
             }
           }} disabled={cv.isSaving}>
-            <i className={`fa-solid ${cv.isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} /> {cv.isSaving ? 'Guardando...' : 'Guardar'}
+            <i className={`fa-solid ${cv.isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} /> 
+            {cv.isSaving ? ' Guardando...' : (cv.hasUnsavedChanges ? ' Guardar*' : ' Guardar')}
           </button>
           
           <button className="app__share-btn" onClick={handleShare}>

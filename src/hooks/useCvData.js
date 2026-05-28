@@ -25,6 +25,7 @@ export const defaultCV = blankCV;
 export const useCvData = (user) => {
   const [cvData, setCvData] = useState(blankCV);
   const [isSaving, setIsSaving] = useState(false);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // 1. Cargar datos de forma segura (Nube manda sobre Local)
   useEffect(() => {
@@ -56,58 +57,40 @@ export const useCvData = (user) => {
     fetchSupabaseData();
   }, [user]);
 
-  // 2. Guardar en Supabase y LocalStorage (con manejo de errores)
+  // 2. Guardar en LocalStorage y marcar cambios sin guardar
   useEffect(() => {
     try {
       localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
     } catch (e) {
       if (e.name === 'QuotaExceededError') {
         console.warn('LocalStorage lleno. Los datos solo se guardarán en la nube.');
-        // Opcional: Podríamos quitar la foto del localStorage para que el resto quepa
         const dataWithoutPhoto = { ...cvData, personalInfo: { ...cvData.personalInfo, photo: null } };
         try { localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(dataWithoutPhoto)); } catch {}
       }
     }
-    
-    if (!user) return;
-
-    const timer = setTimeout(async () => {
-      setIsSaving(true);
-      try {
-        await supabase
-          .from('cv_data')
-          .upsert({ 
-            user_id: user.id, 
-            content: cvData, 
-            is_primary: true,
-            updated_at: new Date().toISOString()
-          }, { onConflict: 'user_id, is_primary' });
-      } catch (err) {
-        console.error("Error al guardar en Supabase:", err);
-      }
-      setIsSaving(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, [cvData, user]);
+  }, [cvData]);
 
   /* ── Métodos de actualización ── */
+  const markUnsaved = () => setHasUnsavedChanges(true);
+
   const updatePersonal = (field, value) => {
     setCvData(d => ({ ...d, personalInfo: { ...d.personalInfo, [field]: value } }));
+    markUnsaved();
   };
 
   const setPhoto = (dataUrl) => {
-    // Si la imagen es muy grande (> 1MB aprox), intentamos avisar o procesar
-    // Por ahora, la guardamos y dejamos que el try-catch de arriba maneje el localstorage
     setCvData(d => ({ ...d, personalInfo: { ...d.personalInfo, photo: dataUrl } }));
+    markUnsaved();
   };
 
   const removePhoto = () => {
     setCvData(d => ({ ...d, personalInfo: { ...d.personalInfo, photo: null } }));
+    markUnsaved();
   };
 
   const addExperience = () => {
     setCvData(d => ({ ...d, experience: [...d.experience, { period: "", title: "", description: "" }] }));
+    markUnsaved();
   };
 
   const updateExperience = (i, field, value) => {
@@ -116,14 +99,17 @@ export const useCvData = (user) => {
       exp[i] = { ...exp[i], [field]: value };
       return { ...d, experience: exp };
     });
+    markUnsaved();
   };
 
   const removeExperience = (i) => {
     setCvData(d => ({ ...d, experience: d.experience.filter((_, idx) => idx !== i) }));
+    markUnsaved();
   };
 
   const addEducation = () => {
     setCvData(d => ({ ...d, education: [...d.education, { period: "", degree: "", institution: "" }] }));
+    markUnsaved();
   };
 
   const updateEducation = (i, field, value) => {
@@ -132,28 +118,34 @@ export const useCvData = (user) => {
       edu[i] = { ...edu[i], [field]: value };
       return { ...d, education: edu };
     });
+    markUnsaved();
   };
 
   const removeEducation = (i) => {
     setCvData(d => ({ ...d, education: d.education.filter((_, idx) => idx !== i) }));
+    markUnsaved();
   };
 
   const addSkill = (skill) => {
     if (!skill || !skill.trim()) return;
     setCvData(d => ({ ...d, skills: [...d.skills, skill.trim()] }));
+    markUnsaved();
   };
 
   const removeSkill = (i) => {
     setCvData(d => ({ ...d, skills: d.skills.filter((_, idx) => idx !== i) }));
+    markUnsaved();
   };
 
   const addLanguage = (lang) => {
     if (!lang || !lang.trim()) return;
     setCvData(d => ({ ...d, languages: [...d.languages, lang.trim()] }));
+    markUnsaved();
   };
 
   const removeLanguage = (i) => {
     setCvData(d => ({ ...d, languages: d.languages.filter((_, idx) => idx !== i) }));
+    markUnsaved();
   };
 
   const saveToBackend = async (customName = null, recipe = null, activeTemplate = null, composerMode = null) => {
@@ -171,6 +163,7 @@ export const useCvData = (user) => {
     }
 
     try {
+      // 1. Guardar o actualizar el CV principal
       await supabase
         .from('cv_data')
         .upsert({ 
@@ -179,6 +172,19 @@ export const useCvData = (user) => {
           is_primary: true,
           updated_at: new Date().toISOString()
         }, { onConflict: 'user_id, is_primary' });
+
+      // 2. Guardar en el historial de versiones (cv_versions)
+      const versionName = customName ? customName : `Versión ${new Date().toLocaleString()}`;
+      await supabase
+        .from('cv_versions')
+        .insert({
+          user_id: user.id,
+          name: versionName,
+          content: contentToSave,
+          created_at: new Date().toISOString()
+        });
+        
+      setHasUnsavedChanges(false);
     } catch (err) {
       console.error("Error al guardar manualmente:", err);
     }
@@ -189,6 +195,8 @@ export const useCvData = (user) => {
     cvData,
     setCvData,
     isSaving,
+    hasUnsavedChanges,
+    setHasUnsavedChanges,
     saveToBackend,
     updatePersonal,
     setPhoto,

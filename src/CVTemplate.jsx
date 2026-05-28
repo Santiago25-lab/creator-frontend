@@ -37,15 +37,15 @@ const SAVED_DESIGNS_KEY = 'creator_cv_saved_designs';
 /* ═══════════════════════════════════════════════════
    COMPONENTE PRINCIPAL
    ═══════════════════════════════════════════════════ */
-const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign }) => {
+const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId }) => {
   const { user, signOut } = useAuth();
 
   // ── Estado del CV (hook extraído con soporte Supabase) ──
-  const cv = useCvData(user);
+  const cv = useCvData(user, projectId);
   const { cvData, setCvData, isSaving } = cv;
 
   // ── Chat IA (hook extraído) ──
-  const chat = useChatIA(cvData, setCvData, user);
+  const chat = useChatIA(cvData, setCvData, user, projectId);
 
   // ── UI State ──
   const [activeTemplate, setActiveTemplate] = useState('resume-a');
@@ -706,15 +706,14 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign }) => {
           <button className="app__regen-btn" onClick={chat.regenerateCV} disabled={chat.isRegenerating}>
             <i className={`fa-solid ${chat.isRegenerating ? 'fa-spinner fa-spin' : 'fa-rotate'}`} /> {chat.isRegenerating ? 'Regenerando...' : 'Regenerar'}
           </button>
-          <button className={`app__regen-btn app__regen-btn--save ${cv.hasUnsavedChanges ? 'unsaved' : ''}`} onClick={() => {
-            const currentName = cv.cvData.cvName || "Mi CV Principal";
-            const name = prompt("¿Qué nombre le pondrás a este CV?", currentName);
-            if (name !== null) {
-              cv.saveToBackend(name, recipe, activeTemplate, composerMode);
-            }
-          }} disabled={cv.isSaving}>
-            <i className={`fa-solid ${cv.isSaving ? 'fa-spinner fa-spin' : 'fa-floppy-disk'}`} /> 
-            {cv.isSaving ? ' Guardando...' : (cv.hasUnsavedChanges ? ' Guardar*' : ' Guardar')}
+          <button className={`app__regen-btn app__regen-btn--save ${cv.hasUnsavedChanges ? 'unsaved' : 'saved'}`} disabled={true} style={{ opacity: 1 }}>
+            {cv.isSaving ? (
+              <><i className="fa-solid fa-spinner fa-spin" /> Guardando...</>
+            ) : cv.hasUnsavedChanges ? (
+              <><i className="fa-solid fa-circle-dot" /> Cambios sin guardar</>
+            ) : (
+              <><i className="fa-solid fa-cloud-check" style={{color: '#10b981'}} /> Guardado en la nube</>
+            )}
           </button>
           
           <button className="app__share-btn" onClick={handleShare}>

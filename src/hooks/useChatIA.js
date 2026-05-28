@@ -3,7 +3,7 @@ import { API_URLS } from '../services/api';
 import { mergeCvData } from '../utils/mergeCvData';
 import { supabase } from '../lib/supabase';
 
-export const useChatIA = (cvData, setCvData, user) => {
+export const useChatIA = (cvData, setCvData, user, projectId) => {
   const [chatMessages, setChatMessages] = useState([
     { role: 'assistant', content: '¡Hola! Soy tu redactor. Cuéntame sobre ti y yo optimizaré tu CV con lenguaje de alto impacto.' }
   ]);
@@ -16,8 +16,8 @@ export const useChatIA = (cvData, setCvData, user) => {
 
   // 1. Cargar historial desde Supabase al iniciar
   useEffect(() => {
-    if (!user) {
-      // Si no hay usuario, resetear chat al mensaje de bienvenida inicial
+    if (!user || !projectId) {
+      // Si no hay usuario o proyecto, resetear chat al mensaje de bienvenida inicial
       setChatMessages([
         { role: 'assistant', content: '¡Hola! Soy tu redactor. Cuéntame sobre ti y yo optimizaré tu CV con lenguaje de alto impacto.' }
       ]);
@@ -29,6 +29,7 @@ export const useChatIA = (cvData, setCvData, user) => {
         .from('chat_history')
         .select('role, content')
         .eq('user_id', user.id)
+        .eq('project_id', projectId)
         .order('created_at', { ascending: true });
 
       if (data && data.length > 0) {
@@ -37,7 +38,7 @@ export const useChatIA = (cvData, setCvData, user) => {
     };
 
     fetchHistory();
-  }, [user]);
+  }, [user, projectId]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -45,9 +46,10 @@ export const useChatIA = (cvData, setCvData, user) => {
 
   // Función auxiliar para guardar mensaje en DB
   const saveMessage = async (role, content) => {
-    if (!user) return;
+    if (!user || !projectId) return;
     await supabase.from('chat_history').insert({
       user_id: user.id,
+      project_id: projectId,
       role,
       content
     });

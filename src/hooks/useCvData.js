@@ -22,14 +22,14 @@ export const blankCV = {
 // Mantenemos una referencia por compatibilidad, pero vacía
 export const defaultCV = blankCV;
 
-export const useCvData = (user) => {
+export const useCvData = (user, projectId) => {
   const [cvData, setCvData] = useState(blankCV);
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
 
   // 1. Cargar datos de forma segura (Nube manda sobre Local)
   useEffect(() => {
-    if (!user) {
+    if (!user || !projectId) {
       setCvData(blankCV);
       localStorage.removeItem(CV_STORAGE_KEY);
       return;
@@ -37,38 +37,55 @@ export const useCvData = (user) => {
 
     const fetchSupabaseData = async () => {
       const { data, error } = await supabase
-        .from('cv_data')
+        .from('cv_projects')
         .select('content')
-        .eq('user_id', user.id)
-        .eq('is_primary', true)
+        .eq('id', projectId)
         .maybeSingle();
 
-      if (data && !error) {
-        // Usuario antiguo: restaurar su contenido
+      if (data && data.content && Object.keys(data.content).length > 0) {
         setCvData(data.content);
         localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(data.content));
       } else {
-        // Usuario nuevo o error: empezar de cero
+        // Proyecto nuevo sin contenido
         setCvData(blankCV);
-        localStorage.removeItem(CV_STORAGE_KEY);
       }
     };
 
     fetchSupabaseData();
-  }, [user]);
+  }, [user, projectId]);
 
-  // 2. Guardar en LocalStorage y marcar cambios sin guardar
+  // 2. Guardar en LocalStorage y autoguardado en BD (cada 2 seg si hay cambios)
   useEffect(() => {
     try {
       localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
     } catch (e) {
       if (e.name === 'QuotaExceededError') {
-        console.warn('LocalStorage lleno. Los datos solo se guardarán en la nube.');
         const dataWithoutPhoto = { ...cvData, personalInfo: { ...cvData.personalInfo, photo: null } };
         try { localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(dataWithoutPhoto)); } catch {}
       }
     }
-  }, [cvData]);
+
+    if (!user || !projectId || !hasUnsavedChanges) return;
+
+    const timer = setTimeout(async () => {
+      setIsSaving(true);
+      try {
+        await supabase
+          .from('cv_projects')
+          .update({ 
+            content: cvData, 
+            updated_at: new Date().toISOString()
+          })
+          .eq('id', projectId);
+        setHasUnsavedChanges(false);
+      } catch (err) {
+        console.error("Error al autoguardar:", err);
+      }
+      setIsSaving(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, [cvData, user, projectId, hasUnsavedChanges]);
 
   /* ── Métodos de actualización ── */
   const markUnsaved = () => setHasUnsavedChanges(true);
@@ -149,7 +166,7 @@ export const useCvData = (user) => {
   };
 
   const saveToBackend = async (customName = null, recipe = null, activeTemplate = null, composerMode = null) => {
-    if (!user) return;
+    if (!user || !projectId) return;
     setIsSaving(true);
     
     let contentToSave = cvData;
@@ -163,15 +180,14 @@ export const useCvData = (user) => {
     }
 
     try {
-      // 1. Guardar o actualizar el CV principal
+      // 1. Guardar o actualizar el CV principal en cv_projects
       await supabase
-        .from('cv_data')
-        .upsert({ 
-          user_id: user.id, 
+        .from('cv_projects')
+        .update({ 
           content: contentToSave, 
-          is_primary: true,
           updated_at: new Date().toISOString()
-        }, { onConflict: 'user_id, is_primary' });
+        })
+        .eq('id', projectId);
 
       // 2. Guardar en el historial de versiones (cv_versions)
       const versionName = customName ? customName : `Versión ${new Date().toLocaleString()}`;

@@ -13,9 +13,10 @@
  * @returns {Object} — CV fusionado
  */
 export const mergeCvData = (current, incoming) => ({
+  ...current,
   personalInfo: {
     ...(incoming.personalInfo || current.personalInfo),
-    photo: current.personalInfo.photo,  // Siempre preservar la foto
+    photo: current.personalInfo?.photo,  // Siempre preservar la foto
   },
   experience: incoming.experience || current.experience,
   education:  incoming.education  || current.education,

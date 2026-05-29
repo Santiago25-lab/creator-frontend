@@ -45,7 +45,10 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
   const { cvData, setCvData, isSaving } = cv;
 
   // ── Chat IA (hook extraído) ──
-  const chat = useChatIA(cvData, setCvData, user, projectId);
+  const chat = useChatIA(cvData, (newCvData) => {
+    setCvData(newCvData);
+    cv.setHasUnsavedChanges(true);
+  }, user, projectId);
 
   // ── UI State ──
   const [activeTemplate, setActiveTemplate] = useState('resume-a');

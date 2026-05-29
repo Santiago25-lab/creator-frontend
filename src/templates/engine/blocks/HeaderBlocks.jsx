@@ -34,7 +34,7 @@ export const SidebarPhotoHeader = ({ data, theme }) => (
         alt={data.name || 'Foto de perfil'}
       />
     </div>
-    <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: theme.primaryColor, margin: '0 0 4px', lineHeight: 1.2 }}>{data.name}</h1>
+    <h1 style={{ fontSize: '1.4rem', fontWeight: 800, color: theme.primaryColor, margin: '0 0 4px', lineHeight: 1.2, wordBreak: 'break-word' }}>{data.name}</h1>
     <p style={{ fontSize: '0.8rem', letterSpacing: '2px', textTransform: 'uppercase', color: `${theme.textColor}99`, fontWeight: 600 }}>{data.title}</p>
   </div>
 );
@@ -59,7 +59,7 @@ export const CenteredCleanHeader = ({ data, theme }) => (
         />
       </div>
     )}
-    <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: theme.textColor, margin: 0, textTransform: 'uppercase', letterSpacing: '3px' }}>{data.name}</h1>
+    <h1 style={{ fontSize: '2.8rem', fontWeight: 900, color: theme.textColor, margin: 0, textTransform: 'uppercase', letterSpacing: '3px', wordBreak: 'break-word' }}>{data.name}</h1>
     <p style={{ fontSize: '1rem', letterSpacing: '4px', textTransform: 'uppercase', color: theme.primaryColor, marginTop: '8px', fontWeight: 600 }}>{data.title}</p>
     {data.aboutMe && (
       <p style={{ fontSize: '0.85rem', color: `${theme.textColor}88`, marginTop: '18px', maxWidth: '550px', margin: '18px auto 0', lineHeight: 1.7 }}>{data.aboutMe}</p>
@@ -87,7 +87,7 @@ export const BoldEditorialHeader = ({ data, theme }) => (
         />
       </div>
     )}
-    <h1 style={{ fontSize: '3.2rem', fontWeight: 900, lineHeight: 0.95, color: theme.textColor, textTransform: 'uppercase', letterSpacing: '-2px', margin: 0 }}>{data.name}</h1>
+    <h1 style={{ fontSize: '3.2rem', fontWeight: 900, lineHeight: 0.95, color: theme.textColor, textTransform: 'uppercase', letterSpacing: '-2px', margin: 0, wordBreak: 'break-word' }}>{data.name}</h1>
     {data.title && (
       <span style={{ display: 'inline-block', marginTop: '14px', padding: '6px 18px', background: `${theme.primaryColor}15`, border: `1.5px solid ${theme.primaryColor}44`, borderRadius: '20px', fontSize: '0.8rem', fontWeight: 700, color: theme.primaryColor, letterSpacing: '1px', textTransform: 'uppercase' }}>{data.title}</span>
     )}
@@ -165,7 +165,7 @@ export const DarkImpactHeader = ({ data, theme }) => (
 export const NeonGradientHeader = ({ data, theme }) => (
   <div style={{ padding: '50px 40px 30px', borderBottom: `1px solid ${theme.primaryColor}22`, display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
     <div style={{ flex: 1 }}>
-      <h1 style={{ fontSize: '2.8rem', fontWeight: 900, margin: 0, color: theme.primaryColor, lineHeight: 1.1 }}>{data.name}</h1>
+      <h1 style={{ fontSize: '2.8rem', fontWeight: 900, margin: 0, color: theme.primaryColor, lineHeight: 1.1, wordBreak: 'break-word' }}>{data.name}</h1>
       <h3 style={{ fontSize: '1rem', fontWeight: 700, color: theme.primaryColor, marginTop: '8px', letterSpacing: '1px' }}>{data.title}</h3>
       <div style={{ display: 'flex', gap: '12px', marginTop: '18px', flexWrap: 'wrap' }}>
         {data.email && <span style={{ fontSize: '0.75rem', color: `${theme.textColor}99` }}>✉️ {data.email}</span>}

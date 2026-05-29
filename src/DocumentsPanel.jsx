@@ -60,7 +60,10 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('userId', user.id); // Enviar el ID del dueño
-    if (projectId) formData.append('projectId', projectId); // Vincular al proyecto actual
+    if (projectId) {
+      formData.append('projectId', projectId); // Vincular al proyecto actual
+      formData.append('project_id', projectId); // Por si el backend usa snake_case
+    }
     if (description.trim()) formData.append('description', description.trim());
 
     try {

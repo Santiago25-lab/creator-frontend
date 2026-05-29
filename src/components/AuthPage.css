@@ -23,6 +23,7 @@
   
   /* Text */
   --on-surface: #e7e0ed;                 /* Bright warm white text */
+  --text-on-surface: #ffffff;            /* High contrast white text for titles */
   --on-surface-variant: #cbc3d7;         /* Medium/muted text */
   --on-primary: #3c0091;                 /* Text on lilac */
   --text-dim: #958ea0;                   /* Subtitles/low opacity */
@@ -84,7 +85,7 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at center, rgba(21, 18, 27, 0.45) 0%, rgba(15, 12, 21, 0.9) 100%);
+  background: radial-gradient(circle at center, rgba(21, 18, 27, 0.75) 0%, rgba(15, 12, 21, 0.95) 100%);
   z-index: 2;
 }
 
@@ -309,9 +310,9 @@
 
 /* Form Card - Glassmorphism translucent dark panel */
 .auth-card-panel {
-  background-color: rgba(25, 31, 49, 0.45);
-  backdrop-filter: var(--backdrop-blur);
-  -webkit-backdrop-filter: var(--backdrop-blur);
+  background-color: rgba(15, 18, 28, 0.85);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
   padding: 30px;
   border-radius: var(--border-radius-lg);
   border: 1px solid var(--panel-border);

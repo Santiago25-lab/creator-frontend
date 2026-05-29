@@ -832,15 +832,16 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
           <button className="app__regen-btn" onClick={chat.regenerateCV} disabled={chat.isRegenerating}>
             <i className={`fa-solid ${chat.isRegenerating ? 'fa-spinner fa-spin' : 'fa-rotate'}`} /> {chat.isRegenerating ? 'Regenerando...' : 'Regenerar'}
           </button>
-          <button className={`app__regen-btn app__regen-btn--save ${cv.hasUnsavedChanges ? 'unsaved' : 'saved'}`} disabled={true} style={{ opacity: 1 }}>
+          
+          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '500', color: cv.isSaving ? 'var(--text-primary)' : (cv.hasUnsavedChanges ? 'var(--text-dim)' : '#10b981'), padding: '0 12px' }}>
             {cv.isSaving ? (
               <><i className="fa-solid fa-spinner fa-spin" /> Guardando...</>
             ) : cv.hasUnsavedChanges ? (
               <><i className="fa-solid fa-circle-dot" /> Cambios sin guardar</>
             ) : (
-              <><i className="fa-solid fa-cloud-check" style={{color: '#10b981'}} /> Guardado en la nube</>
+              <><i className="fa-solid fa-cloud-check" /> Guardado en la nube</>
             )}
-          </button>
+          </div>
           
           <button className="app__share-btn" onClick={handleShare}>
             <i className="fa-solid fa-link" /> Compartir
@@ -940,13 +941,20 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
 
       {/* Share Toast */}
       {showShareToast && (
-        <div className="share-toast">
-          <div className="share-toast-icon">
-            <i className="fa-solid fa-check"></i>
-          </div>
-          <div className="share-toast-content">
-            <h4>¡Enlace copiado!</h4>
-            <p>Comparte tu CV en línea: <span>{shareLink}</span></p>
+        <div 
+          onClick={() => setShowShareToast(false)} 
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '80px', pointerEvents: 'auto', background: 'transparent' }}
+        >
+          <div className="share-toast" onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 24px', borderRadius: '12px', animation: 'slideDown 0.3s ease-out' }}>
+            <div className="share-toast-icon" style={{ background: '#10b98120', color: '#10b981', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+              <i className="fa-solid fa-check"></i>
+            </div>
+            <div className="share-toast-content">
+              <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>¡Enlace copiado!</h4>
+              <p style={{ margin: 0, color: 'var(--text-dim)', fontSize: '14px' }}>
+                Comparte tu CV en línea: <span style={{ background: 'var(--bg-body)', color: 'var(--color-primary)', padding: '4px 8px', borderRadius: '4px', marginLeft: '6px' }}>{shareLink}</span>
+              </p>
+            </div>
           </div>
         </div>
       )}

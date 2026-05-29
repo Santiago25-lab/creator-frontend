@@ -196,7 +196,7 @@ export const useCvData = (user, projectId) => {
 
       // 2. Guardar en el historial de versiones (cv_versions)
       const versionName = customName ? customName : `Versión ${new Date().toLocaleString()}`;
-      await supabase
+      const { error } = await supabase
         .from('cv_versions')
         .insert({
           user_id: user.id,
@@ -204,6 +204,10 @@ export const useCvData = (user, projectId) => {
           content: contentToSave,
           created_at: new Date().toISOString()
         });
+        
+      if (error) {
+        alert("Error al guardar la fotografía. ¿Ejecutaste el script SQL de permisos (RLS) para la tabla cv_versions?\nDetalle: " + error.message);
+      }
         
       setHasUnsavedChanges(false);
     } catch (err) {

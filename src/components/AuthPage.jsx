@@ -96,37 +96,14 @@ const AuthPage = () => {
 
   return (
     <main className="auth-main-layout">
-      {/* Left Side: Vibrant Creative Visual */}
-      <section className="auth-creative-section">
-        {/* Abstract Gradient Background Elements */}
-        <div className="auth-creative-gradients">
-          <div className="gradient-blob gradient-blob-1"></div>
-          <div className="gradient-blob gradient-blob-2"></div>
-        </div>
-        
-        <div className="auth-creative-content">
-          <div className="auth-creative-image-container">
-            <img 
-              alt="Creative Professional Collaboration" 
-              className="creative-img" 
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuC9oV41kxDDjaQqN9xfsvn1kobr2q7JaQptVkbLF6H1iP4qFR0Rlqn3VAiQSaaW-8UVHkndJ1BNEqxnZknaqmLTec0qeRoPPlf1bgSP2xHslBxX3L230yXHkucmnLJgTl7eHjfKlbu3K0JBwCCzwHxPGX7f3CGV229EM2I8jjQJLIVnMS3afONtqGpGXvmsX9bWiQ9r7x_MX_7o5I-mj9XOlnBuKVl_I7TNclwMEx8Kq_yYSzRs6G6OSllNoIrq6F6g8iG5kcNdaTw"
-            />
-          </div>
-          <h1 className="creative-title">
-            Impulsa tu carrera con CreatorCV
-          </h1>
-          <p className="creative-subtitle">
-            Diseña el futuro que mereces con herramientas de vanguardia creadas para profesionales creativos.
-          </p>
-        </div>
+      {/* Video de Fondo */}
+      <video className="auth-bg-video" autoPlay loop muted playsInline>
+        <source src="/background.mp4" type="video/mp4" />
+        Your browser does not support the video tag.
+      </video>
+      <div className="auth-bg-overlay"></div>
 
-        {/* Floating Decorative Badge */}
-        <div className="creative-badge">
-          <span className="badge-text">Inspiración</span>
-        </div>
-      </section>
-
-      {/* Right Side: Login Form */}
+      {/* Formulario de Login / Registro Centrado */}
       <section className="auth-form-section">
         <div className="auth-form-container">
           {/* Top Header & Logo */}

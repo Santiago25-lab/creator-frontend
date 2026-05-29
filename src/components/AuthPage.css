@@ -66,6 +66,28 @@
   position: relative;
 }
 
+/* Background video styling */
+.auth-bg-video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+}
+
+/* Dark gradient overlay on top of video */
+.auth-bg-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at center, rgba(21, 18, 27, 0.45) 0%, rgba(15, 12, 21, 0.9) 100%);
+  z-index: 2;
+}
+
 /* Base grid pattern for background */
 .auth-main-layout::before {
   content: '';
@@ -75,7 +97,7 @@
     radial-gradient(circle at 100% 0%, rgba(160, 120, 255, 0.08) 0%, transparent 40%),
     radial-gradient(circle at 0% 100%, rgba(76, 215, 246, 0.08) 0%, transparent 40%);
   pointer-events: none;
-  z-index: 1;
+  z-index: 3;
 }
 
 /* ==========================================================================
@@ -215,11 +237,12 @@
    ========================================================================== */
 .auth-form-section {
   width: 100%;
+  min-height: 100vh;
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 32px;
-  background-color: var(--surface);
+  background-color: transparent;
   position: relative;
   z-index: 5;
   overflow-y: auto;
@@ -722,25 +745,16 @@
   box-shadow: 0 8px 20px var(--primary-glow);
 }
 
-/* ==========================================================================
-   Responsive Breakpoints
-   ========================================================================== */
 @media (min-width: 992px) {
   .auth-main-layout {
     height: 100vh;
     overflow: hidden;
   }
-  .auth-creative-section {
-    display: flex;
-    height: 100%;
-  }
   .auth-form-section {
-    width: 50%;
+    width: 100%;
     height: 100%;
-    overflow-y: auto;
-  }
-  .creative-title {
-    font-size: 46px;
-    line-height: 54px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }

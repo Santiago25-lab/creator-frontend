@@ -14,6 +14,11 @@ function AppContent() {
     const savedTheme = getSavedTheme();
     applyTheme(savedTheme.accent, savedTheme.mode);
 
+    // Limpiar hash residual si se recarga la página
+    if (window.location.hash === '#project') {
+      window.history.replaceState(null, '', window.location.pathname);
+    }
+
     // Navegación con botones del navegador
     const handlePopState = (event) => {
       if (event.state && event.state.modeData) {
@@ -32,8 +37,11 @@ function AppContent() {
   };
 
   const handleBack = () => {
-    window.history.pushState(null, '', window.location.pathname);
-    setSelectedMode(null);
+    if (window.location.hash === '#project') {
+      window.history.back(); // Esto disparará el popstate y seteará el modo en null
+    } else {
+      setSelectedMode(null);
+    }
   };
 
   if (loading) {

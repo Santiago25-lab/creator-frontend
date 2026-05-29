@@ -28,7 +28,17 @@ function AppContent() {
       }
     };
     window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
+
+    // Prevenir que soltar un archivo en la ventana recargue la página y borre el progreso
+    const preventDrop = (e) => e.preventDefault();
+    window.addEventListener('dragover', preventDrop);
+    window.addEventListener('drop', preventDrop);
+
+    return () => {
+      window.removeEventListener('popstate', handlePopState);
+      window.removeEventListener('dragover', preventDrop);
+      window.removeEventListener('drop', preventDrop);
+    };
   }, []);
 
   const handleSelectMode = (modeData) => {

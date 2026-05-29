@@ -20,7 +20,8 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
   const [showToast, setShowToast] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [viewer, setViewer] = useState(null);
+  const [viewer, setViewer] = useState(null); // { url, type, name }
+  const [sessionDocIds, setSessionDocIds] = useState([]); // IDs de docs subidos en esta sesión
   const [uploadError, setUploadError] = useState('');
   const [description, setDescription] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -42,7 +43,11 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
       if (res.ok) {
         let docs = await res.json();
         if (viewMode === 'project' && projectId) {
-          docs = docs.filter(d => String(d.projectId) === String(projectId));
+          docs = docs.filter(d => 
+            String(d.projectId) === String(projectId) || 
+            String(d.project_id) === String(projectId) ||
+            sessionDocIds.includes(d.id)
+          );
         }
         setDocuments(docs);
       }
@@ -67,9 +72,25 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
     if (description.trim()) formData.append('description', description.trim());
 
     try {
+      // Registrar documentos antes de subir
+      const preRes = await fetch(`${API_URLS.documents}?userId=${user.id}`);
+      const preDocs = preRes.ok ? await preRes.json() : [];
+
       const res = await fetch(`${API_URLS.documents}/upload`, { method: 'POST', body: formData });
+      
       if (res.ok) { 
         setDescription(''); 
+        
+        // Registrar documentos después de subir para encontrar el nuevo
+        const postRes = await fetch(`${API_URLS.documents}?userId=${user.id}`);
+        const postDocs = postRes.ok ? await postRes.json() : [];
+        const oldIds = new Set(preDocs.map(d => d.id));
+        const newIds = postDocs.filter(d => !oldIds.has(d.id)).map(d => d.id);
+        
+        if (newIds.length > 0) {
+          setSessionDocIds(prev => [...prev, ...newIds]);
+        }
+
         await fetchDocuments(); 
         if (onDocumentChange) onDocumentChange();
       }

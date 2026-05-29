@@ -68,10 +68,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
     } catch { return DEFAULT_RECIPE; }
   });
 
-  // Mantener el diseño actual inyectado en cvData para que el temporizador lo autoguarde en Supabase
-  useEffect(() => {
-    cv.setCvData(prev => ({ ...prev, activeTemplate, composerMode, recipe }));
-  }, [activeTemplate, composerMode, recipe]);
+
 
   // Load layout configurations from cvData if available
   useEffect(() => {

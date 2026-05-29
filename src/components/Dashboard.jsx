@@ -148,7 +148,7 @@ const Dashboard = ({ onSelectMode }) => {
       <div className="dashboard-content">
         {!isCreatingProject ? (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
+            <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', gap: '16px' }}>
               <div>
                 <h1 className="dashboard-title" style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 10px 0', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
                   ¡Bienvenido a CreatorCV!

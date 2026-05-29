@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabase';
 import './AuthPage.css';
 
 const AuthPage = () => {
@@ -14,9 +15,48 @@ const AuthPage = () => {
 
   const { signIn, signUp } = useAuth();
 
+  const getPasswordStrength = (pwd) => {
+    if (!pwd) return { score: 0, text: '', color: 'transparent' };
+    let score = 0;
+    if (pwd.length >= 8) score++;
+    if (/[A-Z]/.test(pwd)) score++;
+    if (/[a-z]/.test(pwd)) score++;
+    if (/[0-9]/.test(pwd)) score++;
+    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+
+    if (score < 3) return { score, text: 'Débil', color: '#ef4444' };
+    if (score < 5) return { score, text: 'Media', color: '#f59e0b' };
+    return { score, text: 'Fuerte', color: '#10b981' };
+  };
+
+  const handleOAuth = async (provider) => {
+    try {
+      setLoading(true);
+      const { error } = await supabase.auth.signInWithOAuth({ provider });
+      if (error) throw error;
+    } catch (err) {
+      setError(err.message);
+      setLoading(false);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+
+    // Prevenir inyecciones XSS / caracteres no deseados en registro y controlar longitudes
+    if (!isLogin) {
+      if (fullName.length > 50) return setError("El nombre no puede exceder 50 caracteres.");
+      if (/[<>{}[\]\\]/.test(fullName)) return setError("El nombre contiene caracteres inválidos.");
+      if (email.length > 100) return setError("El correo es demasiado largo.");
+      if (password.length > 100) return setError("La contraseña es demasiado larga.");
+      
+      const pwdStatus = getPasswordStrength(password);
+      if (pwdStatus.score < 5) {
+        return setError("Tu contraseña no es segura. Debe contener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo especial.");
+      }
+    }
+
     setLoading(true);
 
     try {
@@ -73,9 +113,9 @@ const AuthPage = () => {
         <div className="auth-form-container">
           {/* Top Header & Logo */}
           <div className="auth-header-wrapper">
-            <div className="auth-logo-brand">
-              <span className="material-symbols-outlined logo-icon">auto_awesome</span>
-              <span className="logo-text">CreatorCV</span>
+            <div className="auth-logo-brand" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05))', padding: '10px 18px', borderRadius: '12px', border: '1px solid rgba(168, 85, 247, 0.15)', marginBottom: '24px', display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
+              <span className="material-symbols-outlined logo-icon" style={{ color: 'var(--color-primary)', fontSize: '24px' }}>auto_awesome</span>
+              <span className="logo-text" style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px', margin: 0 }}>CreatorCV</span>
             </div>
             <h2 className="auth-welcome-title">
               {isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
@@ -89,16 +129,12 @@ const AuthPage = () => {
           <div className="auth-card-panel">
             {/* Social Logins */}
             <div className="social-logins-grid">
-              <button type="button" className="social-btn">
-                <img 
-                  alt="Google" 
-                  className="social-logo-img" 
-                  src="https://lh3.googleusercontent.com/aida-public/AB6AXuDFG8dq_eWsVGMT-JocSiLczXgT3CuiZ6ELtheKEk0-1F5m4fsteuNQD4fokZkCIv6ZlbnQ8neQ1xYpl9pKeM7SSfZgivmx_9G7FSKJe-j79vQ9HJ3Jr4YH1dtg2ZnVP2gKidwhL2mCN_YK_OQnvM0VGSCCQJlcrBbOkxKle9bXWrF1CHZuT_pVWW1VAfTOm61lWNgrYPhkKscJf2xI6o-JMiSiTs_GnSpWChyF0HpBGLoy-SEZVE2d2Y6fVPbX3UcVaIP0bRMuDAE"
-                />
+              <button type="button" className="social-btn" onClick={() => handleOAuth('google')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: '500' }}>
+                <i className="fa-brands fa-google" style={{ color: '#ea4335', fontSize: '18px' }}></i>
                 Google
               </button>
-              <button type="button" className="social-btn">
-                <span className="material-symbols-outlined social-icon">account_circle</span>
+              <button type="button" className="social-btn" onClick={() => handleOAuth('linkedin_oidc')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: '500' }}>
+                <i className="fa-brands fa-linkedin" style={{ color: '#0a66c2', fontSize: '18px' }}></i>
                 LinkedIn
               </button>
             </div>
@@ -123,6 +159,7 @@ const AuthPage = () => {
                     value={fullName}
                     onChange={(e) => setFullName(e.target.value)}
                     required
+                    maxLength={50}
                   />
                 </div>
               )}
@@ -137,6 +174,7 @@ const AuthPage = () => {
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
+                  maxLength={100}
                 />
               </div>
 
@@ -151,6 +189,7 @@ const AuthPage = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
+                    maxLength={100}
                   />
                   <button 
                     className="password-toggle-btn" 
@@ -162,9 +201,26 @@ const AuthPage = () => {
                     </span>
                   </button>
                 </div>
+                {/* Evaluador de Contraseña */}
+                {!isLogin && password.length > 0 && (() => {
+                  const strength = getPasswordStrength(password);
+                  return (
+                    <div style={{ marginTop: '10px', fontSize: '11px', fontWeight: '500' }}>
+                      <div style={{ display: 'flex', gap: '4px', height: '4px', marginBottom: '6px' }}>
+                        {[1, 2, 3, 4, 5].map((level) => (
+                          <div key={level} style={{ flex: 1, background: level <= strength.score ? strength.color : 'var(--border-color)', borderRadius: '2px', transition: 'all 0.3s' }}></div>
+                        ))}
+                      </div>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <span style={{ color: strength.color, fontWeight: 'bold' }}>{strength.text}</span>
+                        <span style={{ color: 'var(--text-dim)' }}>8+ caracs, 1A, 1a, 1#, 1!@</span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
-              {error && <div className="auth-error-message">{error}</div>}
+              {error && <div className="auth-error-message" style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', background: 'rgba(239, 68, 68, 0.1)', padding: '10px', borderRadius: '8px', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)' }}><i className="fa-solid fa-triangle-exclamation"></i> {error}</div>}
 
               {/* Utils Row */}
               {isLogin && (

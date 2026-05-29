@@ -162,6 +162,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
   // ── Historial de Versiones ──
   const [historyVersions, setHistoryVersions] = useState([]);
   const [loadingVersions, setLoadingVersions] = useState(false);
+  const [activeVersionId, setActiveVersionId] = useState(null);
 
   useEffect(() => {
     if (activeTab === 'history' && user) {
@@ -179,13 +180,20 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
     }
   }, [activeTab, user]);
 
-  const restoreVersion = (version) => {
-    if (window.confirm("¿Seguro que quieres restaurar esta versión? Se reemplazará el contenido actual de este proyecto.")) {
+  const restoreVersion = async (version) => {
+    const confirm = await customConfirm("¿Seguro que quieres restaurar esta versión? Se reemplazará el contenido actual de este proyecto.");
+    if (confirm) {
+      setActiveVersionId(version.id);
       cv.setCvData(version.content);
       cv.setHasUnsavedChanges(true);
       if (version.content.recipe) setRecipe(version.content.recipe);
-      if (version.content.activeTemplate) setActiveTemplate(version.content.activeTemplate);
-      if (version.content.composerMode !== undefined) setComposerMode(version.content.composerMode);
+      if (version.content.activeTemplate) {
+        cv.updateConfig({ activeTemplate: version.content.activeTemplate });
+        setActiveTemplate(version.content.activeTemplate);
+      }
+      if (version.content.composerMode !== undefined) {
+        setComposerMode(version.content.composerMode);
+      }
       setActiveTab('editor');
     }
   };
@@ -761,7 +769,10 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                     if (user) {
                       setLoadingVersions(true);
                       const { data } = await supabase.from('cv_versions').select('id, name, created_at, content').eq('user_id', user.id).order('created_at', { ascending: false });
-                      if (data) setHistoryVersions(data);
+                      if (data) {
+                        setHistoryVersions(data);
+                        if (data.length > 0) setActiveVersionId(data[0].id);
+                      }
                       setLoadingVersions(false);
                     }
                   }
@@ -788,30 +799,33 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                   {/* Línea conectora */}
                   <div style={{ position: 'absolute', left: '16px', top: '10px', bottom: '10px', width: '2px', background: 'var(--border-color)', zIndex: 0 }}></div>
                   
-                  {historyVersions.map((version, idx) => (
-                    <div key={version.id} style={{ position: 'relative', paddingLeft: '40px', zIndex: 1 }}>
-                      {/* Punto en la línea de tiempo */}
-                      <div style={{ position: 'absolute', left: '11px', top: '16px', width: '12px', height: '12px', borderRadius: '50%', background: idx === 0 ? 'var(--color-primary)' : 'var(--bg-card)', border: `2px solid ${idx === 0 ? 'var(--color-primary)' : 'var(--border-color)'}`, boxShadow: '0 0 0 4px var(--bg-body)' }}></div>
-                      
-                      <div style={{ padding: '16px', borderRadius: '12px', border: `1px solid ${idx === 0 ? 'var(--color-primary)' : 'var(--border-color)'}`, background: 'var(--bg-card)', boxShadow: idx === 0 ? '0 4px 12px rgba(99, 102, 241, 0.05)' : 'none', transition: 'all 0.2s' }}
-                           onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--color-primary)'; }}
-                           onMouseOut={e => { e.currentTarget.style.borderColor = idx === 0 ? 'var(--color-primary)' : 'var(--border-color)'; }}
-                      >
-                        <h4 style={{ margin: '0 0 6px 0', fontSize: '15px', color: 'var(--text-primary)' }}>{version.name || 'Versión guardada'}</h4>
-                        <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                          <i className="fa-regular fa-clock" /> {new Date(version.created_at).toLocaleString()}
-                        </p>
-                        <button 
-                          onClick={() => restoreVersion(version)}
-                          style={{ padding: '10px 14px', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '13px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'background 0.2s', fontWeight: '500' }}
-                          onMouseOver={e => { e.currentTarget.style.background = 'var(--border-color)'; }}
-                          onMouseOut={e => { e.currentTarget.style.background = 'var(--bg-body)'; }}
+                  {historyVersions.map((version, idx) => {
+                    const isActive = activeVersionId === version.id || (idx === 0 && activeVersionId === null);
+                    return (
+                      <div key={version.id} style={{ position: 'relative', paddingLeft: '40px', zIndex: 1 }}>
+                        {/* Punto en la línea de tiempo */}
+                        <div style={{ position: 'absolute', left: '11px', top: '16px', width: '12px', height: '12px', borderRadius: '50%', background: isActive ? 'var(--color-primary)' : 'var(--bg-card)', border: `2px solid ${isActive ? 'var(--color-primary)' : 'var(--border-color)'}`, boxShadow: '0 0 0 4px var(--bg-body)' }}></div>
+                        
+                        <div style={{ padding: '16px', borderRadius: '12px', border: `1px solid ${isActive ? 'var(--color-primary)' : 'var(--border-color)'}`, background: 'var(--bg-card)', boxShadow: isActive ? '0 4px 12px rgba(99, 102, 241, 0.05)' : 'none', transition: 'all 0.2s' }}
+                             onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--color-primary)'; }}
+                             onMouseOut={e => { e.currentTarget.style.borderColor = isActive ? 'var(--color-primary)' : 'var(--border-color)'; }}
                         >
-                          <i className="fa-solid fa-rotate-left" style={{ color: 'var(--color-primary)' }}/> Restaurar esta versión
-                        </button>
+                          <h4 style={{ margin: '0 0 6px 0', fontSize: '15px', color: 'var(--text-primary)' }}>{version.name || 'Versión guardada'}</h4>
+                          <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                            <i className="fa-regular fa-clock" /> {new Date(version.created_at).toLocaleString()}
+                          </p>
+                          <button 
+                            onClick={() => { restoreVersion(version); setActiveVersionId(version.id); }}
+                            style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', padding: 0, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s', fontWeight: isActive ? 'bold' : 'normal' }}
+                            onMouseOver={e => e.currentTarget.style.color = 'var(--color-primary)'}
+                            onMouseOut={e => e.currentTarget.style.color = 'var(--text-primary)'}
+                          >
+                            <i className="fa-solid fa-rotate-left" /> Restaurar esta versión
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               ) : (
                 <div style={{ textAlign: 'center', padding: '50px 20px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px dashed var(--border-color)' }}>

@@ -61,15 +61,20 @@ const SharedCV = ({ projectId }) => {
     <div className="shared-cv-container">
       {/* Barra superior de promoción */}
       <div className="shared-cv-promo">
-        <div className="promo-brand">
-          <i className="fa-solid fa-file-signature"></i> CreatorCV
+        <div className="promo-brand" onClick={() => window.location.href = '/'}>
+          <i className="fa-solid fa-file-signature" style={{ background: 'linear-gradient(135deg, #d0bcff, #4cd7f6)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}></i> CreatorCV
         </div>
         <div className="promo-text">
           Este currículum fue creado con CreatorCV. ¡Destaca profesionalmente!
         </div>
-        <button className="promo-btn" onClick={() => window.location.href = '/'}>
-          Crear mi CV Gratis
-        </button>
+        <div className="promo-actions">
+          <button className="promo-btn-login" onClick={() => window.location.href = '/'}>
+            Iniciar Sesión
+          </button>
+          <button className="promo-btn-signup" onClick={() => window.location.href = '/'}>
+            Crear CV Gratis
+          </button>
+        </div>
       </div>
 
       {/* Visor del CV centrado */}

@@ -1,6 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
-import CVPreview from '../templates/engine/CVPreview';
+import ResumeA from '../templates/ResumeA';
+import ResumeB from '../templates/ResumeB';
+import ResumeC from '../templates/ResumeC';
+import ResumeD from '../templates/ResumeD';
+import ResumeE from '../templates/ResumeE';
+import ResumeF from '../templates/ResumeF';
+import ComposedTemplate from '../templates/engine/ComposedTemplate';
 import './SharedCV.css';
 
 const SharedCV = ({ projectId }) => {
@@ -68,12 +74,22 @@ const SharedCV = ({ projectId }) => {
 
       {/* Visor del CV centrado */}
       <div className="shared-cv-viewer">
-        <CVPreview 
-          data={cvData} 
-          design={cvData.recipe} 
-          activeTemplate={cvData.activeTemplate || 'modern'} 
-          zoom={1}
-        />
+        {cvData.composerMode && cvData.recipe ? (
+          <ComposedTemplate data={cvData} recipe={cvData.recipe} zoom={1} />
+        ) : (
+          (() => {
+            const activeTemplate = cvData.activeTemplate || 'resume-a';
+            switch (activeTemplate) {
+              case 'resume-a': return <ResumeA data={cvData} zoom={1} />;
+              case 'resume-b': return <ResumeB data={cvData} zoom={1} />;
+              case 'resume-c': return <ResumeC data={cvData} zoom={1} />;
+              case 'resume-d': return <ResumeD data={cvData} zoom={1} />;
+              case 'resume-e': return <ResumeE data={cvData} zoom={1} />;
+              case 'resume-f': return <ResumeF data={cvData} zoom={1} />;
+              default: return <ResumeA data={cvData} zoom={1} />;
+            }
+          })()
+        )}
       </div>
     </div>
   );

@@ -43,6 +43,8 @@ const AuthPage = () => {
       setLoading(true);
       const { error } = await supabase.auth.signInWithOAuth({ provider });
       if (error) throw error;
+      // Normalmente el navegador redirige a la página del proveedor, pero por si falla:
+      setTimeout(() => setLoading(false), 5000);
     } catch (err) {
       setError(err.message);
       setLoading(false);
@@ -71,12 +73,17 @@ const AuthPage = () => {
     setLoading(true);
 
     try {
+      const timeoutPromise = new Promise((_, reject) => 
+        setTimeout(() => reject(new Error("El servidor tardó demasiado en responder. Intenta de nuevo.")), 15000)
+      );
+
+      let result;
       if (isLogin) {
-        const { error } = await signIn(email, password);
-        if (error) throw error;
+        result = await Promise.race([ signIn(email, password), timeoutPromise ]);
+        if (result.error) throw result.error;
       } else {
-        const { error } = await signUp(email, password, fullName);
-        if (error) throw error;
+        result = await Promise.race([ signUp(email, password, fullName), timeoutPromise ]);
+        if (result.error) throw result.error;
         sessionStorage.setItem('showSuccessPopup', 'true');
         setShowSuccessPopup(true);
       }

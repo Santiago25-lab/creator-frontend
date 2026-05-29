@@ -123,21 +123,21 @@ const AuthPage = () => {
       <section className="auth-form-section">
         <div className="auth-form-container">
           {/* Top Header & Logo */}
-          <div className="auth-header-wrapper" style={{ paddingTop: '10px' }}>
-            <div className="auth-logo-brand" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
-              <span className="material-symbols-outlined logo-icon" style={{ color: 'var(--color-primary)', fontSize: '28px', background: 'rgba(99, 102, 241, 0.1)', padding: '8px', borderRadius: '10px' }}>auto_awesome</span>
-              <span className="logo-text" style={{ fontSize: '24px', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px', margin: 0 }}>CreatorCV</span>
+          <div className="auth-header-wrapper" style={{ paddingTop: '0px', marginBottom: '16px' }}>
+            <div className="auth-logo-brand" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
+              <span className="material-symbols-outlined logo-icon" style={{ color: 'var(--color-primary)', fontSize: '24px', background: 'rgba(99, 102, 241, 0.1)', padding: '6px', borderRadius: '8px' }}>auto_awesome</span>
+              <span className="logo-text" style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px', margin: 0 }}>CreatorCV</span>
             </div>
-            <h2 className="auth-welcome-title">
+            <h2 className="auth-welcome-title" style={{ fontSize: '24px', marginBottom: '4px' }}>
               {isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
             </h2>
-            <p className="auth-welcome-subtitle">
-              {isLogin ? 'Ingresa tus datos para continuar' : 'Únete para guardar tus diseños en la nube'}
+            <p className="auth-welcome-subtitle" style={{ fontSize: '13px' }}>
+              {isLogin ? 'Ingresa tus datos para continuar' : 'Únete para guardar tus diseños'}
             </p>
           </div>
 
           {/* Form Card */}
-          <div className="auth-card-panel">
+          <div className="auth-card-panel" style={{ padding: '20px' }}>
             {/* Social Logins */}
             <div className="social-logins-grid">
               <button type="button" className="social-btn" onClick={() => handleOAuth('google')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: '500' }}>
@@ -217,28 +217,28 @@ const AuthPage = () => {
                   const strength = getPasswordStrength(password);
                   const { checks } = strength;
                   return (
-                    <div style={{ marginTop: '12px', fontSize: '12px', fontWeight: '500', background: 'rgba(0,0,0,0.2)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
-                      <div style={{ display: 'flex', gap: '4px', height: '4px', marginBottom: '12px' }}>
+                    <div style={{ marginTop: '8px', fontSize: '11px', fontWeight: '500', background: 'rgba(0,0,0,0.2)', padding: '10px', borderRadius: '8px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div style={{ display: 'flex', gap: '4px', height: '4px', marginBottom: '8px' }}>
                         {[1, 2, 3, 4, 5].map((level) => (
                           <div key={level} style={{ flex: 1, background: level <= strength.score ? strength.color : 'rgba(255,255,255,0.1)', borderRadius: '2px', transition: 'all 0.3s' }}></div>
                         ))}
                       </div>
-                      <div style={{ color: strength.color, fontWeight: 'bold', marginBottom: '10px', fontSize: '13px' }}>Seguridad: {strength.text}</div>
-                      <ul style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--text-dim)' }}>
-                        <li style={{ color: checks.length ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <i className={`fa-solid ${checks.length ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 8 o más caracteres
+                      <div style={{ color: strength.color, fontWeight: 'bold', marginBottom: '6px', fontSize: '12px' }}>Seguridad: {strength.text}</div>
+                      <ul style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '6px', color: 'var(--text-dim)' }}>
+                        <li style={{ color: checks.length ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <i className={`fa-solid ${checks.length ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 8+ caract.
                         </li>
-                        <li style={{ color: checks.upper ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <i className={`fa-solid ${checks.upper ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 letra mayúscula
+                        <li style={{ color: checks.upper ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <i className={`fa-solid ${checks.upper ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 mayúscula
                         </li>
-                        <li style={{ color: checks.lower ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <i className={`fa-solid ${checks.lower ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 letra minúscula
+                        <li style={{ color: checks.lower ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <i className={`fa-solid ${checks.lower ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 minúscula
                         </li>
-                        <li style={{ color: checks.num ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        <li style={{ color: checks.num ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                           <i className={`fa-solid ${checks.num ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 número
                         </li>
-                        <li style={{ color: checks.spec ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                          <i className={`fa-solid ${checks.spec ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 símbolo (ej. !@#$)
+                        <li style={{ color: checks.spec ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <i className={`fa-solid ${checks.spec ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 símbolo
                         </li>
                       </ul>
                     </div>
@@ -273,21 +273,22 @@ const AuthPage = () => {
           </div>
 
           {/* Secondary Actions Footer */}
-          <div className="auth-switch-footer">
-            <p className="switch-text">
+          <div className="auth-switch-footer" style={{ marginTop: '16px' }}>
+            <p className="switch-text" style={{ fontSize: '14px' }}>
               {isLogin ? '¿No tienes una cuenta?' : '¿Ya tienes una cuenta?'}
               <button 
                 className="switch-link-btn" 
                 type="button"
-                onClick={() => { setIsLogin(!isLogin); setError(''); }}
+                onClick={() => { setIsLogin(!isLogin); setError(''); setPassword(''); }}
+                style={{ fontSize: '14px', marginLeft: '6px' }}
               >
-                {isLogin ? 'Regístrate aquí' : 'Inicia sesión'}
+                {isLogin ? 'Regístrate' : 'Inicia sesión'}
               </button>
             </p>
           </div>
 
           {/* Legal / Footer Mini */}
-          <div className="auth-mini-footer">
+          <div className="auth-mini-footer" style={{ marginTop: '12px', paddingBottom: '16px' }}>
             <a className="footer-link" href="#" onClick={(e) => e.preventDefault()}>Ayuda</a>
             <a className="footer-link" href="#" onClick={(e) => e.preventDefault()}>Privacidad</a>
             <a className="footer-link" href="#" onClick={(e) => e.preventDefault()}>Términos</a>

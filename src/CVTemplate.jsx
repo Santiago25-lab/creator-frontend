@@ -726,7 +726,6 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
             <div style={{ padding: '4px 0' }}>
               <DocumentsPanel
                 projectId={projectId}
-                onDocumentChange={fetchDocuments}
                 onApplyData={(extracted) => {
                   setCvData(prev => mergeExtractedData(prev, extracted));
                 }}

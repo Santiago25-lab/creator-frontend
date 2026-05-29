@@ -159,6 +159,7 @@ const Dashboard = ({ onSelectMode }) => {
               </div>
             )}
           </div>
+          </div>
           </>
         ) : (
           <div className="dashboard-create-project-view">

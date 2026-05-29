@@ -13,10 +13,12 @@ const renderDialog = (type, message, defaultValue = '') => {
     };
 
     const handleClose = () => {
-      root.unmount();
-      if (dialogContainer.parentNode) {
-        dialogContainer.parentNode.removeChild(dialogContainer);
-      }
+      setTimeout(() => {
+        root.unmount();
+        if (dialogContainer.parentNode) {
+          dialogContainer.parentNode.removeChild(dialogContainer);
+        }
+      }, 0);
     };
 
     root.render(

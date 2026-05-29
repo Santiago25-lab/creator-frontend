@@ -830,7 +830,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                           </p>
                           <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
                             <button 
-                              onClick={() => { restoreVersion(version); setActiveVersionId(version.id); }}
+                              onClick={() => restoreVersion(version)}
                               style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', padding: 0, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s', fontWeight: isActive ? 'bold' : 'normal' }}
                               onMouseOver={e => e.currentTarget.style.color = 'var(--color-primary)'}
                               onMouseOut={e => e.currentTarget.style.color = 'var(--text-primary)'}

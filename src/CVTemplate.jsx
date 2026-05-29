@@ -738,46 +738,81 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
 
           {/* TAB: Historial */}
           {activeTab === 'history' && (
-            <div className="app__history" style={{ padding: '20px 0' }}>
-              <p style={{ color: 'var(--text-dim)', marginBottom: '20px', fontSize: '14px' }}>Aquí puedes ver y restaurar las versiones anteriores de tus CV guardados. El autoguardado actualiza tu proyecto actual, pero aquí puedes guardar "fotografías" (versiones) en el tiempo.</p>
+            <div className="app__history" style={{ padding: '20px', background: 'var(--bg-body)', borderRadius: '12px', margin: '0' }}>
+              <div style={{ background: 'var(--bg-card)', padding: '16px', borderRadius: '10px', marginBottom: '24px', border: '1px solid var(--border-color)' }}>
+                <p style={{ color: 'var(--text-dim)', margin: 0, fontSize: '13px', lineHeight: '1.5' }}>
+                  El autoguardado mantiene tu proyecto siempre al día. Usa esta sección para guardar <strong>copias de seguridad (versiones)</strong> en momentos clave y regresar a ellas cuando quieras.
+                </p>
+              </div>
               
               <button 
-                onClick={() => {
+                onClick={async () => {
                   const name = prompt("Nombre de esta versión:", `Versión ${new Date().toLocaleDateString()}`);
-                  if (name) cv.saveToBackend(name, recipe, activeTemplate, composerMode);
+                  if (name) {
+                    await cv.saveToBackend(name, recipe, activeTemplate, composerMode);
+                    // Refresh history
+                    if (user) {
+                      setLoadingVersions(true);
+                      const { data } = await supabase.from('cv_versions').select('id, name, created_at, content').eq('user_id', user.id).order('created_at', { ascending: false });
+                      if (data) setHistoryVersions(data);
+                      setLoadingVersions(false);
+                    }
+                  }
                 }}
                 disabled={cv.isSaving}
-                style={{ width: '100%', padding: '12px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                style={{ width: '100%', padding: '14px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '30px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', boxShadow: '0 4px 12px rgba(99, 102, 241, 0.2)', transition: 'transform 0.2s, box-shadow 0.2s' }}
+                onMouseOver={e => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 16px rgba(99, 102, 241, 0.3)'; }}
+                onMouseOut={e => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(99, 102, 241, 0.2)'; }}
               >
-                <i className="fa-solid fa-camera" /> Guardar versión actual
+                <i className="fa-solid fa-camera-retro" style={{ fontSize: '16px' }} /> Tomar Fotografía del CV (Guardar)
               </button>
+
+              <h3 style={{ fontSize: '15px', color: 'var(--text-primary)', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <i className="fa-solid fa-timeline" style={{ color: 'var(--color-primary)' }}/> Línea de tiempo
+              </h3>
 
               {loadingVersions ? (
                 <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--color-primary)' }}>
                   <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '24px' }} />
-                  <p style={{ marginTop: '10px' }}>Cargando historial...</p>
+                  <p style={{ marginTop: '10px', fontSize: '13px' }}>Cargando línea de tiempo...</p>
                 </div>
               ) : historyVersions.length > 0 ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                  {historyVersions.map(version => (
-                    <div key={version.id} style={{ padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-card)' }}>
-                      <h4 style={{ margin: '0 0 8px 0', fontSize: '15px' }}>{version.name || 'Versión guardada'}</h4>
-                      <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: 'var(--text-dim)' }}>
-                        <i className="fa-regular fa-clock" /> {new Date(version.created_at).toLocaleString()}
-                      </p>
-                      <button 
-                        onClick={() => restoreVersion(version)}
-                        style={{ padding: '8px 12px', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '13px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', position: 'relative' }}>
+                  {/* Línea conectora */}
+                  <div style={{ position: 'absolute', left: '16px', top: '10px', bottom: '10px', width: '2px', background: 'var(--border-color)', zIndex: 0 }}></div>
+                  
+                  {historyVersions.map((version, idx) => (
+                    <div key={version.id} style={{ position: 'relative', paddingLeft: '40px', zIndex: 1 }}>
+                      {/* Punto en la línea de tiempo */}
+                      <div style={{ position: 'absolute', left: '11px', top: '16px', width: '12px', height: '12px', borderRadius: '50%', background: idx === 0 ? 'var(--color-primary)' : 'var(--bg-card)', border: `2px solid ${idx === 0 ? 'var(--color-primary)' : 'var(--border-color)'}`, boxShadow: '0 0 0 4px var(--bg-body)' }}></div>
+                      
+                      <div style={{ padding: '16px', borderRadius: '12px', border: `1px solid ${idx === 0 ? 'var(--color-primary)' : 'var(--border-color)'}`, background: 'var(--bg-card)', boxShadow: idx === 0 ? '0 4px 12px rgba(99, 102, 241, 0.05)' : 'none', transition: 'all 0.2s' }}
+                           onMouseOver={e => { e.currentTarget.style.borderColor = 'var(--color-primary)'; }}
+                           onMouseOut={e => { e.currentTarget.style.borderColor = idx === 0 ? 'var(--color-primary)' : 'var(--border-color)'; }}
                       >
-                        <i className="fa-solid fa-clock-rotate-left" /> Restaurar versión
-                      </button>
+                        <h4 style={{ margin: '0 0 6px 0', fontSize: '15px', color: 'var(--text-primary)' }}>{version.name || 'Versión guardada'}</h4>
+                        <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                          <i className="fa-regular fa-clock" /> {new Date(version.created_at).toLocaleString()}
+                        </p>
+                        <button 
+                          onClick={() => restoreVersion(version)}
+                          style={{ padding: '10px 14px', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '8px', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '13px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', transition: 'background 0.2s', fontWeight: '500' }}
+                          onMouseOver={e => { e.currentTarget.style.background = 'var(--border-color)'; }}
+                          onMouseOut={e => { e.currentTarget.style.background = 'var(--bg-body)'; }}
+                        >
+                          <i className="fa-solid fa-rotate-left" style={{ color: 'var(--color-primary)' }}/> Restaurar esta versión
+                        </button>
+                      </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-dim)' }}>
-                  <i className="fa-solid fa-ghost" style={{ fontSize: '32px', marginBottom: '16px', opacity: 0.5 }} />
-                  <p>Aún no hay versiones guardadas en tu historial.</p>
+                <div style={{ textAlign: 'center', padding: '50px 20px', background: 'var(--bg-card)', borderRadius: '12px', border: '1px dashed var(--border-color)' }}>
+                  <div style={{ width: '60px', height: '60px', background: 'var(--bg-body)', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 16px', color: 'var(--text-dim)' }}>
+                    <i className="fa-solid fa-camera-retro" style={{ fontSize: '24px' }} />
+                  </div>
+                  <h4 style={{ margin: '0 0 8px 0', color: 'var(--text-primary)' }}>Aún no hay fotografías</h4>
+                  <p style={{ margin: 0, fontSize: '13px', color: 'var(--text-dim)' }}>Toma tu primera foto para guardar un punto seguro en tu diseño.</p>
                 </div>
               )}
             </div>

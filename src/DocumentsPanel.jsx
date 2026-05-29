@@ -13,7 +13,7 @@ const hasContent = (val) => {
   return false;
 };
 
-const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUpload }) => {
+const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUpload, linkedDocs = [], onLinkDoc }) => {
   const { user } = useAuth(); // Obtener el usuario actual
   const [documents, setDocuments] = useState([]);
   const [viewMode, setViewMode] = useState('project'); // 'project' | 'global'
@@ -21,7 +21,6 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUplo
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [viewer, setViewer] = useState(null); // { url, type, name }
-  const [sessionDocIds, setSessionDocIds] = useState([]); // IDs de docs subidos en esta sesión
   const [uploadError, setUploadError] = useState('');
   const [description, setDescription] = useState('');
   const [confirmDeleteId, setConfirmDeleteId] = useState(null);
@@ -46,7 +45,7 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUplo
           docs = docs.filter(d => 
             String(d.projectId) === String(projectId) || 
             String(d.project_id) === String(projectId) ||
-            sessionDocIds.includes(d.id)
+            linkedDocs.includes(d.id)
           );
         }
         setDocuments(docs);
@@ -85,8 +84,8 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUplo
         try {
           const jsonRes = await res.clone().json();
           const newDocId = jsonRes.id || jsonRes.document?.id || jsonRes.data?.id || jsonRes._id;
-          if (newDocId) {
-            setSessionDocIds(prev => [...prev, newDocId]);
+          if (newDocId && onLinkDoc) {
+            onLinkDoc(newDocId);
           }
         } catch (e) {
           // Fallback silencioso
@@ -98,8 +97,8 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUplo
         const oldIds = new Set(preDocs.map(d => d.id));
         const newIds = postDocs.filter(d => !oldIds.has(d.id)).map(d => d.id);
         
-        if (newIds.length > 0) {
-          setSessionDocIds(prev => [...prev, ...newIds]);
+        if (newIds.length > 0 && onLinkDoc) {
+          newIds.forEach(id => onLinkDoc(id));
         }
 
         await fetchDocuments(); 

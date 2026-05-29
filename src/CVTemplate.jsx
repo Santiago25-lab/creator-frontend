@@ -731,9 +731,15 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
             <div style={{ padding: '4px 0' }}>
               <DocumentsPanel
                 projectId={projectId}
+                linkedDocs={cvData.linkedDocs || []}
+                onLinkDoc={(docId) => {
+                  setCvData(prev => ({ ...prev, linkedDocs: [...new Set([...(prev.linkedDocs || []), docId])] }));
+                  cv.setHasUnsavedChanges(true);
+                }}
                 onBeforeUpload={() => cv.saveToBackend()}
                 onApplyData={(extracted) => {
                   setCvData(prev => mergeExtractedData(prev, extracted));
+                  cv.setHasUnsavedChanges(true);
                 }}
               />
             </div>

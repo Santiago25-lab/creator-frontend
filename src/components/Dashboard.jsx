@@ -18,21 +18,44 @@ const Dashboard = ({ onSelectMode }) => {
   const [isCreatingProject, setIsCreatingProject] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
 
+  // Papelera
+  const [trashProjects, setTrashProjects] = useState([]);
+  const [showTrash, setShowTrash] = useState(false);
+  const [draggedProjectId, setDraggedProjectId] = useState(null);
+  const [isDragOverTrash, setIsDragOverTrash] = useState(false);
+
   useEffect(() => {
     if (!user) return;
 
     const fetchData = async () => {
       setLoadingDesigns(true);
       
-      // Fetch Projects (en lugar de solo el cv principal)
+      // Fetch Projects (con content para deleted_at)
       const { data: projectsData } = await supabase
         .from('cv_projects')
-        .select('id, name, updated_at')
+        .select('id, name, updated_at, content')
         .eq('user_id', user.id)
         .order('updated_at', { ascending: false });
         
       if (projectsData) {
-        setProjects(projectsData);
+        const now = new Date();
+        const active = [];
+        const trash = [];
+        for (const p of projectsData) {
+          const deletedAt = p.content?.deleted_at;
+          if (deletedAt) {
+            const days = (now - new Date(deletedAt)) / (1000 * 60 * 60 * 24);
+            if (days > 30) {
+              await supabase.from('cv_projects').delete().eq('id', p.id);
+            } else {
+              trash.push(p);
+            }
+          } else {
+            active.push(p);
+          }
+        }
+        setProjects(active);
+        setTrashProjects(trash);
       }
 
       // Fetch Saved Designs (Templates)
@@ -55,6 +78,48 @@ const Dashboard = ({ onSelectMode }) => {
   const closePopup = () => {
     setShowPopup(false);
     sessionStorage.removeItem('showSuccessPopup');
+  };
+
+  // Papelera handlers
+  const handleDragStart = (e, id) => {
+    setDraggedProjectId(id);
+    e.dataTransfer.effectAllowed = 'move';
+  };
+
+  const handleDrop = async (e) => {
+    e.preventDefault();
+    setIsDragOverTrash(false);
+    if (!draggedProjectId) return;
+    
+    const proj = projects.find(p => p.id === draggedProjectId);
+    if (!proj) return;
+    
+    const updatedContent = { ...proj.content, deleted_at: new Date().toISOString() };
+    setProjects(prev => prev.filter(p => p.id !== draggedProjectId));
+    setTrashProjects(prev => [ { ...proj, content: updatedContent }, ...prev ]);
+    
+    await supabase.from('cv_projects').update({ content: updatedContent }).eq('id', draggedProjectId);
+    setDraggedProjectId(null);
+  };
+
+  const handleRestore = async (id) => {
+    const proj = trashProjects.find(p => p.id === id);
+    if (!proj) return;
+    
+    const updatedContent = { ...proj.content };
+    delete updatedContent.deleted_at;
+    
+    setTrashProjects(prev => prev.filter(p => p.id !== id));
+    setProjects(prev => [ { ...proj, content: updatedContent }, ...prev ]);
+    
+    await supabase.from('cv_projects').update({ content: updatedContent }).eq('id', id);
+  };
+  
+  const handleHardDelete = async (id) => {
+    if (window.confirm('¿Eliminar permanentemente este proyecto? No podrá ser recuperado.')) {
+      setTrashProjects(prev => prev.filter(p => p.id !== id));
+      await supabase.from('cv_projects').delete().eq('id', id);
+    }
   };
 
   return (
@@ -99,7 +164,54 @@ const Dashboard = ({ onSelectMode }) => {
 
             <div className="dashboard-extra-sections">
               <div className="dashboard-extra">
-                <h3><i className="fa-solid fa-folder-open"></i> Mis Proyectos</h3>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <h3><i className="fa-solid fa-folder-open"></i> Mis Proyectos</h3>
+                  <button 
+                    onClick={() => setShowTrash(!showTrash)}
+                    style={{ background: 'transparent', border: '1px solid var(--border-color)', color: 'var(--text-dim)', padding: '6px 12px', borderRadius: '6px', cursor: 'pointer', fontSize: '12px', display: 'flex', gap: '6px', alignItems: 'center' }}
+                  >
+                    <i className="fa-solid fa-trash-can"></i> {showTrash ? 'Ocultar Papelera' : 'Ver Papelera'}
+                  </button>
+                </div>
+                
+                {/* Zona de la papelera (drag & drop) */}
+                {showTrash && (
+                  <div 
+                    onDragOver={e => { e.preventDefault(); setIsDragOverTrash(true); }}
+                    onDragLeave={() => setIsDragOverTrash(false)}
+                    onDrop={handleDrop}
+                    style={{ 
+                      marginTop: '16px', marginBottom: '24px', padding: '24px', 
+                      borderRadius: '12px', background: isDragOverTrash ? 'var(--bg-body)' : 'var(--bg-card)', 
+                      border: `2px dashed ${isDragOverTrash ? 'var(--color-primary)' : 'var(--border-color)'}`,
+                      transition: 'all 0.2s', minHeight: '120px'
+                    }}
+                  >
+                    <h4 style={{ margin: '0 0 16px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                      <i className="fa-solid fa-trash-can" style={{ color: '#ef4444' }}></i> Papelera ({trashProjects.length})
+                    </h4>
+                    
+                    <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: 'var(--text-dim)' }}>
+                      Arrastra aquí tus proyectos para eliminarlos. Permanecerán 30 días antes de ser borrados definitivamente.
+                    </p>
+                    
+                    {trashProjects.length > 0 ? (
+                      <div className="dashboard-recent-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+                        {trashProjects.map(proj => (
+                          <div key={proj.id} style={{ background: 'var(--bg-body)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-color)', position: 'relative' }}>
+                            <h5 style={{ margin: '0 0 4px 0', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{proj.name}</h5>
+                            <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
+                              <button onClick={() => handleRestore(proj.id)} style={{ flex: 1, padding: '6px', fontSize: '11px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Recuperar</button>
+                              <button onClick={() => handleHardDelete(proj.id)} style={{ padding: '6px 10px', fontSize: '11px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer' }}><i className="fa-solid fa-xmark"></i></button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      <div style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '13px', padding: '16px' }}>La papelera está vacía</div>
+                    )}
+                  </div>
+                )}
                 {loadingDesigns ? (
                   <div className="extra-empty-state">
                     <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '24px', color: 'var(--color-primary)' }}></i>
@@ -108,7 +220,16 @@ const Dashboard = ({ onSelectMode }) => {
                 ) : projects.length > 0 ? (
                   <div className="dashboard-recent-grid">
                     {projects.map(proj => (
-                      <div key={proj.id} className="recent-card" onClick={() => onSelectMode({ mode: 'manual', projectId: proj.id })}>
+                      <div 
+                        key={proj.id} 
+                        className="recent-card" 
+                        onClick={() => onSelectMode({ mode: 'manual', projectId: proj.id })}
+                        draggable={true}
+                        onDragStart={(e) => handleDragStart(e, proj.id)}
+                        onDragEnd={() => setDraggedProjectId(null)}
+                        style={{ cursor: 'grab', opacity: draggedProjectId === proj.id ? 0.5 : 1 }}
+                        title="Puedes arrastrar este proyecto a la papelera"
+                      >
                         <div className="recent-card-preview" style={{ borderColor: 'var(--color-secondary)' }}>
                           <i className="fa-solid fa-file-user" style={{ color: 'var(--color-secondary)' }}></i>
                         </div>

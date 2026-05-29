@@ -2,6 +2,8 @@ import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
 
 const CV_STORAGE_KEY = 'creator_cv_data';
+let lastAutoVersionTime = 0;
+const AUTO_VERSION_COOLDOWN = 1000 * 60 * 5; // 5 minutos
 
 export const blankCV = {
   personalInfo: {
@@ -195,18 +197,35 @@ export const useCvData = (user, projectId) => {
         .eq('id', projectId);
 
       // 2. Guardar en el historial de versiones (cv_versions)
-      const versionName = customName ? customName : `Versión ${new Date().toLocaleString()}`;
-      const { error } = await supabase
-        .from('cv_versions')
-        .insert({
-          user_id: user.id,
-          name: versionName,
-          content: contentToSave,
-          created_at: new Date().toISOString()
-        });
-        
-      if (error) {
-        alert("Error al guardar la fotografía. ¿Ejecutaste el script SQL de permisos (RLS) para la tabla cv_versions?\nDetalle: " + error.message);
+      let shouldSaveVersion = true;
+      let isAuto = false;
+      
+      // Si todo es null, asumimos que es el autoguardado del debounce
+      if (customName === null && recipe === null && activeTemplate === null && composerMode === null) {
+        isAuto = true;
+        const now = Date.now();
+        if (now - lastAutoVersionTime < AUTO_VERSION_COOLDOWN) {
+          shouldSaveVersion = false;
+        } else {
+          lastAutoVersionTime = now;
+        }
+      }
+
+      if (shouldSaveVersion) {
+        const versionName = customName ? customName : (isAuto ? `Autoguardado (${new Date().toLocaleString()})` : `Versión ${new Date().toLocaleString()}`);
+        const { error } = await supabase
+          .from('cv_versions')
+          .insert({
+            user_id: user.id,
+            name: versionName,
+            content: contentToSave,
+            created_at: new Date().toISOString()
+          });
+          
+        if (error) {
+          console.error("Error en cv_versions:", error);
+          if (!isAuto) alert("Error al guardar la versión. ¿Ejecutaste el script SQL de permisos (RLS) para la tabla cv_versions?\nDetalle: " + error.message);
+        }
       }
         
       setHasUnsavedChanges(false);

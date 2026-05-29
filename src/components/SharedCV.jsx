@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { supabase } from '../../services/api';
-import CVPreview from '../../templates/engine/CVPreview';
+import { supabase } from '../lib/supabase';
+import CVPreview from '../templates/engine/CVPreview';
 import './SharedCV.css';
 
 const SharedCV = ({ projectId }) => {

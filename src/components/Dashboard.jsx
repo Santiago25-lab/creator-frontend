@@ -148,15 +148,35 @@ const Dashboard = ({ onSelectMode }) => {
       <div className="dashboard-content">
         {!isCreatingProject ? (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px' }}>
               <div>
-                <h1 className="dashboard-title">¡Bienvenido a CreatorCV!</h1>
-                <p className="dashboard-subtitle">Aquí están tus proyectos. ¿En qué vamos a trabajar hoy?</p>
+                <h1 className="dashboard-title" style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 10px 0', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
+                  ¡Bienvenido a CreatorCV!
+                </h1>
+                <p className="dashboard-subtitle" style={{ margin: 0, fontSize: '16px', color: 'var(--text-dim)', fontWeight: '500' }}>
+                  Aquí están tus proyectos. ¿En qué vamos a trabajar hoy?
+                </p>
               </div>
               <button 
                 className="dashboard-create-btn" 
                 onClick={() => setIsCreatingProject(true)}
-                style={{ padding: '12px 24px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold' }}
+                style={{ 
+                  padding: '14px 28px', 
+                  background: 'linear-gradient(135deg, var(--color-primary), #8b5cf6)', 
+                  color: 'white', 
+                  border: 'none', 
+                  borderRadius: '12px', 
+                  cursor: 'pointer', 
+                  fontWeight: '700',
+                  fontSize: '15px',
+                  boxShadow: '0 4px 15px rgba(99, 102, 241, 0.3)',
+                  transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px'
+                }}
+                onMouseOver={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 6px 20px rgba(99, 102, 241, 0.4)'; }}
+                onMouseOut={(e) => { e.currentTarget.style.transform = 'translateY(0)'; e.currentTarget.style.boxShadow = '0 4px 15px rgba(99, 102, 241, 0.3)'; }}
               >
                 <i className="fa-solid fa-plus"></i> Nuevo Proyecto
               </button>
@@ -182,10 +202,11 @@ const Dashboard = ({ onSelectMode }) => {
                     onDrop={handleDrop}
                     style={{ 
                       marginTop: '16px', marginBottom: '32px', padding: '24px', 
-                      borderRadius: '16px', background: isDragOverTrash ? 'rgba(239, 68, 68, 0.05)' : 'var(--bg-card)', 
-                      border: `2px dashed ${isDragOverTrash ? '#ef4444' : 'var(--border-color)'}`,
+                      borderRadius: '16px', 
+                      background: isDragOverTrash ? 'rgba(239, 68, 68, 0.08)' : 'rgba(239, 68, 68, 0.02)', 
+                      border: `2px dashed ${isDragOverTrash ? '#ef4444' : 'rgba(239, 68, 68, 0.3)'}`,
                       transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minHeight: '160px',
-                      boxShadow: isDragOverTrash ? '0 10px 25px -5px rgba(239, 68, 68, 0.2)' : 'none',
+                      boxShadow: isDragOverTrash ? '0 10px 25px -5px rgba(239, 68, 68, 0.2)' : 'inset 0 0 20px rgba(0,0,0,0.02)',
                       position: 'relative', overflow: 'hidden'
                     }}
                   >

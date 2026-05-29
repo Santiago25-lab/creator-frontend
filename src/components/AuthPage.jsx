@@ -52,8 +52,8 @@ const AuthPage = () => {
       if (password.length > 100) return setError("La contraseña es demasiado larga.");
       
       const pwdStatus = getPasswordStrength(password);
-      if (pwdStatus.score < 5) {
-        return setError("Tu contraseña no es segura. Debe contener al menos 8 caracteres, una mayúscula, una minúscula, un número y un símbolo especial.");
+      if (pwdStatus.score < 3) {
+        return setError("Tu contraseña debe contener al menos 8 caracteres, incluyendo letras y números.");
       }
     }
 
@@ -112,10 +112,10 @@ const AuthPage = () => {
       <section className="auth-form-section">
         <div className="auth-form-container">
           {/* Top Header & Logo */}
-          <div className="auth-header-wrapper">
-            <div className="auth-logo-brand" style={{ background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(168, 85, 247, 0.05))', padding: '10px 18px', borderRadius: '12px', border: '1px solid rgba(168, 85, 247, 0.15)', marginBottom: '24px', display: 'inline-flex', gap: '8px', alignItems: 'center' }}>
-              <span className="material-symbols-outlined logo-icon" style={{ color: 'var(--color-primary)', fontSize: '24px' }}>auto_awesome</span>
-              <span className="logo-text" style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px', margin: 0 }}>CreatorCV</span>
+          <div className="auth-header-wrapper" style={{ paddingTop: '10px' }}>
+            <div className="auth-logo-brand" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '16px' }}>
+              <span className="material-symbols-outlined logo-icon" style={{ color: 'var(--color-primary)', fontSize: '28px', background: 'rgba(99, 102, 241, 0.1)', padding: '8px', borderRadius: '10px' }}>auto_awesome</span>
+              <span className="logo-text" style={{ fontSize: '24px', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px', margin: 0 }}>CreatorCV</span>
             </div>
             <h2 className="auth-welcome-title">
               {isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}
@@ -213,7 +213,7 @@ const AuthPage = () => {
                       </div>
                       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <span style={{ color: strength.color, fontWeight: 'bold' }}>{strength.text}</span>
-                        <span style={{ color: 'var(--text-dim)' }}>8+ caracs, 1A, 1a, 1#, 1!@</span>
+                        <span style={{ color: 'var(--text-dim)' }}>8+ caracs, letras y números</span>
                       </div>
                     </div>
                   );

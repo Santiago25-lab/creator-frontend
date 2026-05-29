@@ -13,7 +13,28 @@ function AppContent() {
     // Apply saved theme on mount
     const savedTheme = getSavedTheme();
     applyTheme(savedTheme.accent, savedTheme.mode);
+
+    // Navegación con botones del navegador
+    const handlePopState = (event) => {
+      if (event.state && event.state.modeData) {
+        setSelectedMode(event.state.modeData);
+      } else {
+        setSelectedMode(null);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
+
+  const handleSelectMode = (modeData) => {
+    window.history.pushState({ modeData }, '', '#project');
+    setSelectedMode(modeData);
+  };
+
+  const handleBack = () => {
+    window.history.pushState(null, '', window.location.pathname);
+    setSelectedMode(null);
+  };
 
   if (loading) {
     return (
@@ -51,12 +72,12 @@ function AppContent() {
         initialTab={mode === 'ia' ? 'chat' : 'editor'} 
         initialDesign={initialDesign} 
         projectId={projectId}
-        onBack={() => setSelectedMode(null)} 
+        onBack={handleBack} 
       />
     );
   }
 
-  return <Dashboard onSelectMode={setSelectedMode} />;
+  return <Dashboard onSelectMode={handleSelectMode} />;
 }
 
 function App() {

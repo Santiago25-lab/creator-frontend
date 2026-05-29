@@ -15,7 +15,8 @@
 export const mergeCvData = (current, incoming) => ({
   ...current,
   personalInfo: {
-    ...(incoming.personalInfo || current.personalInfo),
+    ...current.personalInfo,
+    ...(incoming.personalInfo ? Object.fromEntries(Object.entries(incoming.personalInfo).filter(([, v]) => v)) : {}),
     photo: current.personalInfo?.photo,  // Siempre preservar la foto
   },
   experience: incoming.experience || current.experience,

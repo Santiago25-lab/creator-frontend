@@ -13,6 +13,11 @@ export const useChatIA = (cvData, setCvData, user, projectId) => {
   const [skillSuggestions, setSkillSuggestions] = useState([]);
   const [langSuggestions, setLangSuggestions] = useState([]);
   const chatEndRef = useRef(null);
+  
+  const cvDataRef = useRef(cvData);
+  useEffect(() => {
+    cvDataRef.current = cvData;
+  }, [cvData]);
 
   // 1. Cargar historial desde Supabase al iniciar
   useEffect(() => {
@@ -92,7 +97,8 @@ export const useChatIA = (cvData, setCvData, user, projectId) => {
           throw new Error('La IA no devolvió un mensaje conversacional.');
         }
 
-        setCvData(mergeCvData(cvData, data));
+        // Usar cvDataRef.current para asegurar que combinamos con los cambios más recientes que haya hecho el usuario
+        setCvData(mergeCvData(cvDataRef.current, data));
         
         // Guardar y mostrar respuesta de la IA
         await saveMessage('assistant', aiResponse);

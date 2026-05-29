@@ -21,21 +21,25 @@
 .dashboard-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
-  background: linear-gradient(135deg, #d0bcff, #4cd7f6);
-  padding: 6px 16px;
+  gap: 8px;
+  background: rgba(99, 102, 241, 0.05);
+  padding: 8px 16px;
   border-radius: 12px;
+  border: 1px solid rgba(168, 85, 247, 0.15);
 }
 
 .dashboard-logo .logo-icon {
-  color: #0f0d15;
-  font-size: 20px;
+  color: var(--color-primary);
+  font-size: 24px;
 }
 
 .dashboard-logo .logo-text {
   font-weight: 800;
-  color: #0f0d15;
-  font-size: 16px;
+  font-size: 20px;
+  background: linear-gradient(135deg, var(--color-primary), #a855f7);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  letter-spacing: -0.5px;
 }
 
 .dashboard-user {

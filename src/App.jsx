@@ -77,6 +77,7 @@ function AppContent() {
     
     return (
       <CVTemplate 
+        key={projectId || 'new-project'}
         initialTab={mode === 'ia' ? 'chat' : 'editor'} 
         initialDesign={initialDesign} 
         projectId={projectId}

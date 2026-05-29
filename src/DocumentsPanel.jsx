@@ -39,7 +39,13 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
         ? `${API_URLS.documents}?userId=${user.id}&projectId=${projectId}`
         : `${API_URLS.documents}?userId=${user.id}`;
       const res = await fetch(url);
-      if (res.ok) setDocuments(await res.json());
+      if (res.ok) {
+        let docs = await res.json();
+        if (viewMode === 'project' && projectId) {
+          docs = docs.filter(d => String(d.projectId) === String(projectId));
+        }
+        setDocuments(docs);
+      }
     } catch {}
   };
 

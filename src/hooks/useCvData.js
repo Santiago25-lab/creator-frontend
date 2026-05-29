@@ -79,6 +79,17 @@ export const useCvData = (user, projectId) => {
             updated_at: new Date().toISOString()
           })
           .eq('id', projectId);
+          
+        const versionName = `Autoguardado (${new Date().toLocaleTimeString()})`;
+        await supabase
+          .from('cv_versions')
+          .insert({
+            user_id: user.id,
+            name: versionName,
+            content: cvData,
+            created_at: new Date().toISOString()
+          });
+
         setHasUnsavedChanges(false);
       } catch (err) {
         console.error("Error al autoguardar:", err);

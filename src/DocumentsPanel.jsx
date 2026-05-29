@@ -114,18 +114,19 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUplo
   };
 
   const handleFileSelect = (e) => { 
-    if (onBeforeUpload) onBeforeUpload();
     const f = e.target.files[0]; 
     if (f) uploadFile(f); 
     e.target.value = ''; 
   };
 
-  const handleDrop = (e) => { 
+  const handleDrop = async (e) => { 
     e.preventDefault(); 
     setIsDragging(false); 
-    if (onBeforeUpload) onBeforeUpload();
     const f = e.dataTransfer.files[0]; 
-    if (f) uploadFile(f); 
+    if (!f) return;
+    setIsUploading(true);
+    if (onBeforeUpload) await onBeforeUpload();
+    uploadFile(f); 
   };
 
   const handleDelete = async (id) => {
@@ -179,10 +180,15 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUplo
       {/* ── Zona de carga ── */}
       <div
         className={`docs__dropzone ${isDragging ? 'docs__dropzone--active' : ''} ${isUploading ? 'docs__dropzone--loading' : ''}`}
-        onClick={() => {
+        onClick={async () => {
           if (!isUploading) {
-            if (onBeforeUpload) onBeforeUpload();
-            fileInputRef.current.click();
+            setIsUploading(true);
+            try {
+              if (onBeforeUpload) await onBeforeUpload();
+            } finally {
+              setIsUploading(false);
+              fileInputRef.current.click();
+            }
           }
         }}
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}

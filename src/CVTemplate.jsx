@@ -731,6 +731,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
             <div style={{ padding: '4px 0' }}>
               <DocumentsPanel
                 projectId={projectId}
+                onBeforeUpload={() => cv.saveToBackend()}
                 onApplyData={(extracted) => {
                   setCvData(prev => mergeExtractedData(prev, extracted));
                 }}

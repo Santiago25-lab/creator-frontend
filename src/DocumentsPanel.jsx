@@ -13,7 +13,7 @@ const hasContent = (val) => {
   return false;
 };
 
-const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
+const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange, onBeforeUpload }) => {
   const { user } = useAuth(); // Obtener el usuario actual
   const [documents, setDocuments] = useState([]);
   const [viewMode, setViewMode] = useState('project'); // 'project' | 'global'
@@ -81,7 +81,18 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
       if (res.ok) { 
         setDescription(''); 
         
-        // Registrar documentos después de subir para encontrar el nuevo
+        // Intentar atrapar el ID directamente del JSON de respuesta por si el backend lo devuelve
+        try {
+          const jsonRes = await res.clone().json();
+          const newDocId = jsonRes.id || jsonRes.document?.id || jsonRes.data?.id || jsonRes._id;
+          if (newDocId) {
+            setSessionDocIds(prev => [...prev, newDocId]);
+          }
+        } catch (e) {
+          // Fallback silencioso
+        }
+
+        // Registrar documentos después de subir para encontrar el nuevo (fallback si la respuesta no tenía el ID explícito)
         const postRes = await fetch(`${API_URLS.documents}?userId=${user.id}`);
         const postDocs = postRes.ok ? await postRes.json() : [];
         const oldIds = new Set(preDocs.map(d => d.id));
@@ -100,6 +111,7 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
   };
 
   const handleFileSelect = (e) => { 
+    if (onBeforeUpload) onBeforeUpload();
     const f = e.target.files[0]; 
     if (f) uploadFile(f); 
     e.target.value = ''; 
@@ -108,6 +120,7 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
   const handleDrop = (e) => { 
     e.preventDefault(); 
     setIsDragging(false); 
+    if (onBeforeUpload) onBeforeUpload();
     const f = e.dataTransfer.files[0]; 
     if (f) uploadFile(f); 
   };
@@ -163,7 +176,12 @@ const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
       {/* ── Zona de carga ── */}
       <div
         className={`docs__dropzone ${isDragging ? 'docs__dropzone--active' : ''} ${isUploading ? 'docs__dropzone--loading' : ''}`}
-        onClick={() => !isUploading && fileInputRef.current.click()}
+        onClick={() => {
+          if (!isUploading) {
+            if (onBeforeUpload) onBeforeUpload();
+            fileInputRef.current.click();
+          }
+        }}
         onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
         onDragLeave={() => setIsDragging(false)}
         onDrop={handleDrop}

@@ -86,6 +86,7 @@ export const useCvData = (user, projectId) => {
           .from('cv_versions')
           .insert({
             user_id: user.id,
+            project_id: projectId,
             name: versionName,
             content: cvData,
             created_at: new Date().toISOString()

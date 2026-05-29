@@ -6,6 +6,7 @@ import { useChatIA } from './hooks/useChatIA';
 import { useAuth } from './context/AuthContext';
 import { supabase } from './lib/supabase';
 import { mergeExtractedData } from './utils/mergeCvData';
+import { customConfirm, customPrompt } from './utils/dialogs';
 import ResumeA from './templates/ResumeA';
 import ResumeB from './templates/ResumeB';
 import ResumeC from './templates/ResumeC';
@@ -179,7 +180,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
       };
       fetchHistory();
     }
-  }, [activeTab, user]);
+  }, [activeTab, user, projectId]);
 
   const restoreVersion = async (version) => {
     const confirm = await customConfirm("¿Seguro que quieres restaurar esta versión? Se reemplazará el contenido actual de este proyecto.");

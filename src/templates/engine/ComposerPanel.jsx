@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { HEADERS, EXPERIENCE, EDUCATION, SKILLS, CONTACT, LAYOUTS, DEFAULT_RECIPE, PRESETS } from './registry';
 import './engine.css';
+import { customPrompt } from '../../utils/dialogs';
 
 const STORAGE_KEY = 'creatorCV_composerRecipe';
 

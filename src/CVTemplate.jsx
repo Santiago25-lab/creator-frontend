@@ -726,21 +726,26 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                 <div ref={chat.chatEndRef} />
               </div>
               <div className="app__chat-input-wrap">
-                <textarea 
-                  className="app__chat-input" 
-                  value={chat.userInput} 
-                  onChange={e => chat.setUserInput(e.target.value)} 
-                  onKeyDown={e => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      chat.sendMessage();
-                    }
-                  }} 
-                  placeholder="Cuéntame sobre tu experiencia..." 
-                  disabled={chat.isLoading} 
-                  rows={1}
-                  maxLength={200}
-                />
+                <div style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <textarea 
+                    className="app__chat-input" 
+                    value={chat.userInput} 
+                    onChange={e => chat.setUserInput(e.target.value)} 
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        chat.sendMessage();
+                      }
+                    }} 
+                    placeholder="Cuéntame sobre tu experiencia..." 
+                    disabled={chat.isLoading} 
+                    rows={1}
+                    maxLength={200}
+                  />
+                  <div style={{ textAlign: 'right', fontSize: '10px', color: 'var(--text-dim)', paddingRight: '4px' }}>
+                    {chat.userInput.length}/200
+                  </div>
+                </div>
                 <button className="app__chat-send" onClick={chat.sendMessage} disabled={chat.isLoading}><i className="fa-solid fa-paper-plane" /></button>
               </div>
             </div>

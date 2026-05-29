@@ -229,6 +229,7 @@ export const useCvData = (user, projectId) => {
           .from('cv_versions')
           .insert({
             user_id: user.id,
+            project_id: projectId,
             name: versionName,
             content: contentToSave,
             created_at: new Date().toISOString()

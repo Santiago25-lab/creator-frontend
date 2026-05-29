@@ -6,7 +6,7 @@ const CustomDialog = ({ type, message, defaultValue, onResolve, onClose }) => {
   
   useEffect(() => {
     const handleKeyDown = (e) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') handleCancel();
       if (e.key === 'Enter' && type !== 'alert') handleConfirm();
       if (e.key === 'Enter' && type === 'alert') {
         onResolve(true);

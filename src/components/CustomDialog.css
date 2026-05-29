@@ -1,8 +1,8 @@
 .custom-dialog-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(15, 13, 21, 0.75);
+  backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -11,79 +11,82 @@
 }
 
 .custom-dialog {
-  background: var(--bg-card, #1e293b);
-  border: 1px solid var(--border-color, #334155);
-  border-radius: 12px;
+  background: #211e27;
+  border: 1px solid rgba(149, 142, 160, 0.15);
+  border-radius: 16px;
   width: 90%;
-  max-width: 400px;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  max-width: 420px;
+  box-shadow: 0 24px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255,255,255,0.05);
   overflow: hidden;
   animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  color: #e7e0ed;
+  font-family: 'Inter', sans-serif;
 }
 
 .custom-dialog-header {
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border-color, #334155);
-  background: rgba(0, 0, 0, 0.1);
+  padding: 20px 24px;
+  border-bottom: 1px solid rgba(149, 142, 160, 0.1);
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .custom-dialog-header i {
-  font-size: 20px;
-  color: #3b82f6;
+  font-size: 22px;
+  color: #d0bcff;
 }
 
 .custom-dialog-header h3 {
   margin: 0;
   font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary, #f8fafc);
+  font-weight: 700;
+  color: #e7e0ed;
 }
 
 .custom-dialog-body {
-  padding: 20px;
+  padding: 24px;
 }
 
 .custom-dialog-body p {
-  margin: 0 0 16px 0;
-  color: var(--text-dim, #cbd5e1);
+  margin: 0 0 20px 0;
+  color: #cbc3d7;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 1.6;
 }
 
 .custom-dialog-body input {
   width: 100%;
-  padding: 10px 12px;
-  background: var(--bg-body, #0f172a);
-  border: 1px solid var(--border-color, #334155);
-  border-radius: 6px;
-  color: var(--text-primary, #f8fafc);
+  padding: 12px 14px;
+  background: #15121b;
+  border: 1px solid rgba(149, 142, 160, 0.2);
+  border-radius: 8px;
+  color: #e7e0ed;
   font-size: 14px;
   font-family: inherit;
   outline: none;
   box-sizing: border-box;
+  transition: all 0.2s;
 }
 
 .custom-dialog-body input:focus {
-  border-color: #3b82f6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: #d0bcff;
+  box-shadow: 0 0 0 2px rgba(208, 188, 255, 0.15);
 }
 
 .custom-dialog-footer {
   display: flex;
   justify-content: flex-end;
   gap: 12px;
-  padding: 16px 20px;
-  background: rgba(0, 0, 0, 0.1);
+  padding: 16px 24px;
+  background: rgba(0, 0, 0, 0.15);
 }
 
 .custom-dialog-footer button {
-  padding: 8px 16px;
-  border-radius: 6px;
+  padding: 10px 18px;
+  border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight: 600;
   cursor: pointer;
   transition: all 0.2s;
   border: none;
@@ -91,21 +94,22 @@
 
 .btn-cancel {
   background: transparent;
-  color: var(--text-dim, #cbd5e1);
+  color: #958ea0;
 }
 
 .btn-cancel:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: white;
+  background: rgba(255, 255, 255, 0.05);
+  color: #e7e0ed;
 }
 
 .btn-confirm {
-  background: #3b82f6;
-  color: white;
+  background: #d0bcff;
+  color: #15121b;
 }
 
 .btn-confirm:hover {
-  background: #2563eb;
+  filter: brightness(1.1);
+  transform: translateY(-1px);
 }
 
 @keyframes fadeIn {

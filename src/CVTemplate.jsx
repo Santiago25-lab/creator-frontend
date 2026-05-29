@@ -172,6 +172,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
           .from('cv_versions')
           .select('id, name, created_at, content')
           .eq('user_id', user.id)
+          .eq('project_id', projectId)
           .order('created_at', { ascending: false });
         if (data && !error) setHistoryVersions(data);
         setLoadingVersions(false);
@@ -195,6 +196,15 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
         setComposerMode(version.content.composerMode);
       }
       setActiveTab('editor');
+    }
+  };
+
+  const deleteVersion = async (id) => {
+    const confirm = await customConfirm("¿Seguro que quieres eliminar esta versión? Esta acción no se puede deshacer.");
+    if (confirm) {
+      setHistoryVersions(prev => prev.filter(v => v.id !== id));
+      if (activeVersionId === id) setActiveVersionId(null);
+      await supabase.from('cv_versions').delete().eq('id', id);
     }
   };
 
@@ -768,7 +778,11 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                     // Refresh history
                     if (user) {
                       setLoadingVersions(true);
-                      const { data } = await supabase.from('cv_versions').select('id, name, created_at, content').eq('user_id', user.id).order('created_at', { ascending: false });
+                      const { data } = await supabase.from('cv_versions')
+                        .select('id, name, created_at, content')
+                        .eq('user_id', user.id)
+                        .eq('project_id', projectId)
+                        .order('created_at', { ascending: false });
                       if (data) {
                         setHistoryVersions(data);
                         if (data.length > 0) setActiveVersionId(data[0].id);
@@ -814,14 +828,24 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                           <p style={{ margin: '0 0 16px 0', fontSize: '12px', color: 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '6px' }}>
                             <i className="fa-regular fa-clock" /> {new Date(version.created_at).toLocaleString()}
                           </p>
-                          <button 
-                            onClick={() => { restoreVersion(version); setActiveVersionId(version.id); }}
-                            style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', padding: 0, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s', fontWeight: isActive ? 'bold' : 'normal' }}
-                            onMouseOver={e => e.currentTarget.style.color = 'var(--color-primary)'}
-                            onMouseOut={e => e.currentTarget.style.color = 'var(--text-primary)'}
-                          >
-                            <i className="fa-solid fa-rotate-left" /> Restaurar esta versión
-                          </button>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+                            <button 
+                              onClick={() => { restoreVersion(version); setActiveVersionId(version.id); }}
+                              style={{ background: 'transparent', border: 'none', color: 'var(--text-primary)', padding: 0, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s', fontWeight: isActive ? 'bold' : 'normal' }}
+                              onMouseOver={e => e.currentTarget.style.color = 'var(--color-primary)'}
+                              onMouseOut={e => e.currentTarget.style.color = 'var(--text-primary)'}
+                            >
+                              <i className="fa-solid fa-rotate-left" /> Restaurar esta versión
+                            </button>
+                            <button 
+                              onClick={() => deleteVersion(version.id)}
+                              style={{ background: 'transparent', border: 'none', color: 'var(--text-dim)', padding: 0, fontSize: '13px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'color 0.2s' }}
+                              onMouseOver={e => e.currentTarget.style.color = '#ef4444'}
+                              onMouseOut={e => e.currentTarget.style.color = 'var(--text-dim)'}
+                            >
+                              <i className="fa-solid fa-trash-can" /> Eliminar
+                            </button>
+                          </div>
                         </div>
                       </div>
                     );

@@ -97,6 +97,29 @@ export const useChatIA = (cvData, setCvData, user, projectId) => {
           throw new Error('La IA no devolvió un mensaje conversacional.');
         }
 
+        // ── SANITIZACIÓN DE RESPUESTAS ──
+        // Prevenir que ChatGPT pegue su respuesta conversacional (ej: "Claro, aquí tienes...") dentro de los campos del CV
+        const cleanAiArtifacts = (text) => {
+          if (!text || typeof text !== 'string') return text;
+          let cleaned = text;
+          // Si el texto completo del chat se coló dentro del campo, lo quitamos
+          if (aiResponse.length > 10 && cleaned.includes(aiResponse.substring(0, 20))) {
+            cleaned = cleaned.replace(aiResponse, '');
+          }
+          // Limpiar introducciones comunes (ej: "Claro, aquí tienes la descripción: ")
+          cleaned = cleaned.replace(/^(¡Claro!|Aquí tienes|Claro,|Por supuesto,)[^\n]*?:\s*\n*/i, '');
+          // Quitar comillas dobles residuales al inicio y fin si la IA las pone por error
+          cleaned = cleaned.replace(/^["']|["']$/g, '');
+          return cleaned.trim();
+        };
+
+        if (data.personalInfo && data.personalInfo.aboutMe) {
+          data.personalInfo.aboutMe = cleanAiArtifacts(data.personalInfo.aboutMe);
+        }
+        if (data.experience) {
+          data.experience = data.experience.map(exp => ({ ...exp, description: cleanAiArtifacts(exp.description) }));
+        }
+
         // Usar cvDataRef.current para asegurar que combinamos con los cambios más recientes que haya hecho el usuario
         setCvData(mergeCvData(cvDataRef.current, data));
         

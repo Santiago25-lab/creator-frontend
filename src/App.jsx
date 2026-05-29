@@ -3,6 +3,7 @@ import { AuthProvider, useAuth } from './context/AuthContext'
 import CVTemplate from './CVTemplate'
 import AuthPage from './components/AuthPage'
 import Dashboard from './components/Dashboard'
+import SharedCV from './components/SharedCV'
 import { applyTheme, getSavedTheme } from './utils/theme'
 
 function AppContent() {
@@ -73,6 +74,13 @@ function AppContent() {
         <p style={{ fontSize: '12px', color: '#64748b', marginTop: '10px' }}>Verificando sesión segura</p>
       </div>
     );
+  }
+
+  const isShareRoute = window.location.pathname.startsWith('/share/');
+  const shareProjectId = isShareRoute ? window.location.pathname.split('/')[2] : null;
+
+  if (isShareRoute && shareProjectId) {
+    return <SharedCV projectId={shareProjectId} />;
   }
 
   if (!user) {

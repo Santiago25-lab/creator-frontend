@@ -1,0 +1,119 @@
+.custom-dialog-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.custom-dialog {
+  background: var(--bg-card, #1e293b);
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 12px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.custom-dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color, #334155);
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.custom-dialog-header i {
+  font-size: 20px;
+  color: #3b82f6;
+}
+
+.custom-dialog-header h3 {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary, #f8fafc);
+}
+
+.custom-dialog-body {
+  padding: 20px;
+}
+
+.custom-dialog-body p {
+  margin: 0 0 16px 0;
+  color: var(--text-dim, #cbd5e1);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.custom-dialog-body input {
+  width: 100%;
+  padding: 10px 12px;
+  background: var(--bg-body, #0f172a);
+  border: 1px solid var(--border-color, #334155);
+  border-radius: 6px;
+  color: var(--text-primary, #f8fafc);
+  font-size: 14px;
+  font-family: inherit;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.custom-dialog-body input:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+
+.custom-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+.custom-dialog-footer button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+.btn-cancel {
+  background: transparent;
+  color: var(--text-dim, #cbd5e1);
+}
+
+.btn-cancel:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+}
+
+.btn-confirm {
+  background: #3b82f6;
+  color: white;
+}
+
+.btn-confirm:hover {
+  background: #2563eb;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(20px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}

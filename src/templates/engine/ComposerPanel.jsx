@@ -60,8 +60,8 @@ const ComposerPanel = ({ recipe, onRecipeChange, onBack, onSave }) => {
         </div>
         <button 
           className="composer-save-btn" 
-          onClick={() => {
-            const name = prompt("Nombre para tu diseño:", "Mi Diseño Personalizado");
+          onClick={async () => {
+            const name = await customPrompt("Nombre para tu diseño:", "Mi Diseño Personalizado");
             if (name) onSave(name);
           }}
           style={{ '--btn-color': recipe.theme.primaryColor }}

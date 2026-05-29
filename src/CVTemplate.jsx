@@ -754,7 +754,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
               
               <button 
                 onClick={async () => {
-                  const name = prompt("Nombre de esta versión:", `Versión ${new Date().toLocaleDateString()}`);
+                  const name = await customPrompt("Nombre de esta versión:", `Versión ${new Date().toLocaleDateString()}`);
                   if (name) {
                     await cv.saveToBackend(name, recipe, activeTemplate, composerMode);
                     // Refresh history

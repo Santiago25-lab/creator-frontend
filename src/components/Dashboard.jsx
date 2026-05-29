@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabase';
 import ProfileModal from './ProfileModal';
+import { customAlert, customConfirm } from '../utils/dialogs';
 import './Dashboard.css';
 
 const Dashboard = ({ onSelectMode }) => {
@@ -116,7 +117,8 @@ const Dashboard = ({ onSelectMode }) => {
   };
   
   const handleHardDelete = async (id) => {
-    if (window.confirm('¿Eliminar permanentemente este proyecto? No podrá ser recuperado.')) {
+    const confirm = await customConfirm('¿Eliminar permanentemente este proyecto? No podrá ser recuperado.');
+    if (confirm) {
       setTrashProjects(prev => prev.filter(p => p.id !== id));
       await supabase.from('cv_projects').delete().eq('id', id);
     }
@@ -358,10 +360,10 @@ const Dashboard = ({ onSelectMode }) => {
             <h3 style={{ marginBottom: '20px' }}>¿Cómo te gustaría crearlo?</h3>
             <div className="dashboard-options">
               <div className="dashboard-card" onClick={async () => {
-                if (!newProjectName.trim()) { alert('Por favor, ingresa un nombre para el proyecto.'); return; }
+                if (!newProjectName.trim()) { await customAlert('Por favor, ingresa un nombre para el proyecto.'); return; }
                 const { data, error } = await supabase.from('cv_projects').insert({ user_id: user.id, name: newProjectName }).select().single();
                 if (error) {
-                  alert('Error al crear el proyecto. ¿Ejecutaste el script SQL de la tabla cv_projects en Supabase?\nDetalle: ' + error.message);
+                  await customAlert('Error al crear el proyecto. ¿Ejecutaste el script SQL de la tabla cv_projects en Supabase?\nDetalle: ' + error.message);
                   return;
                 }
                 if (data) onSelectMode({ mode: 'ia', projectId: data.id });
@@ -373,10 +375,10 @@ const Dashboard = ({ onSelectMode }) => {
               </div>
               
               <div className="dashboard-card" onClick={async () => {
-                if (!newProjectName.trim()) { alert('Por favor, ingresa un nombre para el proyecto.'); return; }
+                if (!newProjectName.trim()) { await customAlert('Por favor, ingresa un nombre para el proyecto.'); return; }
                 const { data, error } = await supabase.from('cv_projects').insert({ user_id: user.id, name: newProjectName }).select().single();
                 if (error) {
-                  alert('Error al crear el proyecto. ¿Ejecutaste el script SQL de la tabla cv_projects en Supabase?\nDetalle: ' + error.message);
+                  await customAlert('Error al crear el proyecto. ¿Ejecutaste el script SQL de la tabla cv_projects en Supabase?\nDetalle: ' + error.message);
                   return;
                 }
                 if (data) onSelectMode({ mode: 'manual', projectId: data.id });

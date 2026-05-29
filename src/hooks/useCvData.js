@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { supabase } from '../lib/supabase';
+import { customAlert } from '../utils/dialogs';
 
 const CV_STORAGE_KEY = 'creator_cv_data';
 let lastAutoVersionTime = 0;
@@ -235,7 +236,7 @@ export const useCvData = (user, projectId) => {
           
         if (error) {
           console.error("Error en cv_versions:", error);
-          if (!isAuto) alert("Error al guardar la versión. ¿Ejecutaste el script SQL de permisos (RLS) para la tabla cv_versions?\nDetalle: " + error.message);
+          if (!isAuto) customAlert("Error al guardar la versión. ¿Ejecutaste el script SQL de permisos (RLS) para la tabla cv_versions?\nDetalle: " + error.message);
         }
       }
         

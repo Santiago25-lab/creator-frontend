@@ -3,7 +3,7 @@ import { supabase } from '../lib/supabase';
 
 const CV_STORAGE_KEY = 'creator_cv_data';
 let lastAutoVersionTime = 0;
-const AUTO_VERSION_COOLDOWN = 1000 * 60 * 5; // 5 minutos
+const AUTO_VERSION_COOLDOWN = 1000 * 60 * 1; // 1 minuto
 
 export const blankCV = {
   personalInfo: {
@@ -84,7 +84,7 @@ export const useCvData = (user, projectId) => {
         console.error("Error al autoguardar:", err);
       }
       setIsSaving(false);
-    }, 2000);
+    }, 60000); // Guardar cada 60 segundos (1 minuto)
 
     return () => clearTimeout(timer);
   }, [cvData, user, projectId, hasUnsavedChanges]);

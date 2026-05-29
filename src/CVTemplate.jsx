@@ -739,6 +739,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                   placeholder="Cuéntame sobre tu experiencia..." 
                   disabled={chat.isLoading} 
                   rows={1}
+                  maxLength={200}
                 />
                 <button className="app__chat-send" onClick={chat.sendMessage} disabled={chat.isLoading}><i className="fa-solid fa-paper-plane" /></button>
               </div>

@@ -128,12 +128,23 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
 
   const applyDesign = (design) => {
     if (!design) return;
+    const configUpdate = {};
     if (design.recipe) {
       setRecipe(design.recipe);
-      if (design.recipe.activeTemplate) setActiveTemplate(design.recipe.activeTemplate);
-      if (design.recipe.composerMode !== undefined) setComposerMode(design.recipe.composerMode);
-      else setComposerMode(true); // Fallback for old saved designs
+      configUpdate.recipe = design.recipe;
+      if (design.recipe.activeTemplate) {
+        setActiveTemplate(design.recipe.activeTemplate);
+        configUpdate.activeTemplate = design.recipe.activeTemplate;
+      }
+      if (design.recipe.composerMode !== undefined) {
+        setComposerMode(design.recipe.composerMode);
+        configUpdate.composerMode = design.recipe.composerMode;
+      } else {
+        setComposerMode(true); // Fallback for old saved designs
+        configUpdate.composerMode = true;
+      }
     }
+    cv.updateConfig(configUpdate);
     setActiveTab('templates');
   };
 
@@ -142,6 +153,37 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
       applyDesign(initialDesign);
     }
   }, [initialDesign]);
+
+  // ── Historial de Versiones ──
+  const [historyVersions, setHistoryVersions] = useState([]);
+  const [loadingVersions, setLoadingVersions] = useState(false);
+
+  useEffect(() => {
+    if (activeTab === 'history' && user) {
+      const fetchHistory = async () => {
+        setLoadingVersions(true);
+        const { data, error } = await supabase
+          .from('cv_versions')
+          .select('id, name, created_at, content')
+          .eq('user_id', user.id)
+          .order('created_at', { ascending: false });
+        if (data && !error) setHistoryVersions(data);
+        setLoadingVersions(false);
+      };
+      fetchHistory();
+    }
+  }, [activeTab, user]);
+
+  const restoreVersion = (version) => {
+    if (window.confirm("¿Seguro que quieres restaurar esta versión? Se reemplazará el contenido actual de este proyecto.")) {
+      cv.setCvData(version.content);
+      cv.setHasUnsavedChanges(true);
+      if (version.content.recipe) setRecipe(version.content.recipe);
+      if (version.content.activeTemplate) setActiveTemplate(version.content.activeTemplate);
+      if (version.content.composerMode !== undefined) setComposerMode(version.content.composerMode);
+      setActiveTab('editor');
+    }
+  };
 
   // ── Alerta de Cambios Sin Guardar ──
   useEffect(() => {
@@ -430,6 +472,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
         <ToolBtn icon="fa-user-pen" label="Datos" active={activeTab === 'editor'} onClick={() => setActiveTab('editor')} />
         <ToolBtn icon="fa-comment-dots" label="IA" active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} />
         <ToolBtn icon="fa-paperclip" label="Docs" active={activeTab === 'docs'} onClick={() => setActiveTab('docs')} />
+        <ToolBtn icon="fa-clock-rotate-left" label="Versiones" active={activeTab === 'history'} onClick={() => setActiveTab('history')} />
         
         <div className="app__tools-footer">
           <div 
@@ -454,6 +497,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
           {activeTab === 'editor' && 'Editar CV'}
           {activeTab === 'chat' && 'Redactor IA'}
           {activeTab === 'docs' && 'Documentos'}
+          {activeTab === 'history' && 'Historial'}
           {isSaving && <span className="app__saving-indicator">Guardando...</span>}
         </h2>
 
@@ -463,7 +507,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
           {activeTab === 'templates' && !composerMode && (
             <div className="app__gallery">
               {/* Botón Crear Diseño de Plantilla - PRIMERO Y RELEVANTE */}
-              <button className="app__create-design-btn" onClick={() => setComposerMode(true)}>
+              <button className="app__create-design-btn" onClick={() => { setComposerMode(true); cv.updateConfig({ composerMode: true }); }}>
                 <i className="fa-solid fa-wand-magic-sparkles" />
                 <span>Crear Diseño de Plantilla</span>
               </button>
@@ -488,7 +532,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
               {showTemplates && (
                 <div className="app__gallery-collapsible">
                   {TEMPLATES.map(t => (
-                    <div key={t.id} className={`app__card ${activeTemplate === t.id && !composerMode ? 'app__card--active' : ''}`} onClick={() => { setActiveTemplate(t.id); setComposerMode(false); }}>
+                    <div key={t.id} className={`app__card ${activeTemplate === t.id && !composerMode ? 'app__card--active' : ''}`} onClick={() => { setActiveTemplate(t.id); setComposerMode(false); cv.updateConfig({ activeTemplate: t.id, composerMode: false }); }}>
                       <div className="app__card-preview" style={{ borderColor: t.accent }}>
                         <i className={`fa-solid ${t.icon}`} style={{ color: t.accent }} />
                       </div>
@@ -532,8 +576,8 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
           {activeTab === 'templates' && composerMode && (
             <ComposerPanel
               recipe={recipe}
-              onRecipeChange={setRecipe}
-              onBack={() => setComposerMode(false)}
+              onRecipeChange={(newRecipe) => { setRecipe(newRecipe); cv.updateConfig({ recipe: newRecipe }); }}
+              onBack={() => { setComposerMode(false); cv.updateConfig({ composerMode: false }); }}
               onSave={saveCurrentDesign}
             />
           )}
@@ -689,6 +733,53 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                   setCvData(prev => mergeExtractedData(prev, extracted));
                 }}
               />
+            </div>
+          )}
+
+          {/* TAB: Historial */}
+          {activeTab === 'history' && (
+            <div className="app__history" style={{ padding: '20px 0' }}>
+              <p style={{ color: 'var(--text-dim)', marginBottom: '20px', fontSize: '14px' }}>Aquí puedes ver y restaurar las versiones anteriores de tus CV guardados. El autoguardado actualiza tu proyecto actual, pero aquí puedes guardar "fotografías" (versiones) en el tiempo.</p>
+              
+              <button 
+                onClick={() => {
+                  const name = prompt("Nombre de esta versión:", `Versión ${new Date().toLocaleDateString()}`);
+                  if (name) cv.saveToBackend(name, recipe, activeTemplate, composerMode);
+                }}
+                disabled={cv.isSaving}
+                style={{ width: '100%', padding: '12px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', marginBottom: '24px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+              >
+                <i className="fa-solid fa-camera" /> Guardar versión actual
+              </button>
+
+              {loadingVersions ? (
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--color-primary)' }}>
+                  <i className="fa-solid fa-spinner fa-spin" style={{ fontSize: '24px' }} />
+                  <p style={{ marginTop: '10px' }}>Cargando historial...</p>
+                </div>
+              ) : historyVersions.length > 0 ? (
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                  {historyVersions.map(version => (
+                    <div key={version.id} style={{ padding: '16px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-card)' }}>
+                      <h4 style={{ margin: '0 0 8px 0', fontSize: '15px' }}>{version.name || 'Versión guardada'}</h4>
+                      <p style={{ margin: '0 0 12px 0', fontSize: '12px', color: 'var(--text-dim)' }}>
+                        <i className="fa-regular fa-clock" /> {new Date(version.created_at).toLocaleString()}
+                      </p>
+                      <button 
+                        onClick={() => restoreVersion(version)}
+                        style={{ padding: '8px 12px', background: 'var(--bg-body)', border: '1px solid var(--border-color)', borderRadius: '6px', color: 'var(--text-primary)', cursor: 'pointer', fontSize: '13px', width: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                      >
+                        <i className="fa-solid fa-clock-rotate-left" /> Restaurar versión
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <div style={{ textAlign: 'center', padding: '40px 20px', color: 'var(--text-dim)' }}>
+                  <i className="fa-solid fa-ghost" style={{ fontSize: '32px', marginBottom: '16px', opacity: 0.5 }} />
+                  <p>Aún no hay versiones guardadas en tu historial.</p>
+                </div>
+              )}
             </div>
           )}
         </div>

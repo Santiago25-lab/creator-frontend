@@ -165,6 +165,11 @@ export const useCvData = (user, projectId) => {
     markUnsaved();
   };
 
+  const updateConfig = (config) => {
+    setCvData(d => ({ ...d, ...config }));
+    markUnsaved();
+  };
+
   const saveToBackend = async (customName = null, recipe = null, activeTemplate = null, composerMode = null) => {
     if (!user || !projectId) return;
     setIsSaving(true);
@@ -214,6 +219,7 @@ export const useCvData = (user, projectId) => {
     hasUnsavedChanges,
     setHasUnsavedChanges,
     saveToBackend,
+    updateConfig,
     updatePersonal,
     setPhoto,
     removePhoto,

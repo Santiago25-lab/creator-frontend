@@ -29,14 +29,14 @@
 }
 
 .dashboard-logo .logo-icon {
-  color: var(--color-primary);
+  color: #6366f1;
   font-size: 24px;
 }
 
 .dashboard-logo .logo-text {
   font-weight: 800;
   font-size: 20px;
-  background: linear-gradient(135deg, var(--color-primary), #a855f7);
+  background: linear-gradient(135deg, #6366f1, #a855f7);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   letter-spacing: -0.5px;

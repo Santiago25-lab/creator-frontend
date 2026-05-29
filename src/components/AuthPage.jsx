@@ -125,8 +125,8 @@ const AuthPage = () => {
           {/* Top Header & Logo */}
           <div className="auth-header-wrapper" style={{ paddingTop: '0px', marginBottom: '16px' }}>
             <div className="auth-logo-brand" style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '8px' }}>
-              <span className="material-symbols-outlined logo-icon" style={{ color: 'var(--color-primary)', fontSize: '24px', background: 'rgba(99, 102, 241, 0.1)', padding: '6px', borderRadius: '8px' }}>auto_awesome</span>
-              <span className="logo-text" style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px', margin: 0 }}>CreatorCV</span>
+              <span className="material-symbols-outlined logo-icon" style={{ color: '#6366f1', fontSize: '24px', background: 'rgba(99, 102, 241, 0.1)', padding: '6px', borderRadius: '8px' }}>auto_awesome</span>
+              <span className="logo-text" style={{ fontSize: '22px', fontWeight: '800', background: 'linear-gradient(135deg, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px', margin: 0 }}>CreatorCV</span>
             </div>
             <h2 className="auth-welcome-title" style={{ fontSize: '24px', marginBottom: '4px' }}>
               {isLogin ? 'Bienvenido de nuevo' : 'Crea tu cuenta'}

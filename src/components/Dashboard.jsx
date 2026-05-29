@@ -150,7 +150,7 @@ const Dashboard = ({ onSelectMode }) => {
           <>
             <div style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', marginBottom: '32px', gap: '16px' }}>
               <div>
-                <h1 className="dashboard-title" style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 10px 0', background: 'linear-gradient(135deg, var(--color-primary), #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
+                <h1 className="dashboard-title" style={{ fontSize: '36px', fontWeight: '800', margin: '0 0 10px 0', background: 'linear-gradient(135deg, #6366f1, #a855f7)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', letterSpacing: '-0.5px' }}>
                   ¡Bienvenido a CreatorCV!
                 </h1>
                 <p className="dashboard-subtitle" style={{ margin: 0, fontSize: '16px', color: 'var(--text-dim)', fontWeight: '500' }}>
@@ -162,7 +162,7 @@ const Dashboard = ({ onSelectMode }) => {
                 onClick={() => setIsCreatingProject(true)}
                 style={{ 
                   padding: '14px 28px', 
-                  background: 'linear-gradient(135deg, var(--color-primary), #8b5cf6)', 
+                  background: 'linear-gradient(135deg, #6366f1, #8b5cf6)', 
                   color: 'white', 
                   border: 'none', 
                   borderRadius: '12px', 

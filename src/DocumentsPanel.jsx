@@ -13,9 +13,10 @@ const hasContent = (val) => {
   return false;
 };
 
-const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
+const DocumentsPanel = ({ projectId, onApplyData, onDocumentChange }) => {
   const { user } = useAuth(); // Obtener el usuario actual
   const [documents, setDocuments] = useState([]);
+  const [viewMode, setViewMode] = useState('project'); // 'project' | 'global'
   const [showToast, setShowToast] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
@@ -29,12 +30,15 @@ const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
 
   useEffect(() => { 
     if (user) fetchDocuments(); 
-  }, [user]);
+  }, [user, viewMode, projectId]);
 
   const fetchDocuments = async () => {
     if (!user) return;
     try {
-      const res = await fetch(`${API_URLS.documents}?userId=${user.id}`);
+      const url = viewMode === 'project' && projectId 
+        ? `${API_URLS.documents}?userId=${user.id}&projectId=${projectId}`
+        : `${API_URLS.documents}?userId=${user.id}`;
+      const res = await fetch(url);
       if (res.ok) setDocuments(await res.json());
     } catch {}
   };
@@ -50,6 +54,7 @@ const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
     const formData = new FormData();
     formData.append('file', file);
     formData.append('userId', user.id); // Enviar el ID del dueño
+    if (projectId) formData.append('projectId', projectId); // Vincular al proyecto actual
     if (description.trim()) formData.append('description', description.trim());
 
     try {
@@ -151,13 +156,29 @@ const DocumentsPanel = ({ onApplyData, onDocumentChange }) => {
       {uploadError && <div className="docs__error">{uploadError}</div>}
 
       {/* ── Lista ── */}
-      <div className="docs__section-header">
-        <span>Mis documentos</span>
-        <span className="docs__count">{documents.length}</span>
+      <div className="docs__section-header" style={{ display: 'flex', flexDirection: 'column', gap: '12px', alignItems: 'stretch' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <span>Mis documentos</span>
+          <span className="docs__count">{documents.length}</span>
+        </div>
+        <div style={{ display: 'flex', gap: '8px', background: 'var(--bg-body)', padding: '4px', borderRadius: '8px' }}>
+          <button 
+            style={{ flex: 1, padding: '6px', borderRadius: '6px', border: 'none', background: viewMode === 'project' ? 'var(--bg-card)' : 'transparent', color: viewMode === 'project' ? 'var(--text-primary)' : 'var(--text-dim)', fontWeight: viewMode === 'project' ? '600' : 'normal', cursor: 'pointer', boxShadow: viewMode === 'project' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}
+            onClick={() => setViewMode('project')}
+          >
+            Este proyecto
+          </button>
+          <button 
+            style={{ flex: 1, padding: '6px', borderRadius: '6px', border: 'none', background: viewMode === 'global' ? 'var(--bg-card)' : 'transparent', color: viewMode === 'global' ? 'var(--text-primary)' : 'var(--text-dim)', fontWeight: viewMode === 'global' ? '600' : 'normal', cursor: 'pointer', boxShadow: viewMode === 'global' ? '0 1px 3px rgba(0,0,0,0.1)' : 'none', transition: 'all 0.2s' }}
+            onClick={() => setViewMode('global')}
+          >
+            Global
+          </button>
+        </div>
       </div>
 
       {documents.length === 0 ? (
-        <div className="docs__empty"><i className="fa-solid fa-folder-open" /><span>Aún no has subido documentos</span></div>
+        <div className="docs__empty"><i className="fa-solid fa-folder-open" /><span>No hay documentos {viewMode === 'project' ? 'en este proyecto' : 'subidos'}</span></div>
       ) : (
         <div className="docs__list">
           {documents.map(doc => (

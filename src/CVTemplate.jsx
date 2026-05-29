@@ -403,14 +403,11 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
   };
 
   const handleShare = () => {
-    // Generate a mock unique URL
-    const uniqueId = Math.random().toString(36).substr(2, 9);
-    const url = `https://creatorcv.com/v/${uniqueId}`;
+    const url = `${window.location.origin}/share/${projectId}`;
     setShareLink(url);
     navigator.clipboard.writeText(url);
     
     setShowShareToast(true);
-    setTimeout(() => setShowShareToast(false), 4000);
   };
 
   /* ── Exportar PDF ── */
@@ -728,6 +725,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
           {activeTab === 'docs' && (
             <div style={{ padding: '4px 0' }}>
               <DocumentsPanel
+                projectId={projectId}
                 onDocumentChange={fetchDocuments}
                 onApplyData={(extracted) => {
                   setCvData(prev => mergeExtractedData(prev, extracted));

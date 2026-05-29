@@ -181,34 +181,53 @@ const Dashboard = ({ onSelectMode }) => {
                     onDragLeave={() => setIsDragOverTrash(false)}
                     onDrop={handleDrop}
                     style={{ 
-                      marginTop: '16px', marginBottom: '24px', padding: '24px', 
-                      borderRadius: '12px', background: isDragOverTrash ? 'var(--bg-body)' : 'var(--bg-card)', 
-                      border: `2px dashed ${isDragOverTrash ? 'var(--color-primary)' : 'var(--border-color)'}`,
-                      transition: 'all 0.2s', minHeight: '120px'
+                      marginTop: '16px', marginBottom: '32px', padding: '24px', 
+                      borderRadius: '16px', background: isDragOverTrash ? 'rgba(239, 68, 68, 0.05)' : 'var(--bg-card)', 
+                      border: `2px dashed ${isDragOverTrash ? '#ef4444' : 'var(--border-color)'}`,
+                      transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)', minHeight: '160px',
+                      boxShadow: isDragOverTrash ? '0 10px 25px -5px rgba(239, 68, 68, 0.2)' : 'none',
+                      position: 'relative', overflow: 'hidden'
                     }}
                   >
-                    <h4 style={{ margin: '0 0 16px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <i className="fa-solid fa-trash-can" style={{ color: '#ef4444' }}></i> Papelera ({trashProjects.length})
+                    {/* Decoración de fondo */}
+                    <div style={{ position: 'absolute', right: '-20px', bottom: '-40px', opacity: 0.03, pointerEvents: 'none' }}>
+                      <i className="fa-solid fa-trash-can" style={{ fontSize: '180px' }}></i>
+                    </div>
+
+                    <h4 style={{ margin: '0 0 12px 0', color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '8px', fontSize: '16px' }}>
+                      <i className="fa-solid fa-trash-can" style={{ color: '#ef4444' }}></i> Papelera de reciclaje ({trashProjects.length})
                     </h4>
                     
-                    <p style={{ margin: '0 0 16px 0', fontSize: '13px', color: 'var(--text-dim)' }}>
-                      Arrastra aquí tus proyectos para eliminarlos. Permanecerán 30 días antes de ser borrados definitivamente.
+                    <p style={{ margin: '0 0 24px 0', fontSize: '13px', color: 'var(--text-dim)', maxWidth: '600px', lineHeight: '1.5' }}>
+                      Arrastra aquí tus proyectos para eliminarlos. Los elementos en la papelera se conservarán durante 30 días antes de ser eliminados definitivamente para liberar espacio.
                     </p>
                     
                     {trashProjects.length > 0 ? (
-                      <div className="dashboard-recent-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))' }}>
+                      <div className="dashboard-recent-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(220px, 1fr))', position: 'relative', zIndex: 1 }}>
                         {trashProjects.map(proj => (
-                          <div key={proj.id} style={{ background: 'var(--bg-body)', padding: '12px', borderRadius: '8px', border: '1px solid var(--border-color)', position: 'relative' }}>
-                            <h5 style={{ margin: '0 0 4px 0', fontSize: '14px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{proj.name}</h5>
-                            <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-                              <button onClick={() => handleRestore(proj.id)} style={{ flex: 1, padding: '6px', fontSize: '11px', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '4px', cursor: 'pointer' }}>Recuperar</button>
-                              <button onClick={() => handleHardDelete(proj.id)} style={{ padding: '6px 10px', fontSize: '11px', background: 'transparent', color: '#ef4444', border: '1px solid #ef4444', borderRadius: '4px', cursor: 'pointer' }}><i className="fa-solid fa-xmark"></i></button>
+                          <div key={proj.id} style={{ background: 'var(--bg-body)', padding: '16px', borderRadius: '12px', border: '1px solid var(--border-color)', position: 'relative', boxShadow: '0 2px 8px rgba(0,0,0,0.05)' }}>
+                            <h5 style={{ margin: '0 0 6px 0', fontSize: '15px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', color: 'var(--text-primary)' }}>{proj.name}</h5>
+                            <span style={{ fontSize: '11px', color: 'var(--text-dim)', display: 'block', marginBottom: '16px' }}>
+                              Eliminado: {proj.content?.deleted_at ? new Date(proj.content.deleted_at).toLocaleDateString() : 'Desconocido'}
+                            </span>
+                            <div style={{ display: 'flex', gap: '8px' }}>
+                              <button onClick={() => handleRestore(proj.id)} style={{ flex: 1, padding: '8px', fontSize: '12px', fontWeight: '500', background: 'var(--color-primary)', color: 'white', border: 'none', borderRadius: '6px', cursor: 'pointer', transition: 'opacity 0.2s', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }} onMouseOver={e=>e.currentTarget.style.opacity=0.9} onMouseOut={e=>e.currentTarget.style.opacity=1}>
+                                <i className="fa-solid fa-rotate-left"></i> Restaurar
+                              </button>
+                              <button onClick={() => handleHardDelete(proj.id)} style={{ padding: '8px 12px', fontSize: '12px', background: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.2)', borderRadius: '6px', cursor: 'pointer', transition: 'all 0.2s' }} title="Borrar permanentemente" onMouseOver={e=>{e.currentTarget.style.background='rgba(239, 68, 68, 0.2)'; e.currentTarget.style.borderColor='rgba(239, 68, 68, 0.4)'}} onMouseOut={e=>{e.currentTarget.style.background='rgba(239, 68, 68, 0.1)'; e.currentTarget.style.borderColor='rgba(239, 68, 68, 0.2)'}}>
+                                <i className="fa-solid fa-trash"></i>
+                              </button>
                             </div>
                           </div>
                         ))}
                       </div>
                     ) : (
-                      <div style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '13px', padding: '16px' }}>La papelera está vacía</div>
+                      <div style={{ textAlign: 'center', color: 'var(--text-dim)', fontSize: '14px', padding: '32px 16px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '12px', position: 'relative', zIndex: 1 }}>
+                        <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'var(--bg-body)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px dashed var(--border-color)', color: '#ef4444', opacity: 0.6, transition: 'all 0.3s', transform: isDragOverTrash ? 'scale(1.1)' : 'scale(1)' }}>
+                          <i className="fa-solid fa-trash-can" style={{ fontSize: '24px' }}></i>
+                        </div>
+                        {isDragOverTrash ? <strong style={{ color: '#ef4444' }}>¡Suelta el proyecto aquí!</strong> : 'La papelera está vacía'}
+                      </div>
                     )}
                   </div>
                 )}

@@ -15,18 +15,27 @@ const AuthPage = () => {
 
   const { signIn, signUp } = useAuth();
 
-  const getPasswordStrength = (pwd) => {
-    if (!pwd) return { score: 0, text: '', color: 'transparent' };
-    let score = 0;
-    if (pwd.length >= 8) score++;
-    if (/[A-Z]/.test(pwd)) score++;
-    if (/[a-z]/.test(pwd)) score++;
-    if (/[0-9]/.test(pwd)) score++;
-    if (/[^A-Za-z0-9]/.test(pwd)) score++;
+  const commonPasswords = new Set(['12345678', 'password', 'qwertyui', 'admin123', '123456789', 'password123', '11111111', '12345678aA!', 'Password123!']);
 
-    if (score < 3) return { score, text: 'Débil', color: '#ef4444' };
-    if (score < 5) return { score, text: 'Media', color: '#f59e0b' };
-    return { score, text: 'Fuerte', color: '#10b981' };
+  const getPasswordStrength = (pwd) => {
+    if (!pwd) return { score: 0, text: '', color: 'transparent', checks: { length: false, upper: false, lower: false, num: false, spec: false } };
+    
+    const checks = {
+      length: pwd.length >= 8,
+      upper: /[A-Z]/.test(pwd),
+      lower: /[a-z]/.test(pwd),
+      num: /[0-9]/.test(pwd),
+      spec: /[^A-Za-z0-9]/.test(pwd)
+    };
+    
+    const score = Object.values(checks).filter(Boolean).length;
+
+    let text = 'Débil';
+    let color = '#ef4444';
+    if (score >= 3 && score < 5) { text = 'Media'; color = '#f59e0b'; }
+    if (score === 5) { text = 'Fuerte'; color = '#10b981'; }
+
+    return { score, text, color, checks };
   };
 
   const handleOAuth = async (provider) => {
@@ -49,11 +58,13 @@ const AuthPage = () => {
       if (fullName.length > 50) return setError("El nombre no puede exceder 50 caracteres.");
       if (/[<>{}[\]\\]/.test(fullName)) return setError("El nombre contiene caracteres inválidos.");
       if (email.length > 100) return setError("El correo es demasiado largo.");
-      if (password.length > 100) return setError("La contraseña es demasiado larga.");
+      if (commonPasswords.has(password.toLowerCase()) || commonPasswords.has(password)) {
+        return setError("Esa contraseña es demasiado común. Por favor, elige una más segura.");
+      }
       
       const pwdStatus = getPasswordStrength(password);
-      if (pwdStatus.score < 3) {
-        return setError("Tu contraseña debe contener al menos 8 caracteres, incluyendo letras y números.");
+      if (pwdStatus.score < 5) {
+        return setError("Tu contraseña aún no cumple todos los requisitos de seguridad.");
       }
     }
 
@@ -201,20 +212,35 @@ const AuthPage = () => {
                     </span>
                   </button>
                 </div>
-                {/* Evaluador de Contraseña */}
+                {/* Evaluador de Contraseña Descriptivo */}
                 {!isLogin && password.length > 0 && (() => {
                   const strength = getPasswordStrength(password);
+                  const { checks } = strength;
                   return (
-                    <div style={{ marginTop: '10px', fontSize: '11px', fontWeight: '500' }}>
-                      <div style={{ display: 'flex', gap: '4px', height: '4px', marginBottom: '6px' }}>
+                    <div style={{ marginTop: '12px', fontSize: '12px', fontWeight: '500', background: 'rgba(0,0,0,0.2)', padding: '14px', borderRadius: '10px', border: '1px solid rgba(255,255,255,0.05)' }}>
+                      <div style={{ display: 'flex', gap: '4px', height: '4px', marginBottom: '12px' }}>
                         {[1, 2, 3, 4, 5].map((level) => (
-                          <div key={level} style={{ flex: 1, background: level <= strength.score ? strength.color : 'var(--border-color)', borderRadius: '2px', transition: 'all 0.3s' }}></div>
+                          <div key={level} style={{ flex: 1, background: level <= strength.score ? strength.color : 'rgba(255,255,255,0.1)', borderRadius: '2px', transition: 'all 0.3s' }}></div>
                         ))}
                       </div>
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <span style={{ color: strength.color, fontWeight: 'bold' }}>{strength.text}</span>
-                        <span style={{ color: 'var(--text-dim)' }}>8+ caracs, letras y números</span>
-                      </div>
+                      <div style={{ color: strength.color, fontWeight: 'bold', marginBottom: '10px', fontSize: '13px' }}>Seguridad: {strength.text}</div>
+                      <ul style={{ margin: 0, paddingLeft: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--text-dim)' }}>
+                        <li style={{ color: checks.length ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className={`fa-solid ${checks.length ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 8 o más caracteres
+                        </li>
+                        <li style={{ color: checks.upper ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className={`fa-solid ${checks.upper ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 letra mayúscula
+                        </li>
+                        <li style={{ color: checks.lower ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className={`fa-solid ${checks.lower ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 letra minúscula
+                        </li>
+                        <li style={{ color: checks.num ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className={`fa-solid ${checks.num ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 número
+                        </li>
+                        <li style={{ color: checks.spec ? '#10b981' : 'var(--text-dim)', display: 'flex', alignItems: 'center', gap: '8px' }}>
+                          <i className={`fa-solid ${checks.spec ? 'fa-circle-check' : 'fa-circle-xmark'}`}></i> 1 símbolo (ej. !@#$)
+                        </li>
+                      </ul>
                     </div>
                   );
                 })()}

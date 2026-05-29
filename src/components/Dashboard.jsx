@@ -177,7 +177,20 @@ const Dashboard = ({ onSelectMode }) => {
                 value={newProjectName}
                 onChange={(e) => setNewProjectName(e.target.value)}
                 placeholder="Ej. CV para Google, CV Diseño Gráfico..."
-                style={{ width: '100%', maxWidth: '400px', padding: '12px 16px', borderRadius: '8px', border: '1px solid var(--border-color)', background: 'var(--bg-card)', color: 'var(--text-primary)', fontSize: '16px' }}
+                style={{ 
+                  width: '100%', 
+                  maxWidth: '400px', 
+                  padding: '12px 16px', 
+                  borderRadius: '8px', 
+                  border: '2px solid #cbd5e1', 
+                  outline: 'none',
+                  background: 'var(--bg-card)', 
+                  color: 'var(--text-primary)', 
+                  fontSize: '16px',
+                  transition: 'border-color 0.2s'
+                }}
+                onFocus={(e) => e.target.style.borderColor = 'var(--color-primary)'}
+                onBlur={(e) => e.target.style.borderColor = '#cbd5e1'}
               />
             </div>
             
@@ -185,7 +198,11 @@ const Dashboard = ({ onSelectMode }) => {
             <div className="dashboard-options">
               <div className="dashboard-card" onClick={async () => {
                 if (!newProjectName.trim()) { alert('Por favor, ingresa un nombre para el proyecto.'); return; }
-                const { data } = await supabase.from('cv_projects').insert({ user_id: user.id, name: newProjectName }).select().single();
+                const { data, error } = await supabase.from('cv_projects').insert({ user_id: user.id, name: newProjectName }).select().single();
+                if (error) {
+                  alert('Error al crear el proyecto. ¿Ejecutaste el script SQL de la tabla cv_projects en Supabase?\nDetalle: ' + error.message);
+                  return;
+                }
                 if (data) onSelectMode({ mode: 'ia', projectId: data.id });
               }}>
                 <div className="card-icon ia-icon"><i className="fa-solid fa-wand-magic-sparkles"></i></div>
@@ -196,7 +213,11 @@ const Dashboard = ({ onSelectMode }) => {
               
               <div className="dashboard-card" onClick={async () => {
                 if (!newProjectName.trim()) { alert('Por favor, ingresa un nombre para el proyecto.'); return; }
-                const { data } = await supabase.from('cv_projects').insert({ user_id: user.id, name: newProjectName }).select().single();
+                const { data, error } = await supabase.from('cv_projects').insert({ user_id: user.id, name: newProjectName }).select().single();
+                if (error) {
+                  alert('Error al crear el proyecto. ¿Ejecutaste el script SQL de la tabla cv_projects en Supabase?\nDetalle: ' + error.message);
+                  return;
+                }
                 if (data) onSelectMode({ mode: 'manual', projectId: data.id });
               }}>
                 <div className="card-icon manual-icon"><i className="fa-solid fa-user-pen"></i></div>

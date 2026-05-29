@@ -128,10 +128,6 @@ const AuthPage = () => {
                 <i className="fa-brands fa-google" style={{ color: '#ea4335', fontSize: '18px' }}></i>
                 Google
               </button>
-              <button type="button" className="social-btn" onClick={() => handleOAuth('linkedin_oidc')} style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', fontWeight: '500' }}>
-                <i className="fa-brands fa-linkedin" style={{ color: '#0a66c2', fontSize: '18px' }}></i>
-                LinkedIn
-              </button>
             </div>
 
             {/* Divider */}

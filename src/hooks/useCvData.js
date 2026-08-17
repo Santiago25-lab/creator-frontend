@@ -73,6 +73,7 @@ export const useCvData = (user, projectId) => {
     const timer = setTimeout(async () => {
       setIsSaving(true);
       try {
+        // Autoguardado del proyecto en cv_projects (sin crear filas en cv_versions)
         await supabase
           .from('cv_projects')
           .update({ 
@@ -80,17 +81,6 @@ export const useCvData = (user, projectId) => {
             updated_at: new Date().toISOString()
           })
           .eq('id', projectId);
-          
-        const versionName = `Autoguardado (${new Date().toLocaleTimeString()})`;
-        await supabase
-          .from('cv_versions')
-          .insert({
-            user_id: user.id,
-            project_id: projectId,
-            name: versionName,
-            content: cvData,
-            created_at: new Date().toISOString()
-          });
 
         setHasUnsavedChanges(false);
       } catch (err) {
@@ -213,15 +203,10 @@ export const useCvData = (user, projectId) => {
       let shouldSaveVersion = true;
       let isAuto = false;
       
-      // Si todo es null, asumimos que es el autoguardado del debounce
+      // Si no se pasó un nombre o receta explícita, se considera guardado del proyecto sin crear nueva versión en la BD
       if (customName === null && recipe === null && activeTemplate === null && composerMode === null) {
         isAuto = true;
-        const now = Date.now();
-        if (now - lastAutoVersionTime < AUTO_VERSION_COOLDOWN) {
-          shouldSaveVersion = false;
-        } else {
-          lastAutoVersionTime = now;
-        }
+        shouldSaveVersion = false;
       }
 
       if (shouldSaveVersion) {

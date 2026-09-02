@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import html2pdf from 'html2pdf.js';
+import { jsPDF } from 'jspdf';
+import html2canvas from 'html2canvas';
 import { API_URLS } from './services/api';
 import { useCvData } from './hooks/useCvData';
 import { useChatIA } from './hooks/useChatIA';
@@ -63,6 +64,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
   const [shareLink, setShareLink] = useState('');
   const [newSoftSkill, setNewSoftSkill] = useState('');
   const [newInterest, setNewInterest] = useState('');
+  const [isExporting, setIsExporting] = useState(false);
 
   const handleManualSave = async () => {
     try {
@@ -448,30 +450,76 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
     setShowShareToast(true);
   };
 
-  /* ── Exportar PDF ── */
+  /* ── Exportar PDF Adaptativo y Multioja ── */
   const exportPDF = async () => {
     const wrapper = cvRef.current;
-    if (!wrapper) return;
+    if (!wrapper || isExporting) return;
 
-    // Guardamos el transform actual y lo reseteamos a escala 1:1 para captura limpia
+    setIsExporting(true);
+
+    // Guardamos el transform actual y lo reseteamos a escala 1:1 para captura ultra nítida
     const prevTransform = wrapper.style.transform;
+    const prevOrigin = wrapper.style.transformOrigin;
     wrapper.style.transform = 'scale(1)';
     wrapper.style.transformOrigin = 'top left';
 
-    const opt = {
-      margin: 0,
-      filename: `${cvData.personalInfo.name.replace(/\s+/g, '_')}_CV.pdf`,
-      image: { type: 'jpeg', quality: 0.98 },
-      html2canvas: { scale: 3, useCORS: true, allowTaint: true, logging: false },
-      jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-    };
-
     try {
-      await html2pdf().set(opt).from(wrapper).save();
+      // 1. Identificar el elemento principal del CV y las páginas de certificados
+      const children = Array.from(wrapper.children);
+      if (children.length === 0) return;
+
+      const cvElement = children[0]; // El diseño del CV
+      const certElements = children.slice(1); // Páginas de certificados adjuntos (si existen)
+
+      // 2. Capturar el CV completo a alta resolución sin cortes
+      const cvCanvas = await html2canvas(cvElement, {
+        scale: 2.5,
+        useCORS: true,
+        allowTaint: true,
+        logging: false,
+        backgroundColor: '#ffffff',
+        windowWidth: cvElement.scrollWidth || 794
+      });
+
+      const cvWidthMm = 210;
+      // Altura proporcional exacta en milímetros (mínimo 297mm A4 estándar)
+      const cvHeightMm = Math.max(297, (cvCanvas.height * cvWidthMm) / cvCanvas.width);
+
+      // Crear el documento PDF con tamaño dinámico que ajusta exactamente el CV sin cortes
+      const pdf = new jsPDF({
+        orientation: 'portrait',
+        unit: 'mm',
+        format: [cvWidthMm, cvHeightMm]
+      });
+
+      const cvImgData = cvCanvas.toDataURL('image/jpeg', 0.98);
+      pdf.addImage(cvImgData, 'JPEG', 0, 0, cvWidthMm, cvHeightMm, undefined, 'FAST');
+
+      // 3. Añadir cada certificado adjunto en una hoja A4 estándar separada
+      for (const certEl of certElements) {
+        const certCanvas = await html2canvas(certEl, {
+          scale: 2.5,
+          useCORS: true,
+          allowTaint: true,
+          logging: false,
+          backgroundColor: '#ffffff'
+        });
+
+        const certImgData = certCanvas.toDataURL('image/jpeg', 0.98);
+        pdf.addPage([210, 297], 'portrait');
+        pdf.addImage(certImgData, 'JPEG', 0, 0, 210, 297, undefined, 'FAST');
+      }
+
+      const rawName = cvData?.personalInfo?.name || 'Mi';
+      const cleanName = rawName.trim().replace(/[^\w\s-]/g, '').replace(/\s+/g, '_') || 'Mi';
+      pdf.save(`${cleanName}_CV.pdf`);
+    } catch (err) {
+      console.error('Error al exportar PDF:', err);
     } finally {
       // Restauramos el transform visual original después de exportar
       wrapper.style.transform = prevTransform;
-      wrapper.style.transformOrigin = 'top center';
+      wrapper.style.transformOrigin = prevOrigin || 'top center';
+      setIsExporting(false);
     }
   };
 
@@ -967,8 +1015,8 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
             <i className="fa-solid fa-link" /> Compartir
           </button>
 
-          <button className="app__export-btn" onClick={exportPDF}>
-            <i className="fa-solid fa-file-pdf" /> Exportar PDF
+          <button className="app__export-btn" onClick={exportPDF} disabled={isExporting}>
+            <i className={`fa-solid ${isExporting ? 'fa-spinner fa-spin' : 'fa-file-pdf'}`} /> {isExporting ? 'Generando PDF...' : 'Exportar PDF'}
           </button>
         </div>
 

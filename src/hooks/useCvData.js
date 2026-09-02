@@ -6,6 +6,26 @@ const CV_STORAGE_KEY = 'creator_cv_data';
 let lastAutoVersionTime = 0;
 const AUTO_VERSION_COOLDOWN = 1000 * 60 * 1; // 1 minuto
 
+export const defaultSectionsVisibility = {
+  personalInfo: true,
+  photo: true,
+  aboutMe: true,
+  objective: false,
+  experience: true,
+  education: true,
+  skills: true,
+  softSkills: true,
+  languages: true,
+  certifications: true,
+  projects: true,
+  publications: false,
+  awards: false,
+  volunteer: false,
+  references: false,
+  interests: true,
+  socialLinks: true
+};
+
 export const blankCV = {
   personalInfo: {
     name: "",
@@ -14,12 +34,24 @@ export const blankCV = {
     email: "",
     address: "",
     website: "",
-    aboutMe: ""
+    aboutMe: "",
+    objective: "",
+    photo: null
   },
   experience: [],
   education: [],
   skills: [],
-  languages: []
+  softSkills: [],
+  languages: [],
+  certifications: [],
+  projects: [],
+  publications: [],
+  awards: [],
+  volunteer: [],
+  references: [],
+  interests: [],
+  socialLinks: [],
+  sectionsVisibility: defaultSectionsVisibility
 };
 
 // Mantenemos una referencia por compatibilidad, pero vacía
@@ -46,8 +78,14 @@ export const useCvData = (user, projectId) => {
         .maybeSingle();
 
       if (data && data.content && Object.keys(data.content).length > 0) {
-        setCvData(data.content);
-        localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(data.content));
+        const loadedContent = {
+          ...blankCV,
+          ...data.content,
+          personalInfo: { ...blankCV.personalInfo, ...(data.content.personalInfo || {}) },
+          sectionsVisibility: { ...defaultSectionsVisibility, ...(data.content.sectionsVisibility || {}) }
+        };
+        setCvData(loadedContent);
+        localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(loadedContent));
       } else {
         // Proyecto nuevo sin contenido
         setCvData(blankCV);
@@ -57,7 +95,7 @@ export const useCvData = (user, projectId) => {
     fetchSupabaseData();
   }, [user, projectId]);
 
-  // 2. Guardar en LocalStorage y autoguardado en BD (cada 2 seg si hay cambios)
+  // 2. Guardar en LocalStorage y autoguardado en BD (cada 60 seg si hay cambios)
   useEffect(() => {
     try {
       localStorage.setItem(CV_STORAGE_KEY, JSON.stringify(cvData));
@@ -73,7 +111,6 @@ export const useCvData = (user, projectId) => {
     const timer = setTimeout(async () => {
       setIsSaving(true);
       try {
-        // Autoguardado del proyecto en cv_projects (sin crear filas en cv_versions)
         await supabase
           .from('cv_projects')
           .update({ 
@@ -87,13 +124,50 @@ export const useCvData = (user, projectId) => {
         console.error("Error al autoguardar:", err);
       }
       setIsSaving(false);
-    }, 60000); // Guardar cada 60 segundos (1 minuto)
+    }, 60000);
 
     return () => clearTimeout(timer);
   }, [cvData, user, projectId, hasUnsavedChanges]);
 
   /* ── Métodos de actualización ── */
   const markUnsaved = () => setHasUnsavedChanges(true);
+
+  // Visibilidad de secciones
+  const toggleSectionVisibility = (key) => {
+    setCvData(d => {
+      const currentVis = d.sectionsVisibility || defaultSectionsVisibility;
+      return {
+        ...d,
+        sectionsVisibility: {
+          ...currentVis,
+          [key]: !currentVis[key]
+        }
+      };
+    });
+    markUnsaved();
+  };
+
+  const setSectionVisibility = (key, isVisible) => {
+    setCvData(d => ({
+      ...d,
+      sectionsVisibility: {
+        ...(d.sectionsVisibility || defaultSectionsVisibility),
+        [key]: isVisible
+      }
+    }));
+    markUnsaved();
+  };
+
+  const setAllSectionsVisibility = (isVisible) => {
+    setCvData(d => {
+      const updated = {};
+      Object.keys(defaultSectionsVisibility).forEach(k => {
+        updated[k] = isVisible;
+      });
+      return { ...d, sectionsVisibility: updated };
+    });
+    markUnsaved();
+  };
 
   const updatePersonal = (field, value) => {
     setCvData(d => ({ ...d, personalInfo: { ...d.personalInfo, [field]: value } }));
@@ -110,14 +184,15 @@ export const useCvData = (user, projectId) => {
     markUnsaved();
   };
 
+  // Experiencia
   const addExperience = () => {
-    setCvData(d => ({ ...d, experience: [...d.experience, { period: "", title: "", description: "" }] }));
+    setCvData(d => ({ ...d, experience: [...(d.experience || []), { period: "", title: "", company: "", description: "" }] }));
     markUnsaved();
   };
 
   const updateExperience = (i, field, value) => {
     setCvData(d => {
-      const exp = [...d.experience];
+      const exp = [...(d.experience || [])];
       exp[i] = { ...exp[i], [field]: value };
       return { ...d, experience: exp };
     });
@@ -125,18 +200,19 @@ export const useCvData = (user, projectId) => {
   };
 
   const removeExperience = (i) => {
-    setCvData(d => ({ ...d, experience: d.experience.filter((_, idx) => idx !== i) }));
+    setCvData(d => ({ ...d, experience: (d.experience || []).filter((_, idx) => idx !== i) }));
     markUnsaved();
   };
 
+  // Educación
   const addEducation = () => {
-    setCvData(d => ({ ...d, education: [...d.education, { period: "", degree: "", institution: "" }] }));
+    setCvData(d => ({ ...d, education: [...(d.education || []), { period: "", degree: "", institution: "" }] }));
     markUnsaved();
   };
 
   const updateEducation = (i, field, value) => {
     setCvData(d => {
-      const edu = [...d.education];
+      const edu = [...(d.education || [])];
       edu[i] = { ...edu[i], [field]: value };
       return { ...d, education: edu };
     });
@@ -144,29 +220,195 @@ export const useCvData = (user, projectId) => {
   };
 
   const removeEducation = (i) => {
-    setCvData(d => ({ ...d, education: d.education.filter((_, idx) => idx !== i) }));
+    setCvData(d => ({ ...d, education: (d.education || []).filter((_, idx) => idx !== i) }));
     markUnsaved();
   };
 
+  // Habilidades Técnicas (Hard Skills)
   const addSkill = (skill) => {
     if (!skill || !skill.trim()) return;
-    setCvData(d => ({ ...d, skills: [...d.skills, skill.trim()] }));
+    setCvData(d => ({ ...d, skills: [...(d.skills || []), skill.trim()] }));
     markUnsaved();
   };
 
   const removeSkill = (i) => {
-    setCvData(d => ({ ...d, skills: d.skills.filter((_, idx) => idx !== i) }));
+    setCvData(d => ({ ...d, skills: (d.skills || []).filter((_, idx) => idx !== i) }));
     markUnsaved();
   };
 
+  // Habilidades Blandas (Soft Skills)
+  const addSoftSkill = (skill) => {
+    if (!skill || !skill.trim()) return;
+    setCvData(d => ({ ...d, softSkills: [...(d.softSkills || []), skill.trim()] }));
+    markUnsaved();
+  };
+
+  const removeSoftSkill = (i) => {
+    setCvData(d => ({ ...d, softSkills: (d.softSkills || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Idiomas
   const addLanguage = (lang) => {
     if (!lang || !lang.trim()) return;
-    setCvData(d => ({ ...d, languages: [...d.languages, lang.trim()] }));
+    setCvData(d => ({ ...d, languages: [...(d.languages || []), lang.trim()] }));
     markUnsaved();
   };
 
   const removeLanguage = (i) => {
-    setCvData(d => ({ ...d, languages: d.languages.filter((_, idx) => idx !== i) }));
+    setCvData(d => ({ ...d, languages: (d.languages || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Certificaciones
+  const addCertification = () => {
+    setCvData(d => ({ ...d, certifications: [...(d.certifications || []), { name: "", issuer: "", date: "" }] }));
+    markUnsaved();
+  };
+
+  const updateCertification = (i, field, value) => {
+    setCvData(d => {
+      const certs = [...(d.certifications || [])];
+      certs[i] = { ...certs[i], [field]: value };
+      return { ...d, certifications: certs };
+    });
+    markUnsaved();
+  };
+
+  const removeCertification = (i) => {
+    setCvData(d => ({ ...d, certifications: (d.certifications || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Proyectos
+  const addProject = () => {
+    setCvData(d => ({ ...d, projects: [...(d.projects || []), { name: "", role: "", link: "", description: "" }] }));
+    markUnsaved();
+  };
+
+  const updateProject = (i, field, value) => {
+    setCvData(d => {
+      const projs = [...(d.projects || [])];
+      projs[i] = { ...projs[i], [field]: value };
+      return { ...d, projects: projs };
+    });
+    markUnsaved();
+  };
+
+  const removeProject = (i) => {
+    setCvData(d => ({ ...d, projects: (d.projects || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Publicaciones
+  const addPublication = () => {
+    setCvData(d => ({ ...d, publications: [...(d.publications || []), { title: "", publisher: "", date: "", link: "" }] }));
+    markUnsaved();
+  };
+
+  const updatePublication = (i, field, value) => {
+    setCvData(d => {
+      const pubs = [...(d.publications || [])];
+      pubs[i] = { ...pubs[i], [field]: value };
+      return { ...d, publications: pubs };
+    });
+    markUnsaved();
+  };
+
+  const removePublication = (i) => {
+    setCvData(d => ({ ...d, publications: (d.publications || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Reconocimientos / Premios
+  const addAward = () => {
+    setCvData(d => ({ ...d, awards: [...(d.awards || []), { title: "", issuer: "", date: "", description: "" }] }));
+    markUnsaved();
+  };
+
+  const updateAward = (i, field, value) => {
+    setCvData(d => {
+      const arr = [...(d.awards || [])];
+      arr[i] = { ...arr[i], [field]: value };
+      return { ...d, awards: arr };
+    });
+    markUnsaved();
+  };
+
+  const removeAward = (i) => {
+    setCvData(d => ({ ...d, awards: (d.awards || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Voluntariado
+  const addVolunteer = () => {
+    setCvData(d => ({ ...d, volunteer: [...(d.volunteer || []), { role: "", organization: "", period: "", description: "" }] }));
+    markUnsaved();
+  };
+
+  const updateVolunteer = (i, field, value) => {
+    setCvData(d => {
+      const arr = [...(d.volunteer || [])];
+      arr[i] = { ...arr[i], [field]: value };
+      return { ...d, volunteer: arr };
+    });
+    markUnsaved();
+  };
+
+  const removeVolunteer = (i) => {
+    setCvData(d => ({ ...d, volunteer: (d.volunteer || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Referencias
+  const addReference = () => {
+    setCvData(d => ({ ...d, references: [...(d.references || []), { name: "", company: "", position: "", phone: "", email: "" }] }));
+    markUnsaved();
+  };
+
+  const updateReference = (i, field, value) => {
+    setCvData(d => {
+      const arr = [...(d.references || [])];
+      arr[i] = { ...arr[i], [field]: value };
+      return { ...d, references: arr };
+    });
+    markUnsaved();
+  };
+
+  const removeReference = (i) => {
+    setCvData(d => ({ ...d, references: (d.references || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Intereses
+  const addInterest = (interest) => {
+    if (!interest || !interest.trim()) return;
+    setCvData(d => ({ ...d, interests: [...(d.interests || []), interest.trim()] }));
+    markUnsaved();
+  };
+
+  const removeInterest = (i) => {
+    setCvData(d => ({ ...d, interests: (d.interests || []).filter((_, idx) => idx !== i) }));
+    markUnsaved();
+  };
+
+  // Redes / Portafolio
+  const addSocialLink = () => {
+    setCvData(d => ({ ...d, socialLinks: [...(d.socialLinks || []), { platform: "LinkedIn", url: "", username: "" }] }));
+    markUnsaved();
+  };
+
+  const updateSocialLink = (i, field, value) => {
+    setCvData(d => {
+      const arr = [...(d.socialLinks || [])];
+      arr[i] = { ...arr[i], [field]: value };
+      return { ...d, socialLinks: arr };
+    });
+    markUnsaved();
+  };
+
+  const removeSocialLink = (i) => {
+    setCvData(d => ({ ...d, socialLinks: (d.socialLinks || []).filter((_, idx) => idx !== i) }));
     markUnsaved();
   };
 
@@ -190,7 +432,6 @@ export const useCvData = (user, projectId) => {
     }
 
     try {
-      // 1. Guardar o actualizar el CV principal en cv_projects
       await supabase
         .from('cv_projects')
         .update({ 
@@ -199,11 +440,9 @@ export const useCvData = (user, projectId) => {
         })
         .eq('id', projectId);
 
-      // 2. Guardar en el historial de versiones (cv_versions)
       let shouldSaveVersion = true;
       let isAuto = false;
       
-      // Si no se pasó un nombre o receta explícita, se considera guardado del proyecto sin crear nueva versión en la BD
       if (customName === null && recipe === null && activeTemplate === null && composerMode === null) {
         isAuto = true;
         shouldSaveVersion = false;
@@ -223,7 +462,7 @@ export const useCvData = (user, projectId) => {
           
         if (error) {
           console.error("Error en cv_versions:", error);
-          if (!isAuto) customAlert("Error al guardar la versión. ¿Ejecutaste el script SQL de permisos (RLS) para la tabla cv_versions?\nDetalle: " + error.message);
+          if (!isAuto) customAlert("Error al guardar la versión en historial.\nDetalle: " + error.message);
         }
       }
         
@@ -242,12 +481,24 @@ export const useCvData = (user, projectId) => {
     setHasUnsavedChanges,
     saveToBackend,
     updateConfig,
+    toggleSectionVisibility,
+    setSectionVisibility,
+    setAllSectionsVisibility,
     updatePersonal,
     setPhoto,
     removePhoto,
     addExperience, updateExperience, removeExperience,
     addEducation, updateEducation, removeEducation,
     addSkill, removeSkill,
+    addSoftSkill, removeSoftSkill,
     addLanguage, removeLanguage,
+    addCertification, updateCertification, removeCertification,
+    addProject, updateProject, removeProject,
+    addPublication, updatePublication, removePublication,
+    addAward, updateAward, removeAward,
+    addVolunteer, updateVolunteer, removeVolunteer,
+    addReference, updateReference, removeReference,
+    addInterest, removeInterest,
+    addSocialLink, updateSocialLink, removeSocialLink,
   };
 };

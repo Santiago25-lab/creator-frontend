@@ -42,19 +42,18 @@ const getAbbr = (skill) => {
 };
 
 const ResumeF = ({ data }) => {
-  const { personalInfo, experience, education, skills, languages } = data;
+  const { personalInfo = {}, experience = [], education = [], skills = [], languages = [] } = data || {};
+  const sectionsVisibility = data?.sectionsVisibility || {};
+  const isVis = (key) => sectionsVisibility[key] !== false;
 
-  // Primeras 8 skills como habilidades software
-  const softwareSkills = skills?.slice(0, 8) || [];
-  // Skills restantes como pasiones (máx 4)
-  const passions = skills?.slice(8, 12) || [];
-
-  // Si no hay pasiones en skills, usar algunos defaults visuales
-  const passionItems = passions.length > 0
-    ? passions
+  // Habilidades técnicas
+  const softwareSkills = skills || [];
+  // Pasiones / Intereses reales
+  const passionItems = data?.interests && data.interests.length > 0
+    ? data.interests
     : ['Fotografía', 'Diseño', 'Arte', 'Tecnología'];
 
-  const bgStyle = personalInfo.photo
+  const bgStyle = isVis('photo') && personalInfo.photo
     ? { backgroundImage: `url(${personalInfo.photo})` }
     : { background: 'linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)' };
 

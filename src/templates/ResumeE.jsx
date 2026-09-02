@@ -9,7 +9,9 @@ import './ResumeE.css';
  * Experiencia en card con borde, idiomas e intereses en crema.
  */
 const ResumeE = ({ data }) => {
-  const { personalInfo, experience, education, skills, languages } = data;
+  const { personalInfo = {}, experience = [], education = [], skills = [], languages = [] } = data || {};
+  const sectionsVisibility = data?.sectionsVisibility || {};
+  const isVis = (key) => sectionsVisibility[key] !== false;
 
   // Separa "Idioma (Nivel)" → { name, level }
   const splitLang = (lang) => {
@@ -31,68 +33,87 @@ const ResumeE = ({ data }) => {
       <div className="resume-e__mark">
         <span>✦ CV</span>
       </div>
-      <div className="resume-e__role-badge">
-        {personalInfo.title || 'Profesional'}
-      </div>
+      {personalInfo.title && (
+        <div className="resume-e__role-badge">
+          {personalInfo.title}
+        </div>
+      )}
 
       {/* ═══ COLUMNA IZQUIERDA ═══ */}
       <div className="resume-e__left">
 
         {/* Foto enmarcada */}
-        <div className="resume-e__photo-wrap">
-          {personalInfo.photo
-            ? (
-              <img 
-                className="resume-e__photo" 
-                src={personalInfo.photo}
-                alt={personalInfo.name || 'Foto de perfil'}
-              />
-            )
-            : (
-              <div className="resume-e__photo-placeholder">
-                <i className="fa-solid fa-camera" />
-                <span>Foto</span>
-              </div>
-            )
-          }
-          <div className="resume-e__photo-frame" />
-        </div>
+        {isVis('photo') && (
+          <div className="resume-e__photo-wrap">
+            {personalInfo.photo
+              ? (
+                <img 
+                  className="resume-e__photo" 
+                  src={personalInfo.photo}
+                  alt={personalInfo.name || 'Foto de perfil'}
+                />
+              )
+              : (
+                <div className="resume-e__photo-placeholder">
+                  <i className="fa-solid fa-camera" />
+                  <span>Foto</span>
+                </div>
+              )
+            }
+            <div className="resume-e__photo-frame" />
+          </div>
+        )}
 
         {/* Name + Year badges */}
         <div className="resume-e__name-badge">{personalInfo.name || 'Tu Nombre'}</div>
         <div className="resume-e__year-badge">{currentYear}</div>
 
         {/* Contacto */}
-        <div>
-          <h3 className="resume-e__contact-title">Contacto</h3>
-          {personalInfo.phone && (
-            <div className="resume-e__contact-item">
-              <i className="fa-solid fa-phone" />
-              <span>{personalInfo.phone}</span>
-            </div>
-          )}
-          {personalInfo.address && (
-            <div className="resume-e__contact-item">
-              <i className="fa-solid fa-location-dot" />
-              <span>{personalInfo.address}</span>
-            </div>
-          )}
-          {personalInfo.email && (
-            <div className="resume-e__contact-item">
-              <i className="fa-solid fa-envelope" />
-              <span>{personalInfo.email}</span>
-            </div>
-          )}
-          {personalInfo.website && (
-            <div className="resume-e__contact-item">
-              <i className="fa-solid fa-globe" />
-              <span>{personalInfo.website}</span>
-            </div>
-          )}
-        </div>
+        {isVis('personalInfo') && (
+          <div>
+            <h3 className="resume-e__contact-title">Contacto</h3>
+            {personalInfo.phone && (
+              <div className="resume-e__contact-item">
+                <i className="fa-solid fa-phone" />
+                <span>{personalInfo.phone}</span>
+              </div>
+            )}
+            {personalInfo.address && (
+              <div className="resume-e__contact-item">
+                <i className="fa-solid fa-location-dot" />
+                <span>{personalInfo.address}</span>
+              </div>
+            )}
+            {personalInfo.email && (
+              <div className="resume-e__contact-item">
+                <i className="fa-solid fa-envelope" />
+                <span>{personalInfo.email}</span>
+              </div>
+            )}
+            {personalInfo.website && (
+              <div className="resume-e__contact-item">
+                <i className="fa-solid fa-globe" />
+                <span>{personalInfo.website}</span>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Redes / Links */}
+        {isVis('socialLinks') && data?.socialLinks && data.socialLinks.length > 0 && (
+          <div style={{ marginTop: '16px' }}>
+            <h3 className="resume-e__contact-title">Enlaces</h3>
+            {data.socialLinks.map((s, i) => (
+              <div key={i} className="resume-e__contact-item">
+                <i className="fa-solid fa-arrow-up-right-from-square" />
+                <span>{s.platform ? `${s.platform}: ` : ''}{s.username || s.url}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Educación */}
-        {education && education.length > 0 && (
+        {isVis('education') && education && education.length > 0 && (
           <div>
             <h2 className="resume-e__left-section-title">Educación</h2>
             {education.map((edu, i) => (
@@ -110,8 +131,27 @@ const ResumeE = ({ data }) => {
           </div>
         )}
 
+        {/* Certificaciones */}
+        {isVis('certifications') && data?.certifications && data.certifications.length > 0 && (
+          <div>
+            <h2 className="resume-e__left-section-title">Certificaciones</h2>
+            {data.certifications.map((cert, i) => (
+              <div key={i} className="resume-e__edu-item">
+                <span className="resume-e__edu-diamond">✦</span>
+                <div>
+                  {cert.date && <p className="resume-e__edu-period">{cert.date}</p>}
+                  <p className="resume-e__edu-degree">{cert.name}</p>
+                  {cert.issuer && (
+                    <p className="resume-e__edu-institution">{cert.issuer}</p>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+
         {/* Technical Skills */}
-        {skills && skills.length > 0 && (
+        {isVis('skills') && skills && skills.length > 0 && (
           <div>
             <h2 className="resume-e__left-section-title">Habilidades Técnicas</h2>
             <div className="resume-e__skills-grid">
@@ -122,11 +162,15 @@ const ResumeE = ({ data }) => {
           </div>
         )}
 
-        {/* Soft Skills → usamos aboutMe como resumen si no hay sección específica */}
-        {personalInfo.aboutMe && (
+        {/* Soft Skills */}
+        {isVis('softSkills') && data?.softSkills && data.softSkills.length > 0 && (
           <div>
             <h2 className="resume-e__left-section-title">Habilidades Blandas</h2>
-            <p className="resume-e__soft-skills">{personalInfo.aboutMe}</p>
+            <div className="resume-e__skills-grid">
+              {data.softSkills.map((s, i) => (
+                <span key={i} className="resume-e__skill-pill" style={{ background: 'rgba(255,255,255,0.1)' }}>{s}</span>
+              ))}
+            </div>
           </div>
         )}
 
@@ -142,14 +186,21 @@ const ResumeE = ({ data }) => {
         </h1>
 
         {/* About en quotes */}
-        {personalInfo.aboutMe && (
+        {isVis('aboutMe') && personalInfo.aboutMe && (
           <p className="resume-e__about">"{personalInfo.aboutMe}"</p>
         )}
 
+        {/* Objetivo */}
+        {isVis('objective') && personalInfo.objective && (
+          <p className="resume-e__about" style={{ fontStyle: 'italic', borderLeft: '3px solid #7c2d12', paddingLeft: '12px' }}>
+            {personalInfo.objective}
+          </p>
+        )}
+
         {/* Experiencia en card */}
-        {experience && experience.length > 0 && (
+        {isVis('experience') && experience && experience.length > 0 && (
           <div className="resume-e__exp-card">
-            <h2 className="resume-e__right-section-title">Experiencia</h2>
+            <h2 className="resume-e__right-section-title">Experiencia Laboral</h2>
             {experience.map((exp, i) => (
               <div key={i} className="resume-e__exp-item">
                 <span className="resume-e__exp-diamond">✦</span>
@@ -160,19 +211,29 @@ const ResumeE = ({ data }) => {
                 </div>
               </div>
             ))}
-            {/* Tags de habilidades clave */}
-            {skills && skills.length > 0 && (
-              <div className="resume-e__exp-tags">
-                {skills.slice(0, 4).map((s, i) => (
-                  <span key={i} className="resume-e__exp-tag">{s}</span>
-                ))}
+          </div>
+        )}
+
+        {/* Proyectos */}
+        {isVis('projects') && data?.projects && data.projects.length > 0 && (
+          <div className="resume-e__exp-card" style={{ marginTop: '16px' }}>
+            <h2 className="resume-e__right-section-title">Proyectos Destacados</h2>
+            {data.projects.map((proj, i) => (
+              <div key={i} className="resume-e__exp-item">
+                <span className="resume-e__exp-diamond">✦</span>
+                <div>
+                  <strong>{proj.name}</strong>
+                  {proj.role && <span style={{ color: '#999', fontSize: '10px', marginLeft: '8px' }}>{proj.role}</span>}
+                  {proj.link && <p style={{ margin: '2px 0', fontSize: '11px', color: '#7c2d12' }}>{proj.link}</p>}
+                  {proj.description && <p style={{ margin: '4px 0 0 0', fontSize: '11.5px', color: '#555', lineHeight: '1.6' }}>{proj.description}</p>}
+                </div>
               </div>
-            )}
+            ))}
           </div>
         )}
 
         {/* Idiomas */}
-        {languages && languages.length > 0 && (
+        {isVis('languages') && languages && languages.length > 0 && (
           <div>
             <h2 className="resume-e__right-section-title">Idiomas</h2>
             <div className="resume-e__lang-row">
@@ -189,11 +250,11 @@ const ResumeE = ({ data }) => {
           </div>
         )}
 
-        {/* Intereses */}
-        {skills && skills.length > 4 && (
-          <div>
-            <span className="resume-e__interest-badge">Intereses</span>
-            {skills.slice(4).map((s, i) => (
+        {/* Intereses REALES */}
+        {isVis('interests') && data?.interests && data.interests.length > 0 && (
+          <div style={{ marginTop: '14px' }}>
+            <span className="resume-e__interest-badge">Intereses & Pasiones</span>
+            {data.interests.map((s, i) => (
               <div key={i} className="resume-e__interest-item">
                 <span className="resume-e__interest-diamond">✦</span>
                 <span>{s}</span>
@@ -201,8 +262,6 @@ const ResumeE = ({ data }) => {
             ))}
           </div>
         )}
-
-
 
       </div>
     </div>

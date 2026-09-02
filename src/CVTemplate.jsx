@@ -19,6 +19,7 @@ import ComposedTemplate from './templates/engine/ComposedTemplate';
 import ComposerPanel, { STORAGE_KEY } from './templates/engine/ComposerPanel';
 import { DEFAULT_RECIPE } from './templates/engine/registry';
 import ProfileModal from './components/ProfileModal';
+import { SectionsPanel } from './components/SectionsPanel';
 import './CVTemplate.css';
 
 /* ═══════════════════════════════════════════════════
@@ -58,7 +59,20 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
   const [showTemplates, setShowTemplates] = useState(false);
   const [showProfile, setShowProfile] = useState(false);
   const [showShareToast, setShowShareToast] = useState(false);
+  const [showSaveToast, setShowSaveToast] = useState(false);
   const [shareLink, setShareLink] = useState('');
+  const [newSoftSkill, setNewSoftSkill] = useState('');
+  const [newInterest, setNewInterest] = useState('');
+
+  const handleManualSave = async () => {
+    try {
+      await cv.saveToBackend(null, recipe, activeTemplate, composerMode);
+      setShowSaveToast(true);
+      setTimeout(() => setShowSaveToast(false), 3000);
+    } catch (e) {
+      console.error("Error al guardar proyecto:", e);
+    }
+  };
 
   // ── Composition Engine ──
   const [composerMode, setComposerMode] = useState(false);
@@ -490,6 +504,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
           <div className="app__logo"><i className="fa-solid fa-pen-ruler" /></div>
         )}
         <ToolBtn icon="fa-layer-group" label="Diseños" active={activeTab === 'templates'} onClick={() => setActiveTab('templates')} />
+        <ToolBtn icon="fa-list-check" label="Módulos" active={activeTab === 'sections'} onClick={() => setActiveTab('sections')} />
         <ToolBtn icon="fa-user-pen" label="Datos" active={activeTab === 'editor'} onClick={() => setActiveTab('editor')} />
         <ToolBtn icon="fa-comment-dots" label="IA" active={activeTab === 'chat'} onClick={() => setActiveTab('chat')} />
         <ToolBtn icon="fa-paperclip" label="Docs" active={activeTab === 'docs'} onClick={() => setActiveTab('docs')} />
@@ -515,6 +530,7 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
         <h2 className="app__panel-title">
           {activeTab === 'templates' && !composerMode && 'Catálogo'}
           {activeTab === 'templates' && composerMode && 'Compositor'}
+          {activeTab === 'sections' && 'Módulos del CV'}
           {activeTab === 'editor' && 'Editar CV'}
           {activeTab === 'chat' && 'Redactor IA'}
           {activeTab === 'docs' && 'Documentos'}
@@ -603,6 +619,15 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
             />
           )}
 
+          {/* TAB: Módulos / Secciones Dinámicas */}
+          {activeTab === 'sections' && (
+            <SectionsPanel 
+              cvData={cvData} 
+              onToggleSection={cv.toggleSectionVisibility} 
+              onSetAllSections={cv.setAllSectionsVisibility} 
+            />
+          )}
+
           {/* TAB: Editor completo */}
           {activeTab === 'editor' && (
             <div className="app__editor">
@@ -629,17 +654,18 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
 
               {/* ── Datos Personales ── */}
               <SectionHeader title="Datos Personales" />
-              <EditorField label="Nombre" value={cvData.personalInfo.name} onChange={v => cv.updatePersonal('name', v)} />
-              <EditorField label="Cargo" value={cvData.personalInfo.title} onChange={v => cv.updatePersonal('title', v)} />
-              <EditorField label="Email" value={cvData.personalInfo.email} onChange={v => cv.updatePersonal('email', v)} />
-              <EditorField label="Teléfono" value={cvData.personalInfo.phone} onChange={v => cv.updatePersonal('phone', v)} />
-              <EditorField label="Ciudad" value={cvData.personalInfo.address} onChange={v => cv.updatePersonal('address', v)} />
-              <EditorField label="Web" value={cvData.personalInfo.website} onChange={v => cv.updatePersonal('website', v)} />
-              <EditorField label="Perfil Profesional" value={cvData.personalInfo.aboutMe} onChange={v => cv.updatePersonal('aboutMe', v)} textarea />
+              <EditorField label="Nombre" value={cvData.personalInfo?.name} onChange={v => cv.updatePersonal('name', v)} />
+              <EditorField label="Cargo" value={cvData.personalInfo?.title} onChange={v => cv.updatePersonal('title', v)} />
+              <EditorField label="Email" value={cvData.personalInfo?.email} onChange={v => cv.updatePersonal('email', v)} />
+              <EditorField label="Teléfono" value={cvData.personalInfo?.phone} onChange={v => cv.updatePersonal('phone', v)} />
+              <EditorField label="Ciudad" value={cvData.personalInfo?.address} onChange={v => cv.updatePersonal('address', v)} />
+              <EditorField label="Web" value={cvData.personalInfo?.website} onChange={v => cv.updatePersonal('website', v)} />
+              <EditorField label="Perfil Profesional" value={cvData.personalInfo?.aboutMe} onChange={v => cv.updatePersonal('aboutMe', v)} textarea />
+              <EditorField label="Objetivo Profesional" value={cvData.personalInfo?.objective} onChange={v => cv.updatePersonal('objective', v)} textarea />
 
               {/* ── Experiencia ── */}
-              <SectionHeader title="Experiencia" onAdd={cv.addExperience} />
-              {cvData.experience.map((exp, i) => (
+              <SectionHeader title="Experiencia Laboral" onAdd={cv.addExperience} />
+              {(cvData.experience || []).map((exp, i) => (
                 <div key={i} className="app__editor-card">
                   <button className="app__editor-remove" onClick={() => cv.removeExperience(i)} title="Eliminar"><i className="fa-solid fa-trash-can" /></button>
                   <EditorField label="Cargo · Empresa" value={exp.title} onChange={v => cv.updateExperience(i, 'title', v)} />
@@ -648,9 +674,21 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                 </div>
               ))}
 
+              {/* ── Proyectos ── */}
+              <SectionHeader title="Proyectos Destacados" onAdd={cv.addProject} />
+              {(cvData.projects || []).map((proj, i) => (
+                <div key={i} className="app__editor-card">
+                  <button className="app__editor-remove" onClick={() => cv.removeProject(i)} title="Eliminar"><i className="fa-solid fa-trash-can" /></button>
+                  <EditorField label="Nombre del Proyecto" value={proj.name} onChange={v => cv.updateProject(i, 'name', v)} />
+                  <EditorField label="Rol / Tecnologías" value={proj.role} onChange={v => cv.updateProject(i, 'role', v)} />
+                  <EditorField label="Enlace (URL)" value={proj.link} onChange={v => cv.updateProject(i, 'link', v)} />
+                  <EditorField label="Descripción del Impacto" value={proj.description} onChange={v => cv.updateProject(i, 'description', v)} textarea />
+                </div>
+              ))}
+
               {/* ── Educación ── */}
               <SectionHeader title="Educación" onAdd={cv.addEducation} />
-              {cvData.education.map((edu, i) => (
+              {(cvData.education || []).map((edu, i) => (
                 <div key={i} className="app__editor-card">
                   <button className="app__editor-remove" onClick={() => cv.removeEducation(i)} title="Eliminar"><i className="fa-solid fa-trash-can" /></button>
                   <EditorField label="Título" value={edu.degree} onChange={v => cv.updateEducation(i, 'degree', v)} />
@@ -659,59 +697,84 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                 </div>
               ))}
 
-              {/* ── Skills ── */}
-              <SectionHeader title="Habilidades" />
+              {/* ── Certificaciones ── */}
+              <SectionHeader title="Certificaciones" onAdd={cv.addCertification} />
+              {(cvData.certifications || []).map((cert, i) => (
+                <div key={i} className="app__editor-card">
+                  <button className="app__editor-remove" onClick={() => cv.removeCertification(i)} title="Eliminar"><i className="fa-solid fa-trash-can" /></button>
+                  <EditorField label="Certificado" value={cert.name} onChange={v => cv.updateCertification(i, 'name', v)} />
+                  <EditorField label="Entidad Emisora" value={cert.issuer} onChange={v => cv.updateCertification(i, 'issuer', v)} />
+                  <EditorField label="Fecha / Año" value={cert.date} onChange={v => cv.updateCertification(i, 'date', v)} />
+                </div>
+              ))}
+
+              {/* ── Habilidades Técnicas ── */}
+              <SectionHeader title="Habilidades Técnicas" />
               <div className="app__editor-tags">
-                {cvData.skills.map((s, i) => (
+                {(cvData.skills || []).map((s, i) => (
                   <span key={i} className="app__editor-tag">
                     {s} <button onClick={() => cv.removeSkill(i)}>×</button>
                   </span>
                 ))}
               </div>
               <div className="app__inline-add">
-                <input className="app__inline-input" value={newSkill} onChange={e => setNewSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && (cv.addSkill(newSkill), setNewSkill(''))} placeholder="Escribe una habilidad..." />
+                <input className="app__inline-input" value={newSkill} onChange={e => setNewSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && (cv.addSkill(newSkill), setNewSkill(''))} placeholder="Ej: React, Spring Boot, SEO..." />
                 <button className="app__inline-btn" onClick={() => { cv.addSkill(newSkill); setNewSkill(''); }} title="Agregar"><i className="fa-solid fa-plus" /></button>
                 <button className="app__suggest-btn" onClick={chat.suggestSkills} title="Sugerencias IA"><i className="fa-solid fa-wand-magic-sparkles" /></button>
               </div>
-              {chat.skillSuggestions.length > 0 && (
-                <div className="app__suggestions">
-                  <span className="app__suggestions-label"><i className="fa-solid fa-lightbulb" /> Sugerencias IA:</span>
-                  <div className="app__editor-tags">
-                    {chat.skillSuggestions.map((s, i) => (
-                      <span key={i} className="app__editor-tag app__editor-tag--suggest" onClick={() => { cv.addSkill(s); chat.setSkillSuggestions(prev => prev.filter((_, idx) => idx !== i)); }}>
-                        + {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              )}
+
+              {/* ── Habilidades Blandas ── */}
+              <SectionHeader title="Habilidades Blandas" />
+              <div className="app__editor-tags">
+                {(cvData.softSkills || []).map((s, i) => (
+                  <span key={i} className="app__editor-tag" style={{ background: 'rgba(255,255,255,0.06)' }}>
+                    {s} <button onClick={() => cv.removeSoftSkill(i)}>×</button>
+                  </span>
+                ))}
+              </div>
+              <div className="app__inline-add">
+                <input className="app__inline-input" value={newSoftSkill} onChange={e => setNewSoftSkill(e.target.value)} onKeyDown={e => e.key === 'Enter' && (cv.addSoftSkill(newSoftSkill), setNewSoftSkill(''))} placeholder="Ej: Liderazgo, Comunicación..." />
+                <button className="app__inline-btn" onClick={() => { cv.addSoftSkill(newSoftSkill); setNewSoftSkill(''); }} title="Agregar"><i className="fa-solid fa-plus" /></button>
+              </div>
 
               {/* ── Idiomas ── */}
               <SectionHeader title="Idiomas" />
               <div className="app__editor-tags">
-                {cvData.languages.map((l, i) => (
+                {(cvData.languages || []).map((l, i) => (
                   <span key={i} className="app__editor-tag">
                     {l} <button onClick={() => cv.removeLanguage(i)}>×</button>
                   </span>
                 ))}
               </div>
               <div className="app__inline-add">
-                <input className="app__inline-input" value={newLang} onChange={e => setNewLang(e.target.value)} onKeyDown={e => e.key === 'Enter' && (cv.addLanguage(newLang), setNewLang(''))} placeholder="Ej: Francés (A2)" />
+                <input className="app__inline-input" value={newLang} onChange={e => setNewLang(e.target.value)} onKeyDown={e => e.key === 'Enter' && (cv.addLanguage(newLang), setNewLang(''))} placeholder="Ej: Inglés (B2), Español (Nativo)" />
                 <button className="app__inline-btn" onClick={() => { cv.addLanguage(newLang); setNewLang(''); }} title="Agregar"><i className="fa-solid fa-plus" /></button>
                 <button className="app__suggest-btn" onClick={chat.suggestLanguages} title="Sugerencias IA"><i className="fa-solid fa-wand-magic-sparkles" /></button>
               </div>
-              {chat.langSuggestions.length > 0 && (
-                <div className="app__suggestions">
-                  <span className="app__suggestions-label"><i className="fa-solid fa-lightbulb" /> Sugerencias IA:</span>
-                  <div className="app__editor-tags">
-                    {chat.langSuggestions.map((l, i) => (
-                      <span key={i} className="app__editor-tag app__editor-tag--suggest" onClick={() => { cv.addLanguage(l); chat.setLangSuggestions(prev => prev.filter((_, idx) => idx !== i)); }}>
-                        + {l}
-                      </span>
-                    ))}
-                  </div>
+
+              {/* ── Intereses & Pasiones ── */}
+              <SectionHeader title="Intereses & Pasiones" />
+              <div className="app__editor-tags">
+                {(cvData.interests || []).map((it, i) => (
+                  <span key={i} className="app__editor-tag" style={{ background: 'rgba(59, 130, 246, 0.15)', borderColor: '#3b82f6' }}>
+                    ✦ {it} <button onClick={() => cv.removeInterest(i)}>×</button>
+                  </span>
+                ))}
+              </div>
+              <div className="app__inline-add">
+                <input className="app__inline-input" value={newInterest} onChange={e => setNewInterest(e.target.value)} onKeyDown={e => e.key === 'Enter' && (cv.addInterest(newInterest), setNewInterest(''))} placeholder="Ej: Open Source, Ajedrez..." />
+                <button className="app__inline-btn" onClick={() => { cv.addInterest(newInterest); setNewInterest(''); }} title="Agregar"><i className="fa-solid fa-plus" /></button>
+              </div>
+
+              {/* ── Redes & Enlaces ── */}
+              <SectionHeader title="Redes & Portafolio" onAdd={cv.addSocialLink} />
+              {(cvData.socialLinks || []).map((soc, i) => (
+                <div key={i} className="app__editor-card">
+                  <button className="app__editor-remove" onClick={() => cv.removeSocialLink(i)} title="Eliminar"><i className="fa-solid fa-trash-can" /></button>
+                  <EditorField label="Plataforma (ej: LinkedIn, GitHub)" value={soc.platform} onChange={v => cv.updateSocialLink(i, 'platform', v)} />
+                  <EditorField label="Usuario o Enlace" value={soc.url || soc.username} onChange={v => cv.updateSocialLink(i, 'url', v)} />
                 </div>
-              )}
+              ))}
             </div>
           )}
 
@@ -740,10 +803,10 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
                     placeholder="Cuéntame sobre tu experiencia..." 
                     disabled={chat.isLoading} 
                     rows={1}
-                    maxLength={200}
+                    maxLength={3000}
                   />
                   <div style={{ textAlign: 'right', fontSize: '10px', color: 'var(--text-dim)', paddingRight: '4px' }}>
-                    {chat.userInput.length}/200
+                    {chat.userInput.length}/3000
                   </div>
                 </div>
                 <button className="app__chat-send" onClick={chat.sendMessage} disabled={chat.isLoading}><i className="fa-solid fa-paper-plane" /></button>
@@ -885,15 +948,20 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
             <i className={`fa-solid ${chat.isRegenerating ? 'fa-spinner fa-spin' : 'fa-rotate'}`} /> {chat.isRegenerating ? 'Regenerando...' : 'Regenerar'}
           </button>
           
-          <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '13px', fontWeight: '500', color: cv.isSaving ? 'var(--text-primary)' : (cv.hasUnsavedChanges ? 'var(--text-dim)' : '#10b981'), padding: '0 12px' }}>
+          <button 
+            className={`app__save-btn ${cv.hasUnsavedChanges ? 'app__save-btn--unsaved' : 'app__save-btn--saved'}`} 
+            onClick={handleManualSave}
+            disabled={cv.isSaving}
+            title="Guardar todos los cambios (información, diseño, bloques y colores)"
+          >
             {cv.isSaving ? (
               <><i className="fa-solid fa-spinner fa-spin" /> Guardando...</>
             ) : cv.hasUnsavedChanges ? (
-              <><i className="fa-solid fa-circle-dot" /> Cambios sin guardar</>
+              <><i className="fa-solid fa-floppy-disk" /> Guardar cambios</>
             ) : (
-              <><i className="fa-solid fa-cloud-check" /> Guardado en la nube</>
+              <><i className="fa-solid fa-cloud-check" /> Guardado</>
             )}
-          </div>
+          </button>
           
           <button className="app__share-btn" onClick={handleShare}>
             <i className="fa-solid fa-link" /> Compartir
@@ -1005,6 +1073,26 @@ const CVTemplate = ({ initialTab = 'templates', onBack, initialDesign, projectId
               <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>¡Enlace copiado!</h4>
               <p style={{ margin: 0, color: 'var(--text-dim)', fontSize: '14px' }}>
                 Comparte tu CV en línea: <span style={{ background: 'var(--bg-body)', color: 'var(--color-primary)', padding: '4px 8px', borderRadius: '4px', marginLeft: '6px' }}>{shareLink}</span>
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Save Toast */}
+      {showSaveToast && (
+        <div 
+          onClick={() => setShowSaveToast(false)} 
+          style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, zIndex: 99999, display: 'flex', alignItems: 'flex-start', justifyContent: 'center', paddingTop: '80px', pointerEvents: 'auto', background: 'transparent' }}
+        >
+          <div className="share-toast" onClick={e => e.stopPropagation()} style={{ background: 'var(--bg-card)', color: 'var(--text-primary)', border: '1px solid var(--border-color)', boxShadow: '0 10px 25px rgba(0,0,0,0.1)', display: 'flex', alignItems: 'center', gap: '16px', padding: '16px 24px', borderRadius: '12px', animation: 'slideDown 0.3s ease-out' }}>
+            <div className="share-toast-icon" style={{ background: '#10b98120', color: '#10b981', width: '40px', height: '40px', borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '18px' }}>
+              <i className="fa-solid fa-floppy-disk"></i>
+            </div>
+            <div className="share-toast-content">
+              <h4 style={{ margin: '0 0 4px 0', color: 'var(--text-primary)' }}>¡Proyecto Guardado!</h4>
+              <p style={{ margin: 0, color: 'var(--text-dim)', fontSize: '14px' }}>
+                Tu información, diseño, colores y secciones se guardaron con éxito en Supabase.
               </p>
             </div>
           </div>

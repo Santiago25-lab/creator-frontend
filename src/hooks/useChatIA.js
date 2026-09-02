@@ -74,7 +74,7 @@ export const useChatIA = (cvData, setCvData, user, projectId) => {
 
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 60000);
+      const timeoutId = setTimeout(() => controller.abort(), 120000);
 
       const res = await fetch(API_URLS.aiGenerate, {
         method: 'POST',
@@ -127,13 +127,19 @@ export const useChatIA = (cvData, setCvData, user, projectId) => {
         await saveMessage('assistant', aiResponse);
         setChatMessages([...newMsgs, { role: 'assistant', content: aiResponse }]);
       } else {
-        setChatMessages([...newMsgs, { role: 'assistant', content: '⚠️ El servidor está ocupado. Reintenta en un momento.' }]);
+        let errText = '⚠️ El servidor está ocupado. Reintenta en un momento.';
+        try {
+          const errData = await res.json();
+          if (errData.ai_message) errText = errData.ai_message;
+          else if (errData.error) errText = '⚠️ ' + errData.error;
+        } catch {}
+        setChatMessages([...newMsgs, { role: 'assistant', content: errText }]);
       }
     } catch (err) {
       const isTimeout = err.name === 'AbortError';
       setChatMessages([...newMsgs, { 
         role: 'assistant', 
-        content: isTimeout ? '⚠️ Tiempo agotado. La IA está tardando mucho, prueba con un mensaje más corto.' : '⚠️ Error de conexión.' 
+        content: isTimeout ? '⚠️ Tiempo agotado. La IA tardó demasiado en procesar la respuesta, intenta de nuevo.' : '⚠️ Error de conexión.' 
       }]);
     }
     setIsLoading(false);
